@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-paper: #fcfbf8;
+    --color-paper-subtle: #f7f6f2;
+    --color-paper-border: #e7e5df;
+    --color-crimson: #991b1b;
+    --color-text-main: #111315;
+    --color-text-muted: #5c6373;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-text-main);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Custom scrollbar for modern browsers */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f7f6f2;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #c7cbd6;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #9fa6b5;
+  }
+}
+
+/* Editorial design accents */
+.editorial-rule {
+  height: 1px;
+  background-color: #e7e5df;
+}
+
+.editorial-rule-double {
+  border-top: 3px double #1c1f24;
+}
+
+.editorial-masthead-rule {
+  border-top: 1px solid #1c1f24;
+  border-bottom: 3px double #1c1f24;
+  padding: 4px 0;
+}
+
+.editorial-dropcap::first-letter {
+  float: left;
+  font-family: 'Playfair Display', 'Noto Serif Devanagari', Georgia, serif;
+  font-size: 3.8rem;
+  line-height: 0.85;
+  padding-top: 4px;
+  padding-right: 10px;
+  padding-bottom: 2px;
+  color: #991b1b;
+  font-weight: 700;
+}
+
+/* Newspaper column divider */
+.editorial-col-divider {
+  border-right: 1px solid #e7e5df;
+}
+
+/* Tiptap Rich Text editor overrides */
+.tiptap-content p {
+  margin-bottom: 1.25rem;
+  line-height: 1.8;
+  font-size: 1.125rem;
+}
+
+.tiptap-content h2 {
+  font-family: 'Noto Serif Devanagari', 'Playfair Display', Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #111315;
+}
+
+.tiptap-content h3 {
+  font-family: 'Noto Serif Devanagari', 'Playfair Display', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #1c1f24;
+}
+
+.tiptap-content blockquote {
+  border-left: 4px solid #991b1b;
+  padding-left: 1.25rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  font-size: 1.2rem;
+  color: #2b2f38;
+  background-color: #f7f6f2;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.tiptap-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.tiptap-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.tiptap-content img {
+  border-radius: 4px;
+  margin: 1.5rem 0;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
