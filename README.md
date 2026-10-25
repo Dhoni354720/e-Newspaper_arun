@@ -156,3 +156,4 @@ Test coverage includes:
 ## 8. License & Attribution
 © 2026 JANVANI NEWS (जनवाणी न्यूज). All rights reserved.
 Demonstration editorial news platform built with React, Vite, Tailwind CSS, and Supabase.
+# e-Newspaper_arun
