@@ -249,10 +249,39 @@ export const ArticleDetailPage: React.FC = () => {
           {/* 4. Metadata: Author, Published Date (Asia/Kolkata), Reading Time & Social Sharing */}
           <div className="py-4 border-t border-b border-paper-border flex flex-wrap items-center justify-between gap-4 mb-8">
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-editorial-600">
-              <span className="flex items-center gap-1.5 font-semibold text-editorial-900">
-                <User className="w-4 h-4 text-crimson-800" />
-                {article.author?.display_name || (language === 'mr' ? 'विशेष प्रतिनिधी' : language === 'hi' ? 'विशेष संवाददाता' : 'Staff Reporter')}
-              </span>
+              {article.author?.slug ? (
+                <Link
+                  to={`/author/${article.author.slug}`}
+                  className="flex items-center gap-1.5 font-semibold text-editorial-900 hover:text-crimson-800 transition-colors"
+                >
+                  <User className="w-4 h-4 text-crimson-800" />
+                  <span>{article.author.display_name}</span>
+                  {article.credit_line && (
+                    <span className="text-editorial-500 font-normal">({article.credit_line})</span>
+                  )}
+                </Link>
+              ) : (
+                <span className="flex items-center gap-1.5 font-semibold text-editorial-900">
+                  <User className="w-4 h-4 text-crimson-800" />
+                  <span>{article.author?.display_name || (language === 'mr' ? 'विशेष प्रतिनिधी' : language === 'hi' ? 'विशेष संवाददाता' : 'Staff Reporter')}</span>
+                  {article.credit_line && (
+                    <span className="text-editorial-500 font-normal">({article.credit_line})</span>
+                  )}
+                </span>
+              )}
+
+              {/* Print E-Paper Cross-Reference Badge */}
+              {article.epaper_page_number && (
+                <Link
+                  to="/epaper"
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-50 text-amber-900 border border-amber-300 rounded text-xs font-bold hover:bg-amber-100 transition-colors"
+                  title="दैनिक जगत समीक्षा मुद्रित पृष्ठ पर देखें"
+                >
+                  <Newspaper className="w-3.5 h-3.5 text-crimson-800" />
+                  <span>मुद्रित पृष्ठ {article.epaper_page_number}</span>
+                </Link>
+              )}
+
               <span>•</span>
               <span className="flex items-center gap-1.5">
                 <Calendar className="w-4 h-4 text-editorial-400" />
@@ -294,9 +323,14 @@ export const ArticleDetailPage: React.FC = () => {
             </figure>
           )}
 
-          {/* 6. Excerpt / Lead Paragraph */}
+          {/* 6. Excerpt / Lead Paragraph with Bold Dateline */}
           {article.excerpt && (
             <div className="mb-6 p-4 sm:p-5 bg-paper-subtle border-l-4 border-crimson-800 rounded-r text-base sm:text-lg font-serif leading-relaxed text-editorial-800">
+              {article.dateline && (
+                <strong className="text-editorial-950 font-bold mr-2 text-base sm:text-lg">
+                  {article.dateline}
+                </strong>
+              )}
               {article.excerpt}
             </div>
           )}
@@ -307,19 +341,20 @@ export const ArticleDetailPage: React.FC = () => {
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.body) }}
           />
 
-          {/* 8. Tags Strip */}
+          {/* 8. Tags Strip with Clickable Links */}
           {article.tags && article.tags.length > 0 && (
             <div className="pt-6 border-t border-paper-border flex flex-wrap items-center gap-2 mb-10">
               <span className="text-xs font-bold text-editorial-500 uppercase tracking-wider mr-1">
                 {language === 'mr' ? 'विषय टॅग्स :' : language === 'hi' ? 'विषय टैग :' : 'Topic Tags :'}
               </span>
               {article.tags.map((tag) => (
-                <span
+                <Link
                   key={tag}
-                  className="text-xs bg-white border border-editorial-200 text-editorial-700 px-3 py-1 rounded-full hover:border-crimson-800 transition-colors"
+                  to={`/tag/${encodeURIComponent(tag.toLowerCase().trim().replace(/\s+/g, '-'))}`}
+                  className="text-xs bg-white border border-editorial-200 text-editorial-700 px-3 py-1 rounded-full hover:border-crimson-800 hover:text-crimson-800 transition-colors"
                 >
                   #{tag}
-                </span>
+                </Link>
               ))}
             </div>
           )}
