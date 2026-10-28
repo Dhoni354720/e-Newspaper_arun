@@ -120,19 +120,23 @@ export class NewsRepository {
   private static instance: NewsRepository;
 
   private constructor() {
-    // Strip seed articles from production; seed only in dev or explicit demo mode
-    const shouldSeed = !import.meta.env.PROD && (isDemoMode() || import.meta.env.DEV);
-
-    getLocalItem(STORAGE_KEYS.CATEGORIES, shouldSeed ? INITIAL_CATEGORIES : []);
-    const initialArticles = getLocalItem(STORAGE_KEYS.ARTICLES, shouldSeed ? INITIAL_ARTICLES : []);
+    getLocalItem(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
+    const initialArticles = getLocalItem(STORAGE_KEYS.ARTICLES, INITIAL_ARTICLES);
     const { updatedArticles } = checkAndAutoPublishScheduled(initialArticles);
     setLocalItem(STORAGE_KEYS.ARTICLES, updatedArticles);
 
-    getLocalItem(STORAGE_KEYS.BREAKING_NEWS, shouldSeed ? INITIAL_BREAKING_NEWS : []);
+    getLocalItem(STORAGE_KEYS.BREAKING_NEWS, INITIAL_BREAKING_NEWS);
     getLocalItem(STORAGE_KEYS.SETTINGS, DEFAULT_SITE_SETTINGS);
-    getLocalItem(STORAGE_KEYS.EPAPER, shouldSeed ? INITIAL_EPAPER_EDITIONS : []);
-    getLocalItem(STORAGE_KEYS.PROFILES, shouldSeed ? INITIAL_PROFILES : []);
-    getLocalItem(STORAGE_KEYS.HOME_BLOCKS, shouldSeed ? INITIAL_HOME_BLOCKS : []);
+    getLocalItem(STORAGE_KEYS.EPAPER, INITIAL_EPAPER_EDITIONS);
+    getLocalItem(STORAGE_KEYS.PROFILES, INITIAL_PROFILES);
+    getLocalItem(STORAGE_KEYS.HOME_BLOCKS, INITIAL_HOME_BLOCKS);
+    getLocalItem(STORAGE_KEYS.GALLERIES, INITIAL_GALLERIES);
+    getLocalItem(STORAGE_KEYS.VIDEOS, INITIAL_VIDEOS);
+    getLocalItem(STORAGE_KEYS.BRIEFS, INITIAL_BRIEFS);
+    getLocalItem(STORAGE_KEYS.HOROSCOPES, INITIAL_HOROSCOPES);
+    getLocalItem(STORAGE_KEYS.SUPPLEMENTS, INITIAL_SUPPLEMENTS);
+    getLocalItem(STORAGE_KEYS.NEWS_TIPS, INITIAL_NEWS_TIPS);
+    getLocalItem(STORAGE_KEYS.CMS_PAGES, INITIAL_CMS_PAGES);
   }
 
   public static getInstance(): NewsRepository {
@@ -204,7 +208,7 @@ export class NewsRepository {
         const orderColumn = options.isTop ? 'top_rank' : 'published_at';
         const { data, count, error } = await query.order(orderColumn, { ascending: options.isTop ? true : false }).range(from, to);
 
-        if (!error && data) {
+        if (!error && data && (data.length > 0 || options.includePrivate)) {
           return {
             articles: data as Article[],
             total: count || data.length,

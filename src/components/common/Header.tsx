@@ -175,7 +175,7 @@ export const Header: React.FC = () => {
                 <img
                   src="/images/logo.png"
                   alt={publicationName}
-                  className="h-14 sm:h-20 md:h-24 lg:h-28 w-auto object-contain transition-transform group-hover:scale-[1.01]"
+                  className="h-14 sm:h-20 md:h-24 lg:h-28 max-w-full w-auto object-contain transition-transform group-hover:scale-[1.01]"
                   onError={(e) => {
                     // Fallback to text masthead if image fails
                     (e.currentTarget as HTMLElement).style.display = 'none';
