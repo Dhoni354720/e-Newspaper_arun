@@ -7,6 +7,16 @@ export default {
   theme: {
     extend: {
       colors: {
+        brand: {
+          red: '#ed1c24',
+          gold: '#fbc707',
+          DEFAULT: '#ed1c24',
+        },
+        highlight: {
+          blue: '#d9f3fd',
+          yellow: '#fceca8',
+          green: '#d8f3dc',
+        },
         paper: {
           DEFAULT: '#fcfbf8',
           subtle: '#f7f6f2',
@@ -27,8 +37,8 @@ export default {
         },
         crimson: {
           900: '#7f1d1d',
-          800: '#991b1b',
-          700: '#b91c1c',
+          800: '#ed1c24', // Brand Red aligned
+          700: '#ed1c24',
           600: '#dc2626',
           500: '#ef4444',
           100: '#fee2e2',
@@ -37,7 +47,7 @@ export default {
       },
       fontFamily: {
         serif: ['"Noto Serif Devanagari"', '"Playfair Display"', 'Georgia', 'serif'],
-        sans: ['Mukta', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['"Noto Sans Devanagari"', 'Mukta', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
         masthead: ['"Playfair Display"', '"Noto Serif Devanagari"', 'Georgia', 'serif'],
       },
       boxShadow: {

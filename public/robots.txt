@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /admin
 
-Sitemap: https://janvaninews.com/sitemap.xml
+Sitemap: https://jagatsameeksha.com/sitemap.xml

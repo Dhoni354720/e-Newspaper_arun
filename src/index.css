@@ -124,6 +124,42 @@
   height: auto;
 }
 
+/* Print-style highlight boxes (sampled from Dainik Jagat Sameeksha broadsheet) */
+.callout-blue {
+  background-color: #d9f3fd;
+  border-left: 4px solid #0284c7;
+  padding: 1rem 1.25rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  margin: 1.5rem 0;
+}
+
+.callout-yellow {
+  background-color: #fceca8;
+  border-left: 4px solid #d97706;
+  padding: 1rem 1.25rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  margin: 1.5rem 0;
+}
+
+.callout-green {
+  background-color: #d8f3dc;
+  border-left: 4px solid #16a34a;
+  padding: 1rem 1.25rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  margin: 1.5rem 0;
+}
+
+.print-masthead-strip {
+  background-color: #fbc707;
+  color: #111315;
+}
+
+.dateline-lead {
+  font-weight: 800;
+  color: #111315;
+  margin-right: 0.35rem;
+}
+
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
