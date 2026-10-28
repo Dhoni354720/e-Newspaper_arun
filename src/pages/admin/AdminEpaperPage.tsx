@@ -51,18 +51,18 @@ export const AdminEpaperPage: React.FC = () => {
     setEditingId(null);
     setTitle('');
     setEditionDate(new Date().toISOString().split('T')[0]);
-    setEditionRegion('pune');
+    setEditionRegion('mumbai');
     setDescription('');
     setThumbnailUrl('');
     setPdfUrl('');
     setIsPublished(true);
-    setPagesCount(6);
+    setPagesCount(4);
     setModalOpen(false);
   };
 
   const handleOpenCreate = () => {
     resetForm();
-    setTitle(`जनवाणी वृत्तपत्र - पुणे मुख्य आवृत्ती`);
+    setTitle('दैनिक जगत समीक्षा - मुंबई मुख्य संस्करण');
     setModalOpen(true);
   };
 
@@ -351,7 +351,7 @@ export const AdminEpaperPage: React.FC = () => {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="उदा. जनवाणी वृत्तपत्र - पुणे मुख्य आवृत्ती"
+                  placeholder="उदा. दैनिक जगत समीक्षा - मुंबई मुख्य संस्करण"
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-crimson-800"
                 />
@@ -381,9 +381,10 @@ export const AdminEpaperPage: React.FC = () => {
                     onChange={(e) => setEditionRegion(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-crimson-800"
                   >
-                    <option value="pune">पुणे आवृत्ती (Pune)</option>
-                    <option value="mumbai">मुंबई आवृत्ती (Mumbai)</option>
-                    <option value="maharashtra">महाराष्ट्र राज्य आवृत्ती (State)</option>
+                    <option value="mumbai">मुंबई आवृत्ती (Mumbai Edition)</option>
+                    <option value="maharashtra">महाराष्ट्र राज्य आवृत्ती (State Edition)</option>
+                    <option value="pune">पुणे आवृत्ती (Pune Edition)</option>
+                    <option value="all">सर्व आवृत्त्या (All Regions)</option>
                   </select>
                 </div>
               </div>

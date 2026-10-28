@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, useParams, useNavigate, Link } from 'react-router-dom';
 import { Header } from '@/components/common/Header';
 import { BreakingNewsTicker } from '@/components/common/BreakingNewsTicker';
 import { Footer } from '@/components/common/Footer';
@@ -8,6 +8,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useSettings } from '@/context/SettingsContext';
 import { repository } from '@/lib/repository';
 import { EpaperEdition, EpaperPage as IEpaperPage } from '@/types/database';
+import { EpaperClipper } from '@/components/epaper/EpaperClipper';
 import { 
   Newspaper, 
   ChevronLeft, 
@@ -25,16 +26,19 @@ import {
   Check,
   MapPin,
   Layers,
-  Sparkles
+  Sparkles,
+  Scissors
 } from 'lucide-react';
 
 export const EpaperPage: React.FC = () => {
   const { language, t } = useLanguage();
   const { publicationName, tagline } = useSettings();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { editionId, pageNumber } = useParams<{ editionId?: string; pageNumber?: string }>();
+  const navigate = useNavigate();
 
   const selectedDate = searchParams.get('date') || '';
-  const selectedRegion = searchParams.get('region') || 'pune';
+  const selectedRegion = searchParams.get('region') || 'mumbai';
 
   const [editions, setEditions] = useState<EpaperEdition[]>([]);
   const [currentEdition, setCurrentEdition] = useState<EpaperEdition | null>(null);
@@ -43,6 +47,7 @@ export const EpaperPage: React.FC = () => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [clipperOpen, setClipperOpen] = useState(false);
 
   const viewerRef = useRef<HTMLDivElement>(null);
 
@@ -55,19 +60,35 @@ export const EpaperPage: React.FC = () => {
       if (!isMounted) return;
       setEditions(res.editions);
 
-      // Find matching edition by date and region, or first available
+      // Find matching edition by route ID, date, or region
       let match: EpaperEdition | undefined;
-      if (selectedDate && selectedRegion) {
-        match = res.editions.find(e => e.edition_date === selectedDate && e.edition_region === selectedRegion);
-      } else if (selectedRegion) {
-        match = res.editions.find(e => e.edition_region === selectedRegion);
-      } else if (selectedDate) {
-        match = res.editions.find(e => e.edition_date === selectedDate);
+      if (editionId) {
+        match = res.editions.find(e => e.id === editionId);
+      }
+      if (!match) {
+        if (selectedDate && selectedRegion) {
+          match = res.editions.find(e => e.edition_date === selectedDate && e.edition_region === selectedRegion);
+        } else if (selectedRegion) {
+          match = res.editions.find(e => e.edition_region === selectedRegion);
+        } else if (selectedDate) {
+          match = res.editions.find(e => e.edition_date === selectedDate);
+        }
       }
 
       const activeEdition = match || res.editions[0] || null;
       setCurrentEdition(activeEdition);
-      setCurrentPageIndex(0);
+
+      if (pageNumber && activeEdition?.pages) {
+        const pNum = parseInt(pageNumber, 10);
+        if (!isNaN(pNum) && pNum >= 1 && pNum <= activeEdition.pages.length) {
+          setCurrentPageIndex(pNum - 1);
+        } else {
+          setCurrentPageIndex(0);
+        }
+      } else {
+        setCurrentPageIndex(0);
+      }
+
       setIsLoading(false);
 
       if (activeEdition) {
@@ -78,7 +99,7 @@ export const EpaperPage: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [selectedDate, selectedRegion]);
+  }, [editionId, pageNumber, selectedDate, selectedRegion]);
 
   // Keyboard navigation for page flip
   useEffect(() => {
@@ -204,6 +225,16 @@ export const EpaperPage: React.FC = () => {
                     <span>{(currentEdition.views_count || 0).toLocaleString()} {t('totalViews')}</span>
                   </span>
                 )}
+
+                <button
+                  type="button"
+                  onClick={() => setClipperOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-editorial-950 rounded-lg text-xs font-black shadow-sm transition-all"
+                  title="बातमीची कतरन काढा व शेअर करा (Clip Article)"
+                >
+                  <Scissors className="w-4 h-4" />
+                  <span>कतरन काढा (Clip)</span>
+                </button>
 
                 <button
                   type="button"
@@ -357,8 +388,18 @@ export const EpaperPage: React.FC = () => {
                   </button>
                 </div>
 
-                {/* Right: Zoom & Fullscreen Controls */}
+                {/* Right: Clip, Zoom & Fullscreen Controls */}
                 <div className="flex items-center gap-1.5 ml-auto">
+                  <button
+                    type="button"
+                    onClick={() => setClipperOpen(true)}
+                    className="p-1.5 hover:bg-stone-800 rounded text-amber-400 hover:text-amber-300 transition-colors mr-1"
+                    title="कतरन काढा (Clip Article)"
+                    aria-label="Clip Article"
+                  >
+                    <Scissors className="w-4 h-4" />
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => setZoomLevel(prev => Math.max(prev - 0.25, 0.75))}
@@ -414,10 +455,12 @@ export const EpaperPage: React.FC = () => {
                       transformOrigin: 'top center',
                       transition: 'transform 0.2s ease-out',
                     }}
-                    className="bg-white rounded shadow-2xl max-w-full overflow-hidden border border-stone-700"
+                    onDoubleClick={() => setZoomLevel(prev => prev > 1 ? 1 : 1.75)}
+                    className="bg-white rounded shadow-2xl max-w-full overflow-hidden border border-stone-700 cursor-zoom-in"
+                    title="डबल क्लिक करून झूम करा (Double click to zoom)"
                   >
                     <img
-                      src={activePage.image_url}
+                      src={zoomLevel > 1.25 && activePage.zoom_image_url ? activePage.zoom_image_url : activePage.image_url}
                       alt={activePage.page_title}
                       className="w-auto h-auto max-w-[850px] object-contain select-none"
                       draggable={false}
@@ -522,6 +565,18 @@ export const EpaperPage: React.FC = () => {
           </div>
         </main>
       </div>
+
+      {clipperOpen && activePage && currentEdition && (
+        <EpaperClipper
+          pageImageUrl={activePage.image_url}
+          zoomImageUrl={activePage.zoom_image_url || activePage.image_url}
+          pageNumber={activePage.page_number}
+          editionTitle={currentEdition.title}
+          editionDate={currentEdition.edition_date}
+          editionRegion={currentEdition.edition_region}
+          onClose={() => setClipperOpen(false)}
+        />
+      )}
 
       <Footer />
     </div>

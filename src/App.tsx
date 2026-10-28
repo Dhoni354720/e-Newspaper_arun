@@ -75,6 +75,8 @@ export const App: React.FC = () => {
               <Route path="/news" element={<NewsFeedPage />} />
               <Route path="/top-news" element={<TopNewsPage />} />
               <Route path="/epaper" element={<EpaperPage />} />
+              <Route path="/epaper/:editionId" element={<EpaperPage />} />
+              <Route path="/epaper/:editionId/page/:pageNumber" element={<EpaperPage />} />
               <Route path="/category/:slug" element={<CategoryPage />} />
               <Route path="/article/:slug" element={<ArticleDetailPage />} />
               <Route path="/tag/:slug" element={<TagPage />} />
