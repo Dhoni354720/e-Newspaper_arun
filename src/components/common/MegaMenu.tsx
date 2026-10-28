@@ -201,17 +201,79 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, categories 
             {/* Column 5: Supplements & Special Features */}
             <div>
               <h3 className="font-serif font-bold text-sm text-crimson-900 border-b border-crimson-200 pb-1.5 mb-3">
-                परिशिष्ट एवं विशेष
+                मल्टीमीडिया एवं विशेष
               </h3>
-              <ul className="space-y-1.5 text-xs text-editorial-700">
+              <ul className="space-y-2 text-xs">
+                <li>
+                  <Link
+                    to="/photos"
+                    onClick={onClose}
+                    className="font-bold text-editorial-900 hover:text-crimson-800 flex items-center justify-between"
+                  >
+                    <span>📸 {t('photoGallery')}</span>
+                    <span className="text-[10px] bg-crimson-100 text-crimson-800 px-1.5 py-0.5 rounded font-mono">HD</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/videos"
+                    onClick={onClose}
+                    className="font-bold text-editorial-900 hover:text-crimson-800 flex items-center justify-between"
+                  >
+                    <span>🎥 {t('videoHub')}</span>
+                    <span className="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-mono">LIVE</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/flash"
+                    onClick={onClose}
+                    className="font-bold text-editorial-900 hover:text-crimson-800 flex items-center justify-between"
+                  >
+                    <span>⚡ {t('flashNews')}</span>
+                    <span className="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-mono">ताज़ा</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/rashifal"
+                    onClick={onClose}
+                    className="font-bold text-editorial-900 hover:text-crimson-800 block"
+                  >
+                    ✨ {t('rashifal')} (१२ राशियां)
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/submit-news"
+                    onClick={onClose}
+                    className="text-editorial-800 hover:text-crimson-800 font-medium block"
+                  >
+                    📢 {t('newsTips')} (नागरिक रिपोर्टर)
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/grievance"
+                    onClick={onClose}
+                    className="text-editorial-700 hover:text-crimson-800 block text-[11px]"
+                  >
+                    ⚖️ {t('grievanceOfficer')}
+                  </Link>
+                </li>
+                <li className="pt-2 border-t border-editorial-100">
+                  <span className="text-[11px] font-bold text-editorial-500 uppercase tracking-wider block mb-1">
+                    इतर विभाग
+                  </span>
+                </li>
                 {specialCats.map(cat => (
                   <li key={cat.id}>
                     <Link
                       to={`/category/${cat.slug}`}
                       onClick={onClose}
-                      className="hover:text-crimson-800 hover:underline block py-0.5"
+                      className="hover:text-crimson-800 hover:underline block py-0.5 text-editorial-700"
                     >
-                      {getCategoryName(cat)}
+                      • {getCategoryName(cat)}
                     </Link>
                   </li>
                 ))}

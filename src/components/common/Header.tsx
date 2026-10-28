@@ -21,6 +21,7 @@ import { getCurrentMastheadDate } from '@/lib/date';
 import { repository } from '@/lib/repository';
 import { Category, SupportedLanguage } from '@/types/database';
 import { MegaMenu } from './MegaMenu';
+import { WeatherWidget } from './WeatherWidget';
 
 export const Header: React.FC = () => {
   const { language, setLanguage, t, getCategoryName } = useLanguage();
@@ -194,8 +195,12 @@ export const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Right Action Controls: Search & E-paper Quick Action */}
+          {/* Right Action Controls: Weather, E-paper & Search */}
           <div className="flex items-center gap-2 sm:gap-3">
+            <div className="hidden lg:block">
+              <WeatherWidget compact />
+            </div>
+
             <Link
               to="/epaper"
               className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-crimson-50 text-crimson-800 border border-crimson-200 hover:bg-crimson-800 hover:text-white transition-all text-xs font-bold shadow-sm"
@@ -410,11 +415,60 @@ export const Header: React.FC = () => {
                       <span>{t('epaper')}</span>
                     </Link>
                   </li>
+                  <li>
+                    <Link
+                      to="/photos"
+                      className="block px-3 py-1.5 rounded text-sm text-editorial-800 hover:bg-paper-subtle font-medium"
+                    >
+                      📸 {t('photoGallery')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/videos"
+                      className="block px-3 py-1.5 rounded text-sm text-editorial-800 hover:bg-paper-subtle font-medium"
+                    >
+                      🎥 {t('videoHub')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/flash"
+                      className="block px-3 py-1.5 rounded text-sm text-amber-700 hover:bg-paper-subtle font-bold"
+                    >
+                      ⚡ {t('flashNews')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/rashifal"
+                      className="block px-3 py-1.5 rounded text-sm text-editorial-800 hover:bg-paper-subtle font-medium"
+                    >
+                      ✨ {t('rashifal')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/submit-news"
+                      className="block px-3 py-1.5 rounded text-sm text-crimson-700 hover:bg-paper-subtle font-medium"
+                    >
+                      📢 {t('newsTips')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/grievance"
+                      className="block px-3 py-1.5 rounded text-xs text-editorial-600 hover:bg-paper-subtle font-medium"
+                    >
+                      ⚖️ {t('grievanceOfficer')}
+                    </Link>
+                  </li>
+                  <li className="pt-2 border-t border-paper-border"></li>
                   {categories.map((cat) => (
                     <li key={cat.id}>
                       <Link
                         to={`/category/${cat.slug}`}
-                        className="block px-3 py-2 rounded text-sm text-editorial-900 hover:bg-paper-subtle font-medium"
+                        className="block px-3 py-1.5 rounded text-sm text-editorial-900 hover:bg-paper-subtle font-medium"
                       >
                         {getCategoryName(cat)}
                       </Link>

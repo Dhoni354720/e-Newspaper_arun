@@ -4,6 +4,7 @@ import { Header } from '@/components/common/Header';
 import { BreakingNewsTicker } from '@/components/common/BreakingNewsTicker';
 import { Footer } from '@/components/common/Footer';
 import { ArticleCard } from '@/components/common/ArticleCard';
+import { WeatherWidget } from '@/components/common/WeatherWidget';
 import { SEOHead } from '@/components/common/SEOHead';
 import { useLanguage } from '@/context/LanguageContext';
 import { repository } from '@/lib/repository';
@@ -488,24 +489,8 @@ export const HomePage: React.FC = () => {
 
       case 'weather':
         return (
-          <section key={block.id} className="bg-white border border-paper-border rounded-lg p-4 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <Sun className="w-5 h-5 text-amber-500 animate-spin-slow" />
-                <span className="font-bold text-sm text-editorial-950">
-                  {block.title_override_hi || 'मौसम एवं तापमान (Maharashtra & MP)'}
-                </span>
-              </div>
-              <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs text-editorial-700 font-medium">
-                {cityWeatherData.map(c => (
-                  <div key={c.city} className="flex items-center gap-1.5">
-                    <span>{c.icon}</span>
-                    <span className="font-bold text-editorial-900">{c.city}:</span>
-                    <span>{c.temp}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+          <section key={block.id} className="my-6">
+            <WeatherWidget />
           </section>
         );
 
