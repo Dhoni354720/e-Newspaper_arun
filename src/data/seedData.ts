@@ -1,186 +1,750 @@
-import { Article, Category, BreakingNewsItem, SiteSettings, EpaperEdition } from '@/types/database';
+import { Article, Category, BreakingNewsItem, SiteSettings, EpaperEdition, Profile, HomeBlock } from '@/types/database';
 import { DEFAULT_SITE_SETTINGS } from '@/config/site';
 
 // Category IDs
-const CAT_MAHARASHTRA = 'c1000000-0000-0000-0000-000000000001';
-const CAT_MUMBAI = 'c1000000-0000-0000-0000-000000000002';
-const CAT_PUNE = 'c1000000-0000-0000-0000-000000000003';
-const CAT_INDIA = 'c1000000-0000-0000-0000-000000000004';
-const CAT_POLITICS = 'c1000000-0000-0000-0000-000000000005';
-const CAT_BUSINESS = 'c1000000-0000-0000-0000-000000000006';
-const CAT_TECH = 'c1000000-0000-0000-0000-000000000007';
-const CAT_EDUCATION = 'c1000000-0000-0000-0000-000000000008';
-const CAT_SPORTS = 'c1000000-0000-0000-0000-000000000009';
-const CAT_ENTERTAINMENT = 'c1000000-0000-0000-0000-000000000010';
-const CAT_HEALTH = 'c1000000-0000-0000-0000-000000000011';
-const CAT_AGRICULTURE = 'c1000000-0000-0000-0000-000000000012';
+export const CAT_TOP = 'c1000000-0000-0000-0000-000000000000';
+export const CAT_MAHARASHTRA = 'c1000000-0000-0000-0000-000000000001';
+export const CAT_MUMBAI = 'c1000000-0000-0000-0000-000000000002';
+export const CAT_PUNE = 'c1000000-0000-0000-0000-000000000003';
+export const CAT_INDIA = 'c1000000-0000-0000-0000-000000000004';
+export const CAT_POLITICS = 'c1000000-0000-0000-0000-000000000005';
+export const CAT_BUSINESS = 'c1000000-0000-0000-0000-000000000006';
+export const CAT_TECH = 'c1000000-0000-0000-0000-000000000007';
+export const CAT_EDUCATION = 'c1000000-0000-0000-0000-000000000008';
+export const CAT_SPORTS = 'c1000000-0000-0000-0000-000000000009';
+export const CAT_ENTERTAINMENT = 'c1000000-0000-0000-0000-000000000010';
+export const CAT_HEALTH = 'c1000000-0000-0000-0000-000000000011';
+export const CAT_AGRICULTURE = 'c1000000-0000-0000-0000-000000000012';
+export const CAT_WORLD = 'c1000000-0000-0000-0000-000000000013';
+export const CAT_MP = 'c1000000-0000-0000-0000-000000000014';
+export const CAT_DELHI = 'c1000000-0000-0000-0000-000000000015';
+export const CAT_CRIME = 'c1000000-0000-0000-0000-000000000016';
+export const CAT_COURT = 'c1000000-0000-0000-0000-000000000017';
+export const CAT_EDITORIAL = 'c1000000-0000-0000-0000-000000000018';
+export const CAT_SUPPLEMENT = 'c1000000-0000-0000-0000-000000000019';
+export const CAT_THANE_NM = 'c1000000-0000-0000-0000-000000000020';
+export const CAT_NAGPUR = 'c1000000-0000-0000-0000-000000000021';
+export const CAT_NASHIK = 'c1000000-0000-0000-0000-000000000022';
+export const CAT_INDORE = 'c1000000-0000-0000-0000-000000000023';
+export const CAT_GWALIOR = 'c1000000-0000-0000-0000-000000000024';
+export const CAT_LEAD_ED = 'c1000000-0000-0000-0000-000000000025';
+export const CAT_OPINION = 'c1000000-0000-0000-0000-000000000026';
+export const CAT_COLUMNS = 'c1000000-0000-0000-0000-000000000027';
+export const CAT_LIFESTYLE = 'c1000000-0000-0000-0000-000000000028';
+export const CAT_RELIGION = 'c1000000-0000-0000-0000-000000000029';
+export const CAT_WEATHER = 'c1000000-0000-0000-0000-000000000030';
+export const CAT_CURIOUS = 'c1000000-0000-0000-0000-000000000031';
+export const CAT_PHOTOS = 'c1000000-0000-0000-0000-000000000032';
+export const CAT_VIDEOS = 'c1000000-0000-0000-0000-000000000033';
+export const CAT_RASHIFAL = 'c1000000-0000-0000-0000-000000000034';
 
 // Translation Group UUIDs
-const GROUP_1 = 'g1000000-0000-0000-0000-000000000001'; // Transit Corridor
-const GROUP_2 = 'g2000000-0000-0000-0000-000000000002'; // Agritech AI
-const GROUP_3 = 'g3000000-0000-0000-0000-000000000003'; // Sports Victory
-const GROUP_4 = 'g4000000-0000-0000-0000-000000000004'; // Mumbai Fintech
-const GROUP_5 = 'g5000000-0000-0000-0000-000000000005'; // Digital Education
-const GROUP_6 = 'g6000000-0000-0000-0000-000000000006'; // Health Vaccine
-const GROUP_7 = 'g7000000-0000-0000-0000-000000000007'; // National Film Awards
-const GROUP_8 = 'g8000000-0000-0000-0000-000000000008'; // Local Governance Reform
-const GROUP_9 = 'g9000000-0000-0000-0000-000000000009'; // Green Hydrogen Energy
-const GROUP_10 = 'g10000000-0000-0000-0000-000000000010'; // Election Roadmap
+const GROUP_1 = 'g1000000-0000-0000-0000-000000000001';
+const GROUP_2 = 'g2000000-0000-0000-0000-000000000002';
+const GROUP_3 = 'g3000000-0000-0000-0000-000000000003';
+const GROUP_4 = 'g4000000-0000-0000-0000-000000000004';
+const GROUP_5 = 'g5000000-0000-0000-0000-000000000005';
+const GROUP_6 = 'g6000000-0000-0000-0000-000000000006';
+const GROUP_7 = 'g7000000-0000-0000-0000-000000000007';
+const GROUP_8 = 'g8000000-0000-0000-0000-000000000008';
+const GROUP_9 = 'g9000000-0000-0000-0000-000000000009';
+const GROUP_10 = 'g10000000-0000-0000-0000-000000000010';
 
 export const INITIAL_CATEGORIES: Category[] = [
   {
-    id: CAT_MAHARASHTRA,
-    slug: 'maharashtra',
+    id: CAT_TOP,
+    slug: 'top-news',
+    kind: 'news',
+    show_in_nav: true,
+    nav_order: 1,
+    color_hex: '#ed1c24',
     sort_order: 1,
     is_active: true,
     created_at: '2026-02-01T00:00:00Z',
     translations: {
-      mr: { id: 't1-mr', category_id: CAT_MAHARASHTRA, language: 'mr', name: 'महाराष्ट्र', description: 'महाराष्ट्रातील ताज्या घडामोडी आणि विश्लेषण' },
+      hi: { id: 't0-hi', category_id: CAT_TOP, language: 'hi', name: 'शीर्ष समाचार', description: 'दैनिक जगत समीक्षा मुख्य समाचार' },
+      mr: { id: 't0-mr', category_id: CAT_TOP, language: 'mr', name: 'ठळक बातम्या', description: 'दैनिक जगत समीक्षा ठळक घडामोडी' },
+      en: { id: 't0-en', category_id: CAT_TOP, language: 'en', name: 'Top Stories', description: 'Top headline stories' },
+    },
+  },
+  {
+    id: CAT_INDIA,
+    slug: 'india',
+    kind: 'news',
+    show_in_nav: true,
+    nav_order: 2,
+    color_hex: '#ed1c24',
+    sort_order: 2,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 't4-hi', category_id: CAT_INDIA, language: 'hi', name: 'देश', description: 'राष्ट्रीय घटनाक्रम और देश भर की खबरें' },
+      mr: { id: 't4-mr', category_id: CAT_INDIA, language: 'mr', name: 'देश', description: 'राष्ट्रीय घडामोडी' },
+      en: { id: 't4-en', category_id: CAT_INDIA, language: 'en', name: 'National', description: 'National policy and union governance' },
+    },
+  },
+  {
+    id: CAT_WORLD,
+    slug: 'international',
+    kind: 'news',
+    show_in_nav: true,
+    nav_order: 3,
+    color_hex: '#0284c7',
+    sort_order: 3,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tw-hi', category_id: CAT_WORLD, language: 'hi', name: 'विदेश', description: 'अंतरराष्ट्रीय संबंध और वैश्विक घटनाक्रम' },
+      mr: { id: 'tw-mr', category_id: CAT_WORLD, language: 'mr', name: 'परराष्ट्र', description: 'आंतरराष्ट्रीय घडामोडी व जागतिक वार्ता' },
+      en: { id: 'tw-en', category_id: CAT_WORLD, language: 'en', name: 'International', description: 'Global geopolitics and foreign affairs' },
+    },
+  },
+  {
+    id: CAT_POLITICS,
+    slug: 'politics',
+    kind: 'news',
+    show_in_nav: true,
+    nav_order: 4,
+    color_hex: '#dc2626',
+    sort_order: 4,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 't5-hi', category_id: CAT_POLITICS, language: 'hi', name: 'राजनीति', description: 'राजनीतिक समाचार और निष्पक्ष विश्लेषण' },
+      mr: { id: 't5-mr', category_id: CAT_POLITICS, language: 'mr', name: 'राजकारण', description: 'राजकीय घडामोडी व विश्लेषण' },
+      en: { id: 't5-en', category_id: CAT_POLITICS, language: 'en', name: 'Politics', description: 'Governance, electoral and parliamentary affairs' },
+    },
+  },
+  {
+    id: CAT_MAHARASHTRA,
+    slug: 'maharashtra',
+    kind: 'city',
+    show_in_nav: true,
+    nav_order: 5,
+    color_hex: '#ea580c',
+    sort_order: 5,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
       hi: { id: 't1-hi', category_id: CAT_MAHARASHTRA, language: 'hi', name: 'महाराष्ट्र', description: 'महाराष्ट्र की ताज़ा खबरें और प्रादेशिक विश्लेषण' },
+      mr: { id: 't1-mr', category_id: CAT_MAHARASHTRA, language: 'mr', name: 'महाराष्ट्र', description: 'महाराष्ट्रातील ताज्या घडामोडी आणि विश्लेषण' },
       en: { id: 't1-en', category_id: CAT_MAHARASHTRA, language: 'en', name: 'Maharashtra', description: 'State policies, regional governance and community news' },
     },
   },
   {
     id: CAT_MUMBAI,
     slug: 'mumbai',
-    sort_order: 2,
+    parent_id: CAT_MAHARASHTRA,
+    kind: 'city',
+    show_in_nav: false,
+    color_hex: '#ea580c',
+    sort_order: 6,
     is_active: true,
     created_at: '2026-02-01T00:00:00Z',
     translations: {
-      mr: { id: 't2-mr', category_id: CAT_MUMBAI, language: 'mr', name: 'मुंबई', description: 'मुंबई शहर आणि उपनगरीय वार्ता' },
       hi: { id: 't2-hi', category_id: CAT_MUMBAI, language: 'hi', name: 'मुंबई', description: 'मुंबई शहर और उपनगरीय समाचार' },
+      mr: { id: 't2-mr', category_id: CAT_MUMBAI, language: 'mr', name: 'मुंबई', description: 'मुंबई शहर आणि उपनगरीय वार्ता' },
       en: { id: 't2-en', category_id: CAT_MUMBAI, language: 'en', name: 'Mumbai', description: 'Metropolitan Mumbai infrastructure and city affairs' },
+    },
+  },
+  {
+    id: CAT_THANE_NM,
+    slug: 'thane-navi-mumbai',
+    parent_id: CAT_MAHARASHTRA,
+    kind: 'city',
+    show_in_nav: false,
+    color_hex: '#ea580c',
+    sort_order: 7,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'ttnm-hi', category_id: CAT_THANE_NM, language: 'hi', name: 'ठाणे / नवी मुंबई', description: 'ठाणे और नवी मुंबई की खबरें' },
+      mr: { id: 'ttnm-mr', category_id: CAT_THANE_NM, language: 'mr', name: 'ठाणे / नवी मुंबई', description: 'ठाणे आणि नवी मुंबई परिसर वार्ता' },
+      en: { id: 'ttnm-en', category_id: CAT_THANE_NM, language: 'en', name: 'Thane & Navi Mumbai', description: 'Thane and Navi Mumbai updates' },
     },
   },
   {
     id: CAT_PUNE,
     slug: 'pune',
-    sort_order: 3,
+    parent_id: CAT_MAHARASHTRA,
+    kind: 'city',
+    show_in_nav: false,
+    color_hex: '#ea580c',
+    sort_order: 8,
     is_active: true,
     created_at: '2026-02-01T00:00:00Z',
     translations: {
-      mr: { id: 't3-mr', category_id: CAT_PUNE, language: 'mr', name: 'पुणे', description: 'पुणे आणि पिंपरी-चिंचवड वार्ता' },
       hi: { id: 't3-hi', category_id: CAT_PUNE, language: 'hi', name: 'पुणे', description: 'पुणे और पिंपरी-चिंचवड समाचार' },
-      en: { id: 't3-en', category_id: CAT_PUNE, language: 'en', name: 'Pune', description: 'Pune knowledge hub, tech corridors and PCMC updates' },
+      mr: { id: 't3-mr', category_id: CAT_PUNE, language: 'mr', name: 'पुणे', description: 'पुणे आणि पिंपरी-चिंचवड वार्ता' },
+      en: { id: 't3-en', category_id: CAT_PUNE, language: 'en', name: 'Pune', description: 'Pune knowledge hub and PCMC updates' },
     },
   },
   {
-    id: CAT_INDIA,
-    slug: 'india',
-    sort_order: 4,
+    id: CAT_NAGPUR,
+    slug: 'nagpur',
+    parent_id: CAT_MAHARASHTRA,
+    kind: 'city',
+    show_in_nav: false,
+    color_hex: '#ea580c',
+    sort_order: 9,
     is_active: true,
     created_at: '2026-02-01T00:00:00Z',
     translations: {
-      mr: { id: 't4-mr', category_id: CAT_INDIA, language: 'mr', name: 'देश', description: 'राष्ट्रीय घडामोडी' },
-      hi: { id: 't4-hi', category_id: CAT_INDIA, language: 'hi', name: 'राष्ट्रीय', description: 'राष्ट्रीय घटनाक्रम और देश भर की खबरें' },
-      en: { id: 't4-en', category_id: CAT_INDIA, language: 'en', name: 'National', description: 'National policy, union governance and country-wide reporting' },
+      hi: { id: 'tng-hi', category_id: CAT_NAGPUR, language: 'hi', name: 'नागपुर', description: 'विदर्भ एवं नागपुर उपराजधानी समाचार' },
+      mr: { id: 'tng-mr', category_id: CAT_NAGPUR, language: 'mr', name: 'नागपूर', description: 'विदर्भ आणि नागपूर उपराजधानी वार्ता' },
+      en: { id: 'tng-en', category_id: CAT_NAGPUR, language: 'en', name: 'Nagpur', description: 'Vidarbha and Nagpur regional news' },
     },
   },
   {
-    id: CAT_POLITICS,
-    slug: 'politics',
-    sort_order: 5,
+    id: CAT_NASHIK,
+    slug: 'nashik',
+    parent_id: CAT_MAHARASHTRA,
+    kind: 'city',
+    show_in_nav: false,
+    color_hex: '#ea580c',
+    sort_order: 10,
     is_active: true,
     created_at: '2026-02-01T00:00:00Z',
     translations: {
-      mr: { id: 't5-mr', category_id: CAT_POLITICS, language: 'mr', name: 'राजकारण', description: 'राजकीय घडामोडी व विश्लेषण' },
-      hi: { id: 't5-hi', category_id: CAT_POLITICS, language: 'hi', name: 'राजनीति', description: 'राजनीतिक समाचार और निष्पक्ष विश्लेषण' },
-      en: { id: 't5-en', category_id: CAT_POLITICS, language: 'en', name: 'Politics', description: 'Governance, electoral strategy and statecraft analysis' },
+      hi: { id: 'tns-hi', category_id: CAT_NASHIK, language: 'hi', name: 'नाशिक', description: 'उत्तर महाराष्ट्र एवं नाशिक समाचार' },
+      mr: { id: 'tns-mr', category_id: CAT_NASHIK, language: 'mr', name: 'नाशिक', description: 'उत्तर महाराष्ट्र आणि नाशिक वार्ता' },
+      en: { id: 'tns-en', category_id: CAT_NASHIK, language: 'en', name: 'Nashik', description: 'North Maharashtra and Nashik district updates' },
+    },
+  },
+  {
+    id: CAT_MP,
+    slug: 'madhya-pradesh',
+    kind: 'city',
+    show_in_nav: true,
+    nav_order: 6,
+    color_hex: '#16a34a',
+    sort_order: 11,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tmp-hi', category_id: CAT_MP, language: 'hi', name: 'मध्य प्रदेश', description: 'मध्य प्रदेश की प्रमुख हलचल' },
+      mr: { id: 'tmp-mr', category_id: CAT_MP, language: 'mr', name: 'मध्य प्रदेश', description: 'मध्य प्रदेशातील घडामोडी' },
+      en: { id: 'tmp-en', category_id: CAT_MP, language: 'en', name: 'Madhya Pradesh', description: 'Madhya Pradesh regional and governance reporting' },
+    },
+  },
+  {
+    id: CAT_INDORE,
+    slug: 'indore',
+    parent_id: CAT_MP,
+    kind: 'city',
+    show_in_nav: false,
+    color_hex: '#16a34a',
+    sort_order: 12,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tind-hi', category_id: CAT_INDORE, language: 'hi', name: 'इंदौर', description: 'इंदौर शहर एवं मालवा समाचार' },
+      mr: { id: 'tind-mr', category_id: CAT_INDORE, language: 'mr', name: 'इंदूर', description: 'इंदूर शहर व माळवा वार्ता' },
+      en: { id: 'tind-en', category_id: CAT_INDORE, language: 'en', name: 'Indore', description: 'Indore city and Malwa region' },
+    },
+  },
+  {
+    id: CAT_GWALIOR,
+    slug: 'gwalior',
+    parent_id: CAT_MP,
+    kind: 'city',
+    show_in_nav: false,
+    color_hex: '#16a34a',
+    sort_order: 13,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tgw-hi', category_id: CAT_GWALIOR, language: 'hi', name: 'ग्वालियर', description: 'ग्वालियर चंबल संभाग की खबरें' },
+      mr: { id: 'tgw-mr', category_id: CAT_GWALIOR, language: 'mr', name: 'ग्वाल्हेर', description: 'ग्वाल्हेर चंबळ विभागातील वार्ता' },
+      en: { id: 'tgw-en', category_id: CAT_GWALIOR, language: 'en', name: 'Gwalior', description: 'Gwalior-Chambal regional dispatches' },
+    },
+  },
+  {
+    id: CAT_DELHI,
+    slug: 'delhi',
+    kind: 'city',
+    show_in_nav: true,
+    nav_order: 7,
+    color_hex: '#2563eb',
+    sort_order: 14,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tdl-hi', category_id: CAT_DELHI, language: 'hi', name: 'दिल्ली', description: 'राष्ट्रीय राजधानी क्षेत्र दिल्ली समाचार' },
+      mr: { id: 'tdl-mr', category_id: CAT_DELHI, language: 'mr', name: 'दिल्ली', description: 'राष्ट्रीय राजधानी दिल्ली आणि एनसीआर वार्ता' },
+      en: { id: 'tdl-en', category_id: CAT_DELHI, language: 'en', name: 'Delhi NCR', description: 'National Capital Region updates' },
+    },
+  },
+  {
+    id: CAT_CRIME,
+    slug: 'crime',
+    kind: 'news',
+    show_in_nav: true,
+    nav_order: 8,
+    color_hex: '#b91c1c',
+    sort_order: 15,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tcr-hi', category_id: CAT_CRIME, language: 'hi', name: 'क्राइम', description: 'अपराध, अन्वेषण और सुरक्षा समाचार' },
+      mr: { id: 'tcr-mr', category_id: CAT_CRIME, language: 'mr', name: 'गुन्हेगारी', description: 'गुन्हे अन्वेषण आणि सुरक्षा वार्ता' },
+      en: { id: 'tcr-en', category_id: CAT_CRIME, language: 'en', name: 'Crime', description: 'Investigative reporting and crime beat' },
+    },
+  },
+  {
+    id: CAT_COURT,
+    slug: 'court',
+    kind: 'news',
+    show_in_nav: true,
+    nav_order: 9,
+    color_hex: '#4f46e5',
+    sort_order: 16,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tct-hi', category_id: CAT_COURT, language: 'hi', name: 'अदालत', description: 'उच्चतम न्यायालय, उच्च न्यायालय एवं विधिक फैसले' },
+      mr: { id: 'tct-mr', category_id: CAT_COURT, language: 'mr', name: 'न्यायालये', description: 'सर्वोच्च न्यायालय, उच्च न्यायालय आणि कायदेशीर निकाल' },
+      en: { id: 'tct-en', category_id: CAT_COURT, language: 'en', name: 'Courts & Law', description: 'Supreme Court, High Courts and judicial rulings' },
     },
   },
   {
     id: CAT_BUSINESS,
     slug: 'business',
-    sort_order: 6,
+    kind: 'news',
+    show_in_nav: true,
+    nav_order: 10,
+    color_hex: '#059669',
+    sort_order: 17,
     is_active: true,
     created_at: '2026-02-01T00:00:00Z',
     translations: {
-      mr: { id: 't6-mr', category_id: CAT_BUSINESS, language: 'mr', name: 'अर्थकारण', description: 'व्यापार, बाजार आणि अर्थव्यवस्था' },
       hi: { id: 't6-hi', category_id: CAT_BUSINESS, language: 'hi', name: 'व्यापार', description: 'बाजार, अर्थव्यवस्था और उद्योग जगत' },
-      en: { id: 't6-en', category_id: CAT_BUSINESS, language: 'en', name: 'Business', description: 'Markets, corporate enterprise and macro-economic trends' },
-    },
-  },
-  {
-    id: CAT_TECH,
-    slug: 'technology',
-    sort_order: 7,
-    is_active: true,
-    created_at: '2026-02-01T00:00:00Z',
-    translations: {
-      mr: { id: 't7-mr', category_id: CAT_TECH, language: 'mr', name: 'तंत्रज्ञान', description: 'टेक विश्वातील क्रांती व नवकल्पना' },
-      hi: { id: 't7-hi', category_id: CAT_TECH, language: 'hi', name: 'तकनीक', description: 'तकनीक, नवाचार और डिजिटल क्रांति' },
-      en: { id: 't7-en', category_id: CAT_TECH, language: 'en', name: 'Technology', description: 'Artificial Intelligence, software engineering and digital economy' },
-    },
-  },
-  {
-    id: CAT_EDUCATION,
-    slug: 'education',
-    sort_order: 8,
-    is_active: true,
-    created_at: '2026-02-01T00:00:00Z',
-    translations: {
-      mr: { id: 't8-mr', category_id: CAT_EDUCATION, language: 'mr', name: 'शिक्षण', description: 'शालेय, उच्च शिक्षण व करिअर' },
-      hi: { id: 't8-hi', category_id: CAT_EDUCATION, language: 'hi', name: 'शिक्षा', description: 'शिक्षा, उच्च अध्ययन और करियर गाइडेंस' },
-      en: { id: 't8-en', category_id: CAT_EDUCATION, language: 'en', name: 'Education', description: 'Academia, universities, exams and career pathways' },
+      mr: { id: 't6-mr', category_id: CAT_BUSINESS, language: 'mr', name: 'अर्थकारण', description: 'व्यापार, बाजार आणि अर्थव्यवस्था' },
+      en: { id: 't6-en', category_id: CAT_BUSINESS, language: 'en', name: 'Business', description: 'Markets, corporate enterprise and economy' },
     },
   },
   {
     id: CAT_SPORTS,
     slug: 'sports',
-    sort_order: 9,
+    kind: 'news',
+    show_in_nav: true,
+    nav_order: 11,
+    color_hex: '#0891b2',
+    sort_order: 18,
     is_active: true,
     created_at: '2026-02-01T00:00:00Z',
     translations: {
-      mr: { id: 't9-mr', category_id: CAT_SPORTS, language: 'mr', name: 'क्रीडा', description: 'क्रीडा जगतातील घडामोडी' },
       hi: { id: 't9-hi', category_id: CAT_SPORTS, language: 'hi', name: 'खेल', description: 'क्रिकेट और खेल जगत की ताज़ा खबरें' },
-      en: { id: 't9-en', category_id: CAT_SPORTS, language: 'en', name: 'Sports', description: 'Cricket, Olympics, athletics and global tournament coverage' },
+      mr: { id: 't9-mr', category_id: CAT_SPORTS, language: 'mr', name: 'क्रीडा', description: 'क्रीडा जगतातील घडामोडी' },
+      en: { id: 't9-en', category_id: CAT_SPORTS, language: 'en', name: 'Sports', description: 'Cricket, athletics and global tournament coverage' },
     },
   },
   {
     id: CAT_ENTERTAINMENT,
     slug: 'entertainment',
-    sort_order: 10,
+    kind: 'news',
+    show_in_nav: true,
+    nav_order: 12,
+    color_hex: '#db2777',
+    sort_order: 19,
     is_active: true,
     created_at: '2026-02-01T00:00:00Z',
     translations: {
-      mr: { id: 't10-mr', category_id: CAT_ENTERTAINMENT, language: 'mr', name: 'मनोरंजन', description: 'चित्रपट, नाटक आणि कला' },
       hi: { id: 't10-hi', category_id: CAT_ENTERTAINMENT, language: 'hi', name: 'मनोरंजन', description: 'सिनेमा, कला और मनोरंजन जगत' },
-      en: { id: 't10-en', category_id: CAT_ENTERTAINMENT, language: 'en', name: 'Entertainment', description: 'Cinema, OTT, theater and performing arts' },
+      mr: { id: 't10-mr', category_id: CAT_ENTERTAINMENT, language: 'mr', name: 'मनोरंजन', description: 'चित्रपट, नाटक आणि कला' },
+      en: { id: 't10-en', category_id: CAT_ENTERTAINMENT, language: 'en', name: 'Entertainment', description: 'Cinema, OTT and performing arts' },
     },
   },
   {
-    id: CAT_HEALTH,
-    slug: 'health',
-    sort_order: 11,
+    id: CAT_EDITORIAL,
+    slug: 'editorial',
+    kind: 'opinion',
+    show_in_nav: true,
+    nav_order: 13,
+    color_hex: '#9333ea',
+    sort_order: 20,
     is_active: true,
     created_at: '2026-02-01T00:00:00Z',
     translations: {
-      mr: { id: 't11-mr', category_id: CAT_HEALTH, language: 'mr', name: 'आरोग्य', description: 'आरोग्य, जीवनशैली आणि सल्ला' },
-      hi: { id: 't11-hi', category_id: CAT_HEALTH, language: 'hi', name: 'स्वास्थ्य', description: 'चिकित्सा, स्वास्थ्य और आरोग्य सलाह' },
-      en: { id: 't11-en', category_id: CAT_HEALTH, language: 'en', name: 'Health', description: 'Medical research, public health and wellness sciences' },
+      hi: { id: 'ted-hi', category_id: CAT_EDITORIAL, language: 'hi', name: 'संपादकीय', description: 'संपादकीय दृष्टिकोण, अग्रलेख और बौद्धिक विचार' },
+      mr: { id: 'ted-mr', category_id: CAT_EDITORIAL, language: 'mr', name: 'संपादकीय', description: 'संपादकीय भूमिका, अग्रलेख व विचार' },
+      en: { id: 'ted-en', category_id: CAT_EDITORIAL, language: 'en', name: 'Editorial', description: 'Editorial stance, opinions and intellectual analysis' },
+    },
+  },
+  {
+    id: CAT_LEAD_ED,
+    slug: 'lead-editorial',
+    parent_id: CAT_EDITORIAL,
+    kind: 'opinion',
+    show_in_nav: false,
+    color_hex: '#9333ea',
+    sort_order: 21,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tled-hi', category_id: CAT_LEAD_ED, language: 'hi', name: 'अग्रलेख', description: 'संपादक अरुण रमाकांत तिवारी का दैनिक अग्रलेख' },
+      mr: { id: 'tled-mr', category_id: CAT_LEAD_ED, language: 'mr', name: 'अग्रलेख', description: 'संपादकांचा दैनिक अग्रलेख' },
+      en: { id: 'tled-en', category_id: CAT_LEAD_ED, language: 'en', name: 'Lead Editorial', description: 'Daily editorial by the Editor-in-Chief' },
+    },
+  },
+  {
+    id: CAT_OPINION,
+    slug: 'opinion',
+    parent_id: CAT_EDITORIAL,
+    kind: 'opinion',
+    show_in_nav: false,
+    color_hex: '#9333ea',
+    sort_order: 22,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'top-hi', category_id: CAT_OPINION, language: 'hi', name: 'विचार-मंथन', description: 'समकालीन मुद्दों पर प्रबुद्ध लेखकों के विचार' },
+      mr: { id: 'top-mr', category_id: CAT_OPINION, language: 'mr', name: 'विचारमंथन', description: 'समकालीन विषयांवरील विचार' },
+      en: { id: 'top-en', category_id: CAT_OPINION, language: 'en', name: 'Op-Ed', description: 'Guest essays and think pieces' },
+    },
+  },
+  {
+    id: CAT_COLUMNS,
+    slug: 'columns',
+    parent_id: CAT_EDITORIAL,
+    kind: 'opinion',
+    show_in_nav: false,
+    color_hex: '#9333ea',
+    sort_order: 23,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tcol-hi', category_id: CAT_COLUMNS, language: 'hi', name: 'स्तंभ', description: 'साप्ताहिक एवं नियमित स्तंभ' },
+      mr: { id: 'tcol-mr', category_id: CAT_COLUMNS, language: 'mr', name: 'स्तंभ', description: 'नियमित स्तंभ' },
+      en: { id: 'tcol-en', category_id: CAT_COLUMNS, language: 'en', name: 'Columns', description: 'Weekly columns' },
     },
   },
   {
     id: CAT_AGRICULTURE,
     slug: 'agriculture',
-    sort_order: 12,
+    kind: 'news',
+    show_in_nav: false,
+    sort_order: 24,
     is_active: true,
     created_at: '2026-02-01T00:00:00Z',
     translations: {
-      mr: { id: 't12-mr', category_id: CAT_AGRICULTURE, language: 'mr', name: 'कृषी', description: 'शेती तंत्रज्ञान आणि शेतकरी वार्ता' },
       hi: { id: 't12-hi', category_id: CAT_AGRICULTURE, language: 'hi', name: 'कृषि', description: 'कृषि तकनीक, फसल मूल्य और ग्रामीण समाचार' },
+      mr: { id: 't12-mr', category_id: CAT_AGRICULTURE, language: 'mr', name: 'कृषी', description: 'शेती तंत्रज्ञान आणि शेतकरी वार्ता' },
       en: { id: 't12-en', category_id: CAT_AGRICULTURE, language: 'en', name: 'Agriculture', description: 'Agritech, rural economy and sustainable farming' },
+    },
+  },
+  {
+    id: CAT_EDUCATION,
+    slug: 'education',
+    kind: 'news',
+    show_in_nav: false,
+    sort_order: 25,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 't8-hi', category_id: CAT_EDUCATION, language: 'hi', name: 'शिक्षा व करियर', description: 'शिक्षा, उच्च अध्ययन और करियर गाइडेंस' },
+      mr: { id: 't8-mr', category_id: CAT_EDUCATION, language: 'mr', name: 'शिक्षण', description: 'शालेय, उच्च शिक्षण व करिअर' },
+      en: { id: 't8-en', category_id: CAT_EDUCATION, language: 'en', name: 'Education', description: 'Academia, universities and careers' },
+    },
+  },
+  {
+    id: CAT_HEALTH,
+    slug: 'health',
+    kind: 'news',
+    show_in_nav: false,
+    sort_order: 26,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 't11-hi', category_id: CAT_HEALTH, language: 'hi', name: 'स्वास्थ्य', description: 'चिकित्सा, स्वास्थ्य और आरोग्य सलाह' },
+      mr: { id: 't11-mr', category_id: CAT_HEALTH, language: 'mr', name: 'आरोग्य', description: 'आरोग्य, जीवनशैली आणि सल्ला' },
+      en: { id: 't11-en', category_id: CAT_HEALTH, language: 'en', name: 'Health', description: 'Medical research and public wellness' },
+    },
+  },
+  {
+    id: CAT_LIFESTYLE,
+    slug: 'lifestyle',
+    kind: 'supplement',
+    show_in_nav: false,
+    sort_order: 27,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tls-hi', category_id: CAT_LIFESTYLE, language: 'hi', name: 'लाइफस्टाइल', description: 'फैशन, खान-पान और जीवनशैली' },
+      mr: { id: 'tls-mr', category_id: CAT_LIFESTYLE, language: 'mr', name: 'जीवनशैली', description: 'फॅशन, खाद्यसंस्कृती आणि जीवनशैली' },
+      en: { id: 'tls-en', category_id: CAT_LIFESTYLE, language: 'en', name: 'Lifestyle', description: 'Living, culture, food and wellness' },
+    },
+  },
+  {
+    id: CAT_RELIGION,
+    slug: 'religion-culture',
+    kind: 'supplement',
+    show_in_nav: false,
+    sort_order: 28,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'trel-hi', category_id: CAT_RELIGION, language: 'hi', name: 'धर्म व संस्कृति', description: 'पर्व, त्योहार और आध्यात्मिक चिंतन' },
+      mr: { id: 'trel-mr', category_id: CAT_RELIGION, language: 'mr', name: 'धर्म व संस्कृती', description: 'उत्सव, सण आणि अध्यात्म' },
+      en: { id: 'trel-en', category_id: CAT_RELIGION, language: 'en', name: 'Faith & Culture', description: 'Traditions, spirituality and festivals' },
+    },
+  },
+  {
+    id: CAT_WEATHER,
+    slug: 'weather',
+    kind: 'special',
+    show_in_nav: false,
+    sort_order: 29,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'twth-hi', category_id: CAT_WEATHER, language: 'hi', name: 'मौसम', description: 'तापमान एवं मौसम पूर्वानुमान' },
+      mr: { id: 'twth-mr', category_id: CAT_WEATHER, language: 'mr', name: 'हवामान', description: 'तापमान व हवामान अंदाज' },
+      en: { id: 'twth-en', category_id: CAT_WEATHER, language: 'en', name: 'Weather', description: 'Meteorological and climate updates' },
+    },
+  },
+  {
+    id: CAT_CURIOUS,
+    slug: 'curious-odd',
+    kind: 'special',
+    show_in_nav: false,
+    sort_order: 30,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tcur-hi', category_id: CAT_CURIOUS, language: 'hi', name: 'विचित्र', description: 'दुनिया के अनोखे और अजब-गजब किस्से' },
+      mr: { id: 'tcur-mr', category_id: CAT_CURIOUS, language: 'mr', name: 'अजब-गजब', description: 'जगातील अजब व आश्चर्यकारक घटना' },
+      en: { id: 'tcur-en', category_id: CAT_CURIOUS, language: 'en', name: 'Curious & Odd', description: 'Unusual, viral and odd news from around the world' },
+    },
+  },
+  {
+    id: CAT_SUPPLEMENT,
+    slug: 'supplements',
+    kind: 'supplement',
+    show_in_nav: false,
+    sort_order: 31,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tsup-hi', category_id: CAT_SUPPLEMENT, language: 'hi', name: 'पुरवणी', description: 'दैनिक जगत समीक्षा विशेष परिशिष्ट' },
+      mr: { id: 'tsup-mr', category_id: CAT_SUPPLEMENT, language: 'mr', name: 'पुरवणी', description: 'विशेष साप्ताहिक पुरवण्या' },
+      en: { id: 'tsup-en', category_id: CAT_SUPPLEMENT, language: 'en', name: 'Supplements', description: 'Special weekend and thematic broadsheet supplements' },
+    },
+  },
+  {
+    id: CAT_PHOTOS,
+    slug: 'photos',
+    kind: 'special',
+    show_in_nav: false,
+    sort_order: 32,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tpho-hi', category_id: CAT_PHOTOS, language: 'hi', name: 'फोटो गैलरी', description: 'कैमरे की नज़र से ताज़ा तस्वीरें' },
+      mr: { id: 'tpho-mr', category_id: CAT_PHOTOS, language: 'mr', name: 'फोटो दालन', description: 'छायाचित्रे' },
+      en: { id: 'tpho-en', category_id: CAT_PHOTOS, language: 'en', name: 'Photo Gallery', description: 'Photo essays and news pictures' },
+    },
+  },
+  {
+    id: CAT_VIDEOS,
+    slug: 'videos',
+    kind: 'special',
+    show_in_nav: false,
+    sort_order: 33,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tvid-hi', category_id: CAT_VIDEOS, language: 'hi', name: 'वीडियो', description: 'ग्राउंड रिपोर्ट और विशेष वीडियो' },
+      mr: { id: 'tvid-mr', category_id: CAT_VIDEOS, language: 'mr', name: 'व्हिडिओ', description: 'ग्राउंड रिपोर्ट आणि व्हिडिओ वार्ता' },
+      en: { id: 'tvid-en', category_id: CAT_VIDEOS, language: 'en', name: 'Videos', description: 'Video journalism and field reporting' },
+    },
+  },
+  {
+    id: CAT_RASHIFAL,
+    slug: 'rashifal',
+    kind: 'special',
+    show_in_nav: false,
+    sort_order: 34,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tras-hi', category_id: CAT_RASHIFAL, language: 'hi', name: 'राशिफल', description: 'दैनिक राशिफल एवं ग्रह गोचर' },
+      mr: { id: 'tras-mr', category_id: CAT_RASHIFAL, language: 'mr', name: 'राशीभविष्य', description: 'दैनिक राशीभविष्य' },
+      en: { id: 'tras-en', category_id: CAT_RASHIFAL, language: 'en', name: 'Horoscope', description: 'Daily astrological insights' },
     },
   },
 ];
 
-const DEFAULT_AUTHOR = {
-  id: 'usr-admin-01',
-  display_name: 'संपादकीय मंडळ',
-  role: 'admin' as const,
-  created_at: '2026-01-01T00:00:00Z',
-  updated_at: '2026-01-01T00:00:00Z',
-};
+export const INITIAL_PROFILES: Profile[] = [
+  {
+    id: 'usr-admin-01',
+    slug: 'arun-ramakant-tiwari',
+    display_name: 'अरुण रमाकांत तिवारी',
+    role: 'admin',
+    avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+    designation: 'प्रधान संपादक (Chief Editor)',
+    bio_hi: 'दैनिक जगत समीक्षा के संस्थापक एवं प्रधान संपादक। भारतीय समाचार पत्र उद्योग में तीन दशकों से अधिक का निष्पक्ष एवं निर्भीक पत्रकारिता का अनुभव।',
+    bio_mr: 'दैनिक जगत समीक्षाचे संस्थापक व मुख्य संपादक. भारतीय वृत्तपत्र क्षेत्रात तीन दशकांपेक्षा अधिक काळ निष्पक्ष व निर्भीक पत्रकारितेचा अनुभव.',
+    bio_en: 'Founder and Editor-in-Chief of Dainik Jagat Sameeksha with over 30 years of principled investigative print journalism.',
+    is_columnist: true,
+    is_active: true,
+    created_at: '2026-01-01T00:00:00Z',
+    updated_at: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: 'usr-bureau-special',
+    slug: 'special-correspondent',
+    display_name: 'विशेष संवाददाता',
+    role: 'author',
+    avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+    designation: 'विशेष संवाददाता (National Bureau)',
+    bio_hi: 'दैनिक जगत समीक्षा राष्ट्रीय एवं प्रादेशिक खोजी रिपोर्टिंग ब्यूरो।',
+    bio_mr: 'दैनिक जगत समीक्षा राष्ट्रीय व प्रादेशिक शोध पत्रकारिता ब्युरो पथक.',
+    bio_en: 'Special correspondent bureau covering national governance, investigative pieces, and state developments.',
+    is_columnist: false,
+    is_active: true,
+    created_at: '2026-01-01T00:00:00Z',
+    updated_at: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: 'usr-legal-desk',
+    slug: 'legal-correspondent',
+    display_name: 'विधि संवाददाता',
+    role: 'author',
+    avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
+    designation: 'विधिक ब्यूरो (Legal Bureau)',
+    bio_hi: 'उच्चतम न्यायालय एवं मुंबई उच्च न्यायालय विधिक मामलों के विशेषज्ञ विश्लेषक।',
+    bio_mr: 'सर्वोच्च न्यायालय आणि मुंबई उच्च न्यायालय कायदेशीर बाबींचे विश्लेषक.',
+    bio_en: 'Supreme Court of India and Bombay High Court legal affairs analyst.',
+    is_columnist: true,
+    is_active: true,
+    created_at: '2026-01-01T00:00:00Z',
+    updated_at: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: 'usr-sports-desk',
+    slug: 'sports-desk',
+    display_name: 'खेल ब्यूरो',
+    role: 'author',
+    avatar_url: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=400&q=80',
+    designation: 'क्रीडा एवं खेल प्रतिनिधि',
+    bio_hi: 'क्रिकेट, ओलंपिक एवं राष्ट्रीय खेल स्पर्धाओं की विस्तृत कवरेज।',
+    bio_mr: 'क्रिकेट, ऑलिम्पिक आणि राष्ट्रीय क्रीडा स्पर्धांचे सखोल वार्तांकन.',
+    bio_en: 'National and international sports desk reporter.',
+    is_columnist: false,
+    is_active: true,
+    created_at: '2026-01-01T00:00:00Z',
+    updated_at: '2026-01-01T00:00:00Z',
+  },
+];
+
+export const INITIAL_HOME_BLOCKS: HomeBlock[] = [
+  {
+    id: 'hb-01',
+    block_type: 'hero',
+    title_override_hi: 'प्रमुख समाचार',
+    title_override_mr: 'प्रमुख घडामोडी',
+    title_override_en: 'Lead Stories',
+    item_count: 5,
+    sort_order: 1,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+  },
+  {
+    id: 'hb-02',
+    block_type: 'ticker',
+    title_override_hi: 'ताज़ा ब्रेकिंग',
+    title_override_mr: 'ताजी ब्रेकिंग',
+    title_override_en: 'Breaking News',
+    item_count: 8,
+    sort_order: 2,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+  },
+  {
+    id: 'hb-03',
+    block_type: 'top_news',
+    title_override_hi: 'ठळक खबरें (शीर्ष समाचार)',
+    title_override_mr: 'ठळक बातम्या',
+    title_override_en: 'Top Headlines',
+    item_count: 4,
+    sort_order: 3,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+  },
+  {
+    id: 'hb-04',
+    block_type: 'city',
+    category_id: CAT_MAHARASHTRA,
+    title_override_hi: 'महाराष्ट्र एवं मुंबई मेट्रो',
+    title_override_mr: 'महाराष्ट्र व मुंबई विशेष',
+    title_override_en: 'Maharashtra & Mumbai Metro',
+    item_count: 4,
+    sort_order: 4,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+  },
+  {
+    id: 'hb-05',
+    block_type: 'opinion',
+    category_id: CAT_EDITORIAL,
+    title_override_hi: 'संपादकीय एवं विचार',
+    title_override_mr: 'संपादकीय व विचार',
+    title_override_en: 'Editorial & Opinion',
+    item_count: 3,
+    sort_order: 5,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+  },
+  {
+    id: 'hb-06',
+    block_type: 'crime',
+    category_id: CAT_CRIME,
+    title_override_hi: 'क्राइम एवं अदालत',
+    title_override_mr: 'गुन्हेगारी आणि न्यायालये',
+    title_override_en: 'Crime & Courts',
+    item_count: 3,
+    sort_order: 6,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+  },
+  {
+    id: 'hb-07',
+    block_type: 'sports',
+    category_id: CAT_SPORTS,
+    title_override_hi: 'खेल जगत',
+    title_override_mr: 'क्रीडा विश्व',
+    title_override_en: 'Sports World',
+    item_count: 4,
+    sort_order: 7,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+  },
+  {
+    id: 'hb-08',
+    block_type: 'epaper_promo',
+    title_override_hi: 'आज का ई-समाचार पत्र',
+    title_override_mr: 'आजचे ई-वृत्तपत्र',
+    title_override_en: "Today's E-Paper Edition",
+    item_count: 1,
+    sort_order: 8,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+  },
+  {
+    id: 'hb-09',
+    block_type: 'weather',
+    title_override_hi: 'मौसम अपडेट',
+    title_override_mr: 'हवामान अंदाज',
+    title_override_en: 'Weather Forecast',
+    item_count: 1,
+    sort_order: 9,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+  },
+];
+
+const DEFAULT_AUTHOR = INITIAL_PROFILES[0];
 
 export const INITIAL_ARTICLES: Article[] = [
   // ==========================================
@@ -1184,64 +1748,64 @@ function generatePagePreview(editionTitle: string, pageNum: number, pageName: st
     
     <!-- Top Utility Bar -->
     <rect x="40" y="40" width="720" height="28" fill="#1c1917"/>
-    <text x="50" y="58" fill="#f5f5f4" font-family="serif" font-size="12" font-weight="bold">JANVANI DIGITAL EPAPER • ${dateStr} • ${editionTitle}</text>
+    <text x="50" y="58" fill="#f5f5f4" font-family="serif" font-size="12" font-weight="bold">DAINIK JAGAT SAMEEKSHA EPAPER • ${dateStr} • ${editionTitle}</text>
     <text x="740" y="58" fill="#e7e5e4" font-family="sans-serif" font-size="11" text-anchor="end">PAGE ${pageNum} : ${pageName.toUpperCase()}</text>
     
     <!-- Masthead -->
-    <line x1="40" y1="85" x2="760" y2="85" stroke="#991b1b" stroke-width="3"/>
-    <text x="400" y="135" fill="#1c1917" font-family="serif" font-size="46" font-weight="900" text-anchor="middle" letter-spacing="2">जनवाणी न्यूज</text>
-    <text x="400" y="156" fill="#78716c" font-family="serif" font-size="13" font-style="italic" text-anchor="middle">महाराष्ट्र, देश आणि जगातील विश्वसनीय व निर्भीक डिजिटल वृत्तपत्र</text>
+    <line x1="40" y1="85" x2="760" y2="85" stroke="#ed1c24" stroke-width="3"/>
+    <text x="400" y="135" fill="#ed1c24" font-family="serif" font-size="46" font-weight="900" text-anchor="middle" letter-spacing="2">दैनिक जगत समीक्षा</text>
+    <text x="400" y="156" fill="#78716c" font-family="serif" font-size="13" font-style="italic" text-anchor="middle">सत्य, निष्पक्ष एवं निर्भीक • RNI: MAHHIN/2014/57312 • भांडुप, मुंबई</text>
     <line x1="40" y1="170" x2="760" y2="170" stroke="#1c1917" stroke-width="2"/>
     <line x1="40" y1="174" x2="760" y2="174" stroke="#1c1917" stroke-width="1"/>
     
     <!-- Lead Headline -->
     <rect x="40" y="185" width="720" height="70" fill="#fafaf9"/>
-    <text x="55" y="215" fill="#991b1b" font-family="sans-serif" font-size="12" font-weight="bold">★ विशेष वृत्त — ${pageName} ★</text>
-    <text x="55" y="242" fill="#0c0a09" font-family="serif" font-size="22" font-weight="800">${editionTitle} : विकास, तंत्रज्ञान आणि लोकाभिमुख निर्णय</text>
+    <text x="55" y="215" fill="#ed1c24" font-family="sans-serif" font-size="12" font-weight="bold">★ मुख्य समाचार — ${pageName} ★</text>
+    <text x="55" y="242" fill="#0c0a09" font-family="serif" font-size="22" font-weight="800">${editionTitle} : राष्ट्रीय विकास एवं निष्पक्ष विश्लेषण</text>
     
     <!-- Column 1: Lead Story -->
     <rect x="40" y="270" width="345" height="240" fill="#f5f5f4" rx="4"/>
     <text x="212" y="390" fill="#a8a29e" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">[ मुद्रित छायाचित्र • Editorial Photo ]</text>
-    <text x="40" y="530" fill="#1c1917" font-family="serif" font-size="16" font-weight="bold">पुणे-मुंबई द्रुतगती कॉरिडोअरचा वेगवान विस्तार</text>
+    <text x="40" y="530" fill="#1c1917" font-family="serif" font-size="16" font-weight="bold">दैनिक जगत समीक्षा का राष्ट्रीय संकल्प</text>
     <text x="40" y="552" fill="#44403c" font-family="sans-serif" font-size="11" line-height="1.4">
-      <tspan x="40" dy="0">राज्यातील दळणवळण व्यवस्थेला गती देण्यासाठी नवीन तंत्रज्ञानाचा वापर</tspan>
-      <tspan x="40" dy="16">करण्यात येत असून पश्चिम घाटातील पर्यावरणाचे रक्षण करत ५० मिनिटांत प्रवास</tspan>
-      <tspan x="40" dy="16">शक्य होणार आहे. पहिल्या टप्प्यातील कामाला गती देण्यात आली आहे.</tspan>
+      <tspan x="40" dy="0">प्रधान संपादक अरुण रमाकांत तिवारी के मार्गदर्शन में निष्पक्ष</tspan>
+      <tspan x="40" dy="16">एवं निर्भीक पत्रकारिता का निरंतर प्रवाह। मुंबई और महाराष्ट्र का</tspan>
+      <tspan x="40" dy="16">सर्वाधिक प्रतिष्ठित हिंदी दैनिक समाचार पत्र।</tspan>
     </text>
     
     <!-- Column 2: Side Stories -->
     <line x1="400" y1="270" x2="400" y2="700" stroke="#e7e5e4" stroke-width="1"/>
-    <text x="415" y="295" fill="#991b1b" font-family="serif" font-size="18" font-weight="bold">शेती क्षेत्रात कृत्रिम बुद्धिमत्तेचा वापर</text>
+    <text x="415" y="295" fill="#ed1c24" font-family="serif" font-size="18" font-weight="bold">कृषि एवं ग्रामीण विकास</text>
     <text x="415" y="318" fill="#44403c" font-family="sans-serif" font-size="11">
-      <tspan x="415" dy="0">मराठवाड्यातील दुष्काळग्रस्त पट्ट्यात ठिबक सिंचन आणि सेन्सर</tspan>
-      <tspan x="415" dy="16">तंत्रज्ञानामुळे ४० टक्के पाण्याची बचत झाली असून उत्पादन वाढले आहे.</tspan>
+      <tspan x="415" dy="0">सूक्ष्म सिंचाई और एआई से किसानों को मिला बड़ा लाभ,</tspan>
+      <tspan x="415" dy="16">लागत में 40% की बचत और उत्पादन में रिकॉर्ड बढ़ोतरी।</tspan>
     </text>
     
     <line x1="415" y1="365" x2="760" y2="365" stroke="#e7e5e4" stroke-width="1"/>
-    <text x="415" y="395" fill="#0c0a09" font-family="serif" font-size="18" font-weight="bold">फिनटेक हब : ४ अब्ज डॉलर्सची गुंतवणूक</text>
+    <text x="415" y="395" fill="#0c0a09" font-family="serif" font-size="18" font-weight="bold">फिनटेक एवं व्यापार जगत</text>
     <text x="415" y="418" fill="#44403c" font-family="sans-serif" font-size="11">
-      <tspan x="415" dy="0">मुंबईच्या आंतरराष्ट्रीय वित्तीय केंद्रात जागतिक गुंतवणूकदारांनी</tspan>
-      <tspan x="415" dy="16">मोठा विश्वास व्यक्त केला असून हजारो कुशल रोजगार निर्माण होत आहेत.</tspan>
+      <tspan x="415" dy="0">मुंबई अंतरराष्ट्रीय वित्तीय केंद्र में 4 अरब डॉलर का निवेश,</tspan>
+      <tspan x="415" dy="16">उद्योग और रोजगार को मिली नई गति।</tspan>
     </text>
     
     <!-- Bottom Grid Section (3 sub-columns) -->
     <line x1="40" y1="620" x2="760" y2="620" stroke="#1c1917" stroke-width="1"/>
     <rect x="40" y="635" width="225" height="180" fill="#fafaf9" stroke="#e7e5e4"/>
-    <text x="50" y="660" fill="#991b1b" font-family="serif" font-size="14" font-weight="bold">क्रीडा : भारताचा कसोटी विजय</text>
-    <text x="50" y="685" fill="#57534e" font-family="sans-serif" font-size="10">पाचव्या दिवशी अखेरच्या सत्रात भारताचा थरारक विजय.</text>
+    <text x="50" y="660" fill="#ed1c24" font-family="serif" font-size="14" font-weight="bold">खेल : राष्ट्रीय गौरव</text>
+    <text x="50" y="685" fill="#57534e" font-family="sans-serif" font-size="10">भारतीय टीम ने जीती रोमांचक टेस्ट श्रृंखला।</text>
     
     <rect x="285" y="635" width="230" height="180" fill="#fafaf9" stroke="#e7e5e4"/>
-    <text x="295" y="660" fill="#991b1b" font-family="serif" font-size="14" font-weight="bold">शिक्षण : डिजिटल स्मार्ट वर्ग</text>
-    <text x="295" y="685" fill="#57534e" font-family="sans-serif" font-size="10">सर्व जिल्हा परिषद शाळांमध्ये मोफत ब्रॉडबँड लायब्ररी.</text>
+    <text x="295" y="660" fill="#ed1c24" font-family="serif" font-size="14" font-weight="bold">शिक्षा : डिजिटल क्रांति</text>
+    <text x="295" y="685" fill="#57534e" font-family="sans-serif" font-size="10">स्कूलों में स्मार्ट टैबलेट लाइब्रेरी की शुरुआत।</text>
     
     <rect x="535" y="635" width="225" height="180" fill="#fafaf9" stroke="#e7e5e4"/>
-    <text x="545" y="660" fill="#991b1b" font-family="serif" font-size="14" font-weight="bold">आरोग्य : लशीची चाचणी यशस्वी</text>
-    <text x="545" y="685" fill="#57534e" font-family="sans-serif" font-size="10">पुण्यातील प्रयोगशाळेत स्वदेशी लशीच्या तिसऱ्या चाचण्या पूर्ण.</text>
+    <text x="545" y="660" fill="#ed1c24" font-family="serif" font-size="14" font-weight="bold">स्वास्थ्य : चिकित्सा विज्ञान</text>
+    <text x="545" y="685" fill="#57534e" font-family="sans-serif" font-size="10">स्वदेशी इम्यूनोथेरेपी शोध में बड़ी सफलता।</text>
     
     <!-- Bottom Editorial Footer -->
     <line x1="40" y1="1080" x2="760" y2="1080" stroke="#1c1917" stroke-width="2"/>
     <text x="400" y="1105" fill="#78716c" font-family="sans-serif" font-size="11" text-anchor="middle">
-      मुद्रक व प्रकाशक : जनवाणी न्यूज मीडिया प्रा. लि. • RNI क्र. MAHMAR/2026/84210 • सर्व हक्क राखीव
+      संपादक : अरुण रमाकांत तिवारी • RNI क्र. MAHHIN/2014/57312 • भांडुप (पश्चिम), मुंबई 400078
     </text>
   </svg>`;
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
@@ -1251,18 +1815,18 @@ function generatePagePreview(editionTitle: string, pageNum: number, pageName: st
 // INITIAL E-PAPER EDITIONS
 // ==========================================
 export const INITIAL_EPAPER_EDITIONS: EpaperEdition[] = [
-  // 1. Today\'s Pune Edition
+  // 1. Today's Mumbai Edition
   {
-    id: 'ep-pune-20260225',
+    id: 'ep-mumbai-20260225',
     edition_date: '2026-02-25',
-    edition_region: 'pune',
-    title: 'जनवाणी वृत्तपत्र - पुणे मुख्य आवृत्ती',
-    title_mr: 'जनवाणी वृत्तपत्र - पुणे मुख्य आवृत्ती',
-    title_hi: 'जनवाणी समाचार पत्र - पुणे मुख्य संस्करण',
-    description: 'पुणे, पिंपरी-चिंचवड आणि पश्चिम महाराष्ट्रातील ताज्या बातम्या, स्थानिक विकास आणि संपादकीय विश्लेषण.',
-    thumbnail_url: generatePagePreview('पुणे मुख्य आवृत्ती', 1, 'मुख्य पृष्ठ', '२५ फेब्रुवारी २०२६'),
+    edition_region: 'mumbai',
+    title: 'दैनिक जगत समीक्षा - मुंबई मुख्य संस्करण',
+    title_mr: 'दैनिक जगत समीक्षा - मुंबई मुख्य आवृत्ती',
+    title_hi: 'दैनिक जगत समीक्षा - मुंबई मुख्य संस्करण',
+    description: 'मुंबई, उपनगर एवं ठाणे की विशेष खबरें, राष्ट्रीय हलचल और संपादकीय दृष्टिकोण।',
+    thumbnail_url: generatePagePreview('मुंबई मुख्य संस्करण', 1, 'मुख्य पृष्ठ', '२५ फरवरी २०२६'),
     pdf_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-    file_size_bytes: 8450000, // ~8.45 MB
+    file_size_bytes: 8450000,
     total_pages: 6,
     is_published: true,
     views_count: 14280,

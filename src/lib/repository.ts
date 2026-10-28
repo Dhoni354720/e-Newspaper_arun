@@ -1,5 +1,5 @@
-import { Article, Category, BreakingNewsItem, SiteSettings, MediaAsset, SupportedLanguage, ArticleStatus, EpaperEdition, EpaperPage, AuditLog, ContactMessage } from '@/types/database';
-import { INITIAL_CATEGORIES, INITIAL_ARTICLES, INITIAL_BREAKING_NEWS, INITIAL_EPAPER_EDITIONS } from '@/data/seedData';
+import { Article, Category, BreakingNewsItem, SiteSettings, MediaAsset, SupportedLanguage, ArticleStatus, EpaperEdition, EpaperPage, AuditLog, ContactMessage, Profile, HomeBlock } from '@/types/database';
+import { INITIAL_CATEGORIES, INITIAL_ARTICLES, INITIAL_BREAKING_NEWS, INITIAL_EPAPER_EDITIONS, INITIAL_PROFILES, INITIAL_HOME_BLOCKS } from '@/data/seedData';
 import { DEFAULT_SITE_SETTINGS } from '@/config/site';
 import { isSupabaseConfigured, isDemoMode, supabase } from './supabase';
 import { generateSlug, ensureUniqueSlug } from './slug';
@@ -15,6 +15,8 @@ const STORAGE_KEYS = {
   EPAPER: 'djs_epaper_v2',
   AUDIT_LOGS: 'djs_audit_v2',
   CONTACT_MESSAGES: 'djs_contact_messages_v2',
+  PROFILES: 'djs_profiles_v2',
+  HOME_BLOCKS: 'djs_home_blocks_v2',
 };
 
 // Memory fallback / LocalStorage loader with seed data
@@ -80,6 +82,8 @@ export class NewsRepository {
     getLocalItem(STORAGE_KEYS.BREAKING_NEWS, shouldSeed ? INITIAL_BREAKING_NEWS : []);
     getLocalItem(STORAGE_KEYS.SETTINGS, DEFAULT_SITE_SETTINGS);
     getLocalItem(STORAGE_KEYS.EPAPER, shouldSeed ? INITIAL_EPAPER_EDITIONS : []);
+    getLocalItem(STORAGE_KEYS.PROFILES, shouldSeed ? INITIAL_PROFILES : []);
+    getLocalItem(STORAGE_KEYS.HOME_BLOCKS, shouldSeed ? INITIAL_HOME_BLOCKS : []);
   }
 
   public static getInstance(): NewsRepository {
@@ -97,6 +101,10 @@ export class NewsRepository {
     categorySlug?: string;
     status?: ArticleStatus | 'all';
     isBreaking?: boolean;
+    isTop?: boolean;
+    tagSlug?: string;
+    authorId?: string;
+    authorSlug?: string;
     search?: string;
     page?: number;
     limit?: number;
@@ -130,13 +138,22 @@ export class NewsRepository {
           query = query.eq('is_breaking', options.isBreaking);
         }
 
+        if (options.isTop !== undefined) {
+          query = query.eq('is_top', options.isTop);
+        }
+
+        if (options.authorId) {
+          query = query.eq('author_id', options.authorId);
+        }
+
         if (options.search) {
           query = query.or(`headline.ilike.%${options.search}%,excerpt.ilike.%${options.search}%`);
         }
 
         const from = (page - 1) * limit;
         const to = from + limit - 1;
-        const { data, count, error } = await query.order('published_at', { ascending: false }).range(from, to);
+        const orderColumn = options.isTop ? 'top_rank' : 'published_at';
+        const { data, count, error } = await query.order(orderColumn, { ascending: options.isTop ? true : false }).range(from, to);
 
         if (!error && data) {
           return {
@@ -162,10 +179,14 @@ export class NewsRepository {
     const categories = getLocalItem<Category[]>(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
     const categoryMap = new Map(categories.map(c => [c.id, c]));
 
-    // Populate categories relation
+    const profiles = getLocalItem<Profile[]>(STORAGE_KEYS.PROFILES, INITIAL_PROFILES);
+    const profileMap = new Map(profiles.map(p => [p.id, p]));
+
+    // Populate categories & author relation
     let filtered = allArticles.map(art => ({
       ...art,
       categories: (art.category_ids || []).map(id => categoryMap.get(id)).filter(Boolean) as Category[],
+      author: art.author || (art.author_id ? profileMap.get(art.author_id) : undefined),
     }));
 
     // Filter by privacy
@@ -185,11 +206,49 @@ export class NewsRepository {
       filtered = filtered.filter(art => art.language === options.language);
     }
 
-    // Filter by category slug
+    // Hierarchical category filtering
     if (options.categorySlug) {
+      const targetCat = categories.find(c => c.slug === options.categorySlug);
+      if (targetCat) {
+        const allowedCatIds = new Set<string>([targetCat.id]);
+        categories.forEach(c => {
+          if (c.parent_id === targetCat.id) {
+            allowedCatIds.add(c.id);
+          }
+        });
+        filtered = filtered.filter(art =>
+          art.category_ids?.some(id => allowedCatIds.has(id)) ||
+          art.categories?.some(cat => cat.slug === options.categorySlug || allowedCatIds.has(cat.id))
+        );
+      } else {
+        filtered = filtered.filter(art =>
+          art.categories?.some(cat => cat.slug === options.categorySlug)
+        );
+      }
+    }
+
+    // Filter by top news
+    if (options.isTop !== undefined) {
+      filtered = filtered.filter(art => art.is_top === options.isTop);
+    }
+
+    // Filter by tag
+    if (options.tagSlug) {
+      const qTag = options.tagSlug.toLowerCase().trim();
       filtered = filtered.filter(art =>
-        art.categories?.some(cat => cat.slug === options.categorySlug)
+        art.tags?.some(t => {
+          const norm = t.toLowerCase().trim();
+          return norm === qTag || norm.replace(/\s+/g, '-') === qTag;
+        })
       );
+    }
+
+    // Filter by author
+    if (options.authorId) {
+      filtered = filtered.filter(art => art.author_id === options.authorId);
+    }
+    if (options.authorSlug) {
+      filtered = filtered.filter(art => art.author?.slug === options.authorSlug);
     }
 
     // Filter by breaking
@@ -208,8 +267,13 @@ export class NewsRepository {
       );
     }
 
-    // Sort by publication date or updated_at
+    // Sort by top_rank if isTop, or publication date
     filtered.sort((a, b) => {
+      if (options.isTop) {
+        const rankA = a.top_rank ?? 999;
+        const rankB = b.top_rank ?? 999;
+        if (rankA !== rankB) return rankA - rankB;
+      }
       const dateA = new Date(a.published_at || a.created_at).getTime();
       const dateB = new Date(b.published_at || b.created_at).getTime();
       return dateB - dateA;
@@ -1018,6 +1082,164 @@ export class NewsRepository {
     }
     const messages = getLocalItem<ContactMessage[]>(STORAGE_KEYS.CONTACT_MESSAGES, []);
     return messages.slice(0, limit);
+  }
+
+  // --------------------------------------------------------------------------
+  // AUTHORS & PROFILES
+  // --------------------------------------------------------------------------
+  async getAuthors(): Promise<Profile[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .order('display_name', { ascending: true });
+        if (!error && data && data.length > 0) {
+          return data as Profile[];
+        }
+      } catch (err) {
+        console.warn('Supabase getAuthors failed, using local fallback:', err);
+      }
+    }
+    return getLocalItem<Profile[]>(STORAGE_KEYS.PROFILES, INITIAL_PROFILES);
+  }
+
+  async getAuthorBySlug(slug: string): Promise<Profile | null> {
+    const authors = await this.getAuthors();
+    return authors.find(a => a.slug === slug) || null;
+  }
+
+  async getAuthorById(id: string): Promise<Profile | null> {
+    const authors = await this.getAuthors();
+    return authors.find(a => a.id === id) || null;
+  }
+
+  async getArticlesByAuthor(
+    authorIdOrSlug: string,
+    options: { language?: SupportedLanguage; page?: number; limit?: number } = {}
+  ): Promise<{ articles: Article[]; total: number; page: number; totalPages: number }> {
+    const authors = await this.getAuthors();
+    const author = authors.find(a => a.id === authorIdOrSlug || a.slug === authorIdOrSlug);
+    if (!author) {
+      return { articles: [], total: 0, page: 1, totalPages: 1 };
+    }
+    return this.getArticles({
+      ...options,
+      authorId: author.id,
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // HOME BLOCKS
+  // --------------------------------------------------------------------------
+  async getHomeBlocks(): Promise<HomeBlock[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase
+          .from('home_blocks')
+          .select('*, category:categories(*)')
+          .order('sort_order', { ascending: true });
+        if (!error && data && data.length > 0) {
+          return data as HomeBlock[];
+        }
+      } catch (err) {
+        console.warn('Supabase getHomeBlocks failed, using local fallback:', err);
+      }
+    }
+    const blocks = getLocalItem<HomeBlock[]>(STORAGE_KEYS.HOME_BLOCKS, INITIAL_HOME_BLOCKS);
+    const categories = getLocalItem<Category[]>(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
+    const catMap = new Map(categories.map(c => [c.id, c]));
+
+    return blocks
+      .map(b => ({
+        ...b,
+        category: b.category_id ? catMap.get(b.category_id) : undefined,
+      }))
+      .sort((a, b) => a.sort_order - b.sort_order);
+  }
+
+  async saveHomeBlock(block: Partial<HomeBlock> & { block_type: HomeBlock['block_type'] }): Promise<HomeBlock> {
+    const blocks = getLocalItem<HomeBlock[]>(STORAGE_KEYS.HOME_BLOCKS, INITIAL_HOME_BLOCKS);
+    let saved: HomeBlock;
+
+    if (block.id) {
+      const idx = blocks.findIndex(b => b.id === block.id);
+      if (idx >= 0) {
+        saved = { ...blocks[idx], ...block } as HomeBlock;
+        blocks[idx] = saved;
+      } else {
+        saved = {
+          id: block.id,
+          block_type: block.block_type,
+          item_count: block.item_count || 4,
+          sort_order: block.sort_order || blocks.length + 1,
+          is_active: block.is_active !== undefined ? block.is_active : true,
+          created_at: new Date().toISOString(),
+          ...block,
+        } as HomeBlock;
+        blocks.push(saved);
+      }
+    } else {
+      saved = {
+        id: `hb-${Date.now()}`,
+        block_type: block.block_type,
+        item_count: block.item_count || 4,
+        sort_order: blocks.length + 1,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        ...block,
+      } as HomeBlock;
+      blocks.push(saved);
+    }
+
+    setLocalItem(STORAGE_KEYS.HOME_BLOCKS, blocks);
+
+    if (isSupabaseConfigured()) {
+      Promise.resolve(
+        supabase.from('home_blocks').upsert({
+          id: saved.id,
+          block_type: saved.block_type,
+          category_id: saved.category_id || null,
+          title_override_hi: saved.title_override_hi,
+          title_override_mr: saved.title_override_mr,
+          title_override_en: saved.title_override_en,
+          item_count: saved.item_count,
+          sort_order: saved.sort_order,
+          is_active: saved.is_active,
+        })
+      ).catch(e => console.warn('Supabase home block sync failed:', e));
+    }
+
+    return saved;
+  }
+
+  async reorderHomeBlocks(orderedIds: string[]): Promise<void> {
+    const blocks = getLocalItem<HomeBlock[]>(STORAGE_KEYS.HOME_BLOCKS, INITIAL_HOME_BLOCKS);
+    const updated = blocks.map(b => {
+      const newOrder = orderedIds.indexOf(b.id);
+      return newOrder >= 0 ? { ...b, sort_order: newOrder + 1 } : b;
+    });
+    setLocalItem(STORAGE_KEYS.HOME_BLOCKS, updated);
+
+    if (isSupabaseConfigured()) {
+      Promise.all(
+        updated.map(b =>
+          supabase.from('home_blocks').update({ sort_order: b.sort_order }).eq('id', b.id)
+        )
+      ).catch(e => console.warn('Supabase home block reorder sync failed:', e));
+    }
+  }
+
+  async deleteHomeBlock(id: string): Promise<void> {
+    let blocks = getLocalItem<HomeBlock[]>(STORAGE_KEYS.HOME_BLOCKS, INITIAL_HOME_BLOCKS);
+    blocks = blocks.filter(b => b.id !== id);
+    setLocalItem(STORAGE_KEYS.HOME_BLOCKS, blocks);
+
+    if (isSupabaseConfigured()) {
+      Promise.resolve(supabase.from('home_blocks').delete().eq('id', id)).catch(e =>
+        console.warn('Supabase home block delete failed:', e)
+      );
+    }
   }
 }
 
