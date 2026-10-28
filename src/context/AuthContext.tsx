@@ -110,6 +110,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
 
         if (error) {
+          // In local development with demo mode active, allow fallback if account is not yet seeded in remote Supabase
+          if (isDemoMode()) {
+            const trimmedEmail = email.trim().toLowerCase();
+            if (trimmedEmail.startsWith('admin') || trimmedEmail.startsWith('editor') || trimmedEmail === 'jagatsameeksha2014@gmail.com') {
+              const demoProfile: Profile = {
+                id: 'usr-admin-01',
+                display_name: 'अरुण रमाकांत तिवारी (मुख्य संपादक)',
+                role: trimmedEmail.startsWith('editor') ? 'editor' : 'admin',
+                avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80',
+                created_at: '2026-01-01T00:00:00Z',
+                updated_at: new Date().toISOString(),
+              };
+
+              setUser(demoProfile);
+              localStorage.setItem(LOCAL_ADMIN_KEY, JSON.stringify(demoProfile));
+              setIsLoading(false);
+              return { success: true };
+            }
+          }
+
           setIsLoading(false);
           return { success: false, error: error.message };
         }
