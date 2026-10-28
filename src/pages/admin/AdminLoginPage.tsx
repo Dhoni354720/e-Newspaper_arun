@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useSettings } from '@/context/SettingsContext';
-import { isSupabaseConfigured } from '@/lib/supabase';
+import { isSupabaseConfigured, isDemoMode } from '@/lib/supabase';
 import { ShieldCheck, Lock, Mail, AlertCircle, ArrowLeft, Database, CheckCircle2 } from 'lucide-react';
 
 export const AdminLoginPage: React.FC = () => {
@@ -11,8 +11,8 @@ export const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [email, setEmail] = useState('admin@janvaninews.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -35,11 +35,12 @@ export const AdminLoginPage: React.FC = () => {
     if (res.success) {
       navigate(from, { replace: true });
     } else {
-      setError(res.error || 'लॉगिन अयशस्वी झाले. कृपया माहिती तपासा.');
+      setError(res.error || 'लॉगिन विफल रहा। कृपया अपनी साख (credentials) की जाँच करें।');
     }
   };
 
   const hasLiveSupabase = isSupabaseConfigured();
+  const showDemoNotice = isDemoMode();
 
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans selection:bg-crimson-800 selection:text-white">
@@ -52,7 +53,7 @@ export const AdminLoginPage: React.FC = () => {
           </Link>
           <div className="mt-2 flex items-center justify-center gap-1.5 text-xs text-crimson-400 font-semibold tracking-wider uppercase">
             <ShieldCheck className="w-4 h-4" />
-            संपादकीय कक्ष लॉगिन (CMS Access)
+            संपादकीय कक्ष लॉगिन (CMS Secure Access)
           </div>
         </div>
 
@@ -63,10 +64,15 @@ export const AdminLoginPage: React.FC = () => {
               <Database className="w-3.5 h-3.5 text-emerald-400" />
               Live Supabase Database Connected
             </span>
-          ) : (
+          ) : showDemoNotice ? (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-amber-950/80 border border-amber-700 text-amber-300">
               <Database className="w-3.5 h-3.5 text-amber-400" />
-              Resilient Local Mode (Ready for Supabase credentials)
+              Local Development Demo Mode
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-red-950/80 border border-red-700 text-red-300">
+              <Database className="w-3.5 h-3.5 text-red-400" />
+              Supabase Not Configured
             </span>
           )}
         </div>
@@ -84,7 +90,7 @@ export const AdminLoginPage: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                प्रशासक ईमेल (Admin Email)
+                ईमेल (Staff Email)
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -95,7 +101,7 @@ export const AdminLoginPage: React.FC = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@janvaninews.com"
+                  placeholder="editor@example.com"
                   className="w-full pl-9 pr-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-crimson-700 focus:border-crimson-700"
                 />
               </div>
@@ -125,25 +131,25 @@ export const AdminLoginPage: React.FC = () => {
               disabled={isSubmitting}
               className="w-full py-2.5 px-4 bg-crimson-800 hover:bg-crimson-900 disabled:opacity-50 text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 shadow-md uppercase tracking-wider"
             >
-              {isSubmitting ? 'तपासत आहे...' : 'संपादकीय कक्षात प्रवेश करा'}
+              {isSubmitting ? 'जाँच हो रही है...' : 'संपादकीय कक्ष में प्रवेश करें'}
             </button>
           </form>
 
-          {/* Quick Demo Credentials Info Box */}
-          <div className="mt-6 pt-5 border-t border-gray-700 text-xs text-gray-400 space-y-2">
-            <p className="font-semibold text-gray-300 flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-crimson-400" />
-              प्रात्यक्षिक प्रशासक खात्याची माहिती (Demo Login):
-            </p>
-            <div className="bg-gray-900/80 p-2.5 rounded border border-gray-700 font-mono text-[11px] text-gray-300 space-y-1">
-              <div>ईमेल: <span className="text-amber-300">admin@janvaninews.com</span></div>
-              <div>पासवर्ड: <span className="text-amber-300">admin123</span></div>
+          {/* Development Demo Notice: Only rendered if VITE_DEMO_MODE=true in dev */}
+          {showDemoNotice && (
+            <div className="mt-6 pt-5 border-t border-gray-700 text-xs text-gray-400 space-y-2">
+              <p className="font-semibold text-gray-300 flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-crimson-400" />
+                डेमो विकास मोड (Development Demo Only):
+              </p>
+              <div className="bg-gray-900/80 p-2.5 rounded border border-gray-700 font-mono text-[11px] text-gray-300 space-y-1">
+                <div>ईमेल: <span className="text-amber-300">admin@demo.local</span></div>
+                <div>पासवर्ड: <span className="text-amber-300">(कोई भी पासवर्ड)</span></div>
+              </div>
             </div>
-            <p className="text-[11px] text-gray-400 leading-relaxed">
-              लॉगिन केल्यानंतर आपण बातम्या लिहू शकता, मसुदे सेव्ह करू शकता, प्रतिमा अपलोड करू शकता आणि बातम्या थेट प्रकाशित करू शकता.
-            </p>
-          </div>
+          )}
         </div>
+
 
         <div className="mt-6 text-center">
           <Link

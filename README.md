@@ -61,14 +61,27 @@ The application will be accessible at:
 
 ---
 
-## 4. Administrative CMS Credentials
+## 4. Administrative CMS Access & Setup
 
-The portal is pre-configured with a dedicated authorized administrator account for demonstration and workflow verification:
+Access to the Editorial CMS panel is invite-only and protected by Supabase Auth with Row Level Security (RLS).
 
 - **Login URL**: `/admin/login`
-- **Admin Email**: `admin@janvaninews.com`
-- **Admin Password**: `admin123`
-- **Editor Email**: `editor@janvaninews.com` (Sub-editor role)
+
+### Provisioning the Initial Administrator
+To provision your primary administrator account safely without hardcoding passwords into source code:
+
+1. Open your Supabase Dashboard SQL Editor.
+2. Execute the setup procedure provided in `supabase/migrations/20261028_01_security_hardening.sql`:
+
+```sql
+SELECT public.setup_initial_admin(
+  'jagatsameeksha2014@gmail.com',
+  'YOUR_SECURE_PASSWORD',
+  'अरुण तिवारी (संपादक)'
+);
+```
+
+Public self-registration is disabled. Additional editorial team members are invited directly through the staff management workflow.
 
 ---
 

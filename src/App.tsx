@@ -26,6 +26,9 @@ import { AdminMediaPage } from '@/pages/admin/AdminMediaPage';
 import { AdminSettingsPage } from '@/pages/admin/AdminSettingsPage';
 import { AdminAccountPage } from '@/pages/admin/AdminAccountPage';
 
+import { isSupabaseConfigured } from '@/lib/supabase';
+import { ConfigErrorScreen } from '@/components/common/ConfigErrorScreen';
+
 // Scroll to top helper
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -36,6 +39,12 @@ const ScrollToTop = () => {
 };
 
 export const App: React.FC = () => {
+  // Enforce Phase 0 rule: A production build with missing Supabase config must show
+  // a clear configuration-error screen instead of silently running in local mode.
+  if (import.meta.env.PROD && !isSupabaseConfigured()) {
+    return <ConfigErrorScreen />;
+  }
+
   return (
     <BrowserRouter>
       <LanguageProvider>

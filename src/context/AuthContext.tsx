@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Profile, UserRole } from '@/types/database';
-import { isSupabaseConfigured, supabase } from '@/lib/supabase';
+import { isSupabaseConfigured, isDemoMode, supabase } from '@/lib/supabase';
 
 interface AuthContextType {
   user: Profile | null;
@@ -13,7 +13,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const LOCAL_ADMIN_KEY = 'janvani_auth_user';
+const LOCAL_ADMIN_KEY = 'djs_auth_user_demo';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<Profile | null>(null);
@@ -35,11 +35,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (profile) {
               setUser(profile as Profile);
             } else {
-              // Default author if profile record hasn't synced yet
+              // Least privilege fallback: default to 'author', NEVER 'admin'
               setUser({
                 id: session.user.id,
                 display_name: session.user.email?.split('@')[0] || 'User',
-                role: 'admin',
+                role: 'author',
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
               });
@@ -48,8 +48,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } catch (e) {
           console.warn('Supabase auth session error:', e);
         }
-      } else {
-        // Local auth fallback
+      } else if (isDemoMode()) {
+        // Local auth fallback only when explicitly enabled in non-production development
         const saved = localStorage.getItem(LOCAL_ADMIN_KEY);
         if (saved) {
           try {
@@ -58,6 +58,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             localStorage.removeItem(LOCAL_ADMIN_KEY);
           }
         }
+      } else {
+        // Clear any old local demo keys in production or non-demo modes
+        localStorage.removeItem(LOCAL_ADMIN_KEY);
+        localStorage.removeItem('janvani_auth_user');
       }
       setIsLoading(false);
     }
@@ -75,6 +79,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           if (profile) {
             setUser(profile as Profile);
+          } else {
+            setUser({
+              id: session.user.id,
+              display_name: session.user.email?.split('@')[0] || 'User',
+              role: 'author',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            });
           }
         } else {
           setUser(null);
@@ -93,7 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (isSupabaseConfigured()) {
       try {
         const { data, error } = await supabase.auth.signInWithPassword({
-          email,
+          email: email.trim().toLowerCase(),
           password: password || '',
         });
 
@@ -112,7 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const userProfile: Profile = profile || {
             id: data.user.id,
             display_name: email.split('@')[0],
-            role: 'admin',
+            role: 'author', // Default to least-privilege author
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           };
@@ -128,29 +140,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
 
-    // Provisioned Local Admin Mode
-    // Default credentials clearly provided: admin@janvaninews.com / admin123
-    const trimmedEmail = email.trim().toLowerCase();
-    if (trimmedEmail === 'admin@janvaninews.com' || trimmedEmail === 'editor@janvaninews.com' || trimmedEmail.endsWith('@janvaninews.com')) {
-      const adminProfile: Profile = {
-        id: 'usr-admin-01',
-        display_name: trimmedEmail.startsWith('editor') ? 'मुख्य उपसंपादक' : 'मुख्य संपादक (Administrator)',
-        role: trimmedEmail.startsWith('editor') ? 'editor' : 'admin',
-        avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80',
-        created_at: '2026-01-01T00:00:00Z',
-        updated_at: new Date().toISOString(),
-      };
+    // Demo Mode: Only permissible when explicitly configured in non-production
+    if (isDemoMode()) {
+      const trimmedEmail = email.trim().toLowerCase();
+      if (trimmedEmail.startsWith('admin') || trimmedEmail.startsWith('editor')) {
+        const demoProfile: Profile = {
+          id: 'usr-demo-01',
+          display_name: trimmedEmail.startsWith('editor') ? 'उपसंपादक (डेमो)' : 'मुख्य संपादक (डेमो प्रशासक)',
+          role: trimmedEmail.startsWith('editor') ? 'editor' : 'admin',
+          avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80',
+          created_at: '2026-01-01T00:00:00Z',
+          updated_at: new Date().toISOString(),
+        };
 
-      setUser(adminProfile);
-      localStorage.setItem(LOCAL_ADMIN_KEY, JSON.stringify(adminProfile));
+        setUser(demoProfile);
+        localStorage.setItem(LOCAL_ADMIN_KEY, JSON.stringify(demoProfile));
+        setIsLoading(false);
+        return { success: true };
+      }
+
       setIsLoading(false);
-      return { success: true };
+      return {
+        success: false,
+        error: 'डेमो मोड: केवल admin@... या editor@... पते मान्य हैं।',
+      };
     }
 
     setIsLoading(false);
     return {
       success: false,
-      error: 'अवैध ईमेल किंवा पासवर्ड. कृपया अधिकृत प्रशासक खाते वापरा (उदा. admin@janvaninews.com)',
+      error: 'प्रमाणीकरण सेवा उपलब्ध नहीं है। कृपया Supabase विन्यास की जाँच करें।',
     };
   };
 
