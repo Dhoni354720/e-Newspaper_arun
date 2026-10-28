@@ -8,6 +8,7 @@ import {
   ArticleStatus, 
   EpaperEdition, 
   EpaperPage, 
+  EpaperClip,
   AuditLog, 
   ContactMessage, 
   Profile, 
@@ -844,9 +845,30 @@ export class NewsRepository {
     return editions.find(e => e.id === id) || null;
   }
 
-  async getEpaperEditionByDate(date: string, region: string = 'pune'): Promise<EpaperEdition | null> {
+  async getEpaperEditionByDate(date: string, region: string = 'mumbai'): Promise<EpaperEdition | null> {
     const { editions } = await this.getEpaperEditions({ date, isPublished: true });
     return editions.find(e => e.edition_region === region) || editions[0] || null;
+  }
+
+  async saveEpaperClip(clip: {
+    edition_id: string;
+    page_number: number;
+    title?: string;
+    clip_url: string;
+  }): Promise<EpaperClip> {
+    const clips = getLocalItem<EpaperClip[]>('djs_epaper_clips', []);
+    const newClip: EpaperClip = {
+      id: `clip-${Date.now()}`,
+      edition_id: clip.edition_id,
+      page_number: clip.page_number,
+      title: clip.title || 'वृत्त कतरन',
+      clip_url: clip.clip_url,
+      share_count: 1,
+      created_at: new Date().toISOString(),
+    };
+    clips.unshift(newClip);
+    setLocalItem('djs_epaper_clips', clips);
+    return newClip;
   }
 
   async saveEpaperEdition(data: Partial<EpaperEdition>): Promise<EpaperEdition> {

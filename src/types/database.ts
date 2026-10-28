@@ -211,6 +211,17 @@ export interface EpaperPage {
   page_title: string;
   image_url: string;
   thumbnail_url?: string;
+  zoom_image_url?: string;
+  created_at: string;
+}
+
+export interface EpaperClip {
+  id: string;
+  edition_id: string;
+  page_number: number;
+  title?: string;
+  clip_url: string;
+  share_count: number;
   created_at: string;
 }
 
