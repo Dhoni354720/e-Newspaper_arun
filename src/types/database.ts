@@ -246,3 +246,161 @@ export interface ContactMessage {
   updated_at: string;
 }
 
+// ----------------------------------------------------------------------------
+// PHASE 2: NEW CONTENT TYPES & SUBSYSTEMS
+// ----------------------------------------------------------------------------
+
+export interface GalleryImage {
+  id: string;
+  gallery_id: string;
+  image_url: string;
+  thumbnail_url?: string;
+  caption_hi?: string;
+  caption_mr?: string;
+  caption_en?: string;
+  credit?: string;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface Gallery {
+  id: string;
+  slug: string;
+  title_hi: string;
+  title_mr: string;
+  title_en: string;
+  cover_image_url: string;
+  credit?: string;
+  category_id?: string;
+  category?: Category;
+  images?: GalleryImage[];
+  is_published: boolean;
+  published_at: string;
+  created_at: string;
+}
+
+export interface VideoItem {
+  id: string;
+  slug: string;
+  provider: 'youtube' | 'vimeo' | 'custom';
+  video_id_or_url: string;
+  title_hi: string;
+  title_mr: string;
+  title_en: string;
+  description_hi?: string;
+  description_mr?: string;
+  description_en?: string;
+  thumbnail_url: string;
+  duration_seconds?: number;
+  category_id?: string;
+  category?: Category;
+  is_published: boolean;
+  published_at: string;
+  created_at: string;
+}
+
+export interface BriefItem {
+  id: string;
+  language: SupportedLanguage;
+  content: string;
+  image_url?: string;
+  target_url?: string;
+  category_id?: string;
+  category?: Category;
+  is_published: boolean;
+  created_at: string;
+}
+
+export type HoroscopeSign =
+  | 'aries'
+  | 'taurus'
+  | 'gemini'
+  | 'cancer'
+  | 'leo'
+  | 'virgo'
+  | 'libra'
+  | 'scorpio'
+  | 'sagittarius'
+  | 'capricorn'
+  | 'aquarius'
+  | 'pisces';
+
+export type HoroscopePeriod = 'daily' | 'weekly' | 'monthly';
+
+export interface HoroscopeItem {
+  id: string;
+  period: HoroscopePeriod;
+  date_for: string; // YYYY-MM-DD
+  sign: HoroscopeSign;
+  content_hi: string;
+  content_mr?: string;
+  content_en?: string;
+  lucky_number?: number;
+  lucky_color?: string;
+  author_credit?: string;
+  created_at: string;
+}
+
+export interface SupplementItem {
+  id: string;
+  slug: string;
+  title_hi: string;
+  title_mr: string;
+  title_en: string;
+  cover_image_url: string;
+  issue_date: string; // YYYY-MM-DD
+  description?: string;
+  pdf_url?: string;
+  is_published: boolean;
+  created_at: string;
+}
+
+export type NewsTipStatus = 'new' | 'reviewed' | 'used' | 'rejected';
+
+export interface NewsTip {
+  id: string;
+  sender_name: string;
+  sender_phone: string;
+  sender_city: string;
+  message: string;
+  image_urls?: string[];
+  status: NewsTipStatus;
+  created_at: string;
+}
+
+export interface CMSPage {
+  slug: string;
+  title_hi: string;
+  title_mr: string;
+  title_en: string;
+  body_hi: string;
+  body_mr: string;
+  body_en: string;
+  meta_description?: string;
+  is_published: boolean;
+  updated_at: string;
+}
+
+export interface WeatherCity {
+  key: string;
+  name_hi: string;
+  name_mr: string;
+  name_en: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface WeatherData {
+  cityKey: string;
+  cityName: string;
+  temperature: number; // Celsius
+  weatherCode: number;
+  condition_hi: string;
+  condition_mr: string;
+  condition_en: string;
+  windSpeed: number; // km/h
+  humidity?: number; // %
+  updatedAt: string;
+}
+
+

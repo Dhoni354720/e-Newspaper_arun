@@ -1,4 +1,21 @@
-import { Article, Category, BreakingNewsItem, SiteSettings, EpaperEdition, Profile, HomeBlock } from '@/types/database';
+import { 
+  Article, 
+  Category, 
+  BreakingNewsItem, 
+  SiteSettings, 
+  EpaperEdition, 
+  Profile, 
+  HomeBlock,
+  Gallery,
+  VideoItem,
+  BriefItem,
+  HoroscopeItem,
+  SupplementItem,
+  NewsTip,
+  CMSPage,
+  WeatherCity,
+  HoroscopeSign
+} from '@/types/database';
 import { DEFAULT_SITE_SETTINGS } from '@/config/site';
 
 // Category IDs
@@ -2025,3 +2042,491 @@ export const INITIAL_EPAPER_EDITIONS: EpaperEdition[] = [
     ],
   },
 ];
+
+// ----------------------------------------------------------------------------
+// PHASE 2: NEW CONTENT TYPES SEED DATA
+// ----------------------------------------------------------------------------
+
+export const SUPPORTED_WEATHER_CITIES: WeatherCity[] = [
+  { key: 'mumbai', name_hi: 'मुंबई', name_mr: 'मुंबई', name_en: 'Mumbai', latitude: 19.076, longitude: 72.8777 },
+  { key: 'pune', name_hi: 'पुणे', name_mr: 'पुणे', name_en: 'Pune', latitude: 18.5204, longitude: 73.8567 },
+  { key: 'nagpur', name_hi: 'नागपुर', name_mr: 'नागपूर', name_en: 'Nagpur', latitude: 21.1458, longitude: 79.0882 },
+  { key: 'delhi', name_hi: 'दिल्ली', name_mr: 'नवी दिल्ली', name_en: 'Delhi', latitude: 28.6139, longitude: 77.209 },
+  { key: 'indore', name_hi: 'इंदौर', name_mr: 'इंदूर', name_en: 'Indore', latitude: 22.7196, longitude: 75.8577 },
+  { key: 'gwalior', name_hi: 'ग्वालियर', name_mr: 'ग्वाल्हेर', name_en: 'Gwalior', latitude: 26.2183, longitude: 78.1828 },
+];
+
+export const ZODIAC_SIGNS: Array<{ sign: HoroscopeSign; hi: string; mr: string; en: string; symbol: string }> = [
+  { sign: 'aries', hi: 'मेष', mr: 'मेष', en: 'Aries', symbol: '♈' },
+  { sign: 'taurus', hi: 'वृषभ', mr: 'वृषभ', en: 'Taurus', symbol: '♉' },
+  { sign: 'gemini', hi: 'मिथुन', mr: 'मिथुन', en: 'Gemini', symbol: '♊' },
+  { sign: 'cancer', hi: 'कर्क', mr: 'कर्क', en: 'Cancer', symbol: '♋' },
+  { sign: 'leo', hi: 'सिंह', mr: 'सिंह', en: 'Leo', symbol: '♌' },
+  { sign: 'virgo', hi: 'कन्या', mr: 'कन्या', en: 'Virgo', symbol: '♍' },
+  { sign: 'libra', hi: 'तुला', mr: 'तूळ', en: 'Libra', symbol: '♎' },
+  { sign: 'scorpio', hi: 'वृश्चिक', mr: 'वृश्चिक', en: 'Scorpio', symbol: '♏' },
+  { sign: 'sagittarius', hi: 'धनु', mr: 'धनु', en: 'Sagittarius', symbol: '♐' },
+  { sign: 'capricorn', hi: 'मकर', mr: 'मकर', en: 'Capricorn', symbol: '♑' },
+  { sign: 'aquarius', hi: 'कुंभ', mr: 'कुंभ', en: 'Aquarius', symbol: '♒' },
+  { sign: 'pisces', hi: 'मीन', mr: 'मीन', en: 'Pisces', symbol: '♓' },
+];
+
+export const INITIAL_GALLERIES: Gallery[] = [
+  {
+    id: 'gal-mumbai-ganeshotsav',
+    slug: 'mumbai-ganeshotsav-darshan',
+    title_hi: 'मुंबई गणेशोत्सव: लालबाग से गिरगांव चौपाटी तक आस्था और संस्कृति का महाकुंभ',
+    title_mr: 'मुंबई गणेशोत्सव: लालबाग ते गिरगाव चौपाटीपर्यंत भक्तीचा महासागर',
+    title_en: 'Mumbai Ganeshotsav: The Grand Cultural Spectacle from Lalbaug to Girgaon',
+    cover_image_url: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=1200&q=80',
+    credit: 'दैनिक जगत समीक्षा फोटो ब्यूरो / संतोष सांवत',
+    is_published: true,
+    published_at: '2026-08-25T10:00:00Z',
+    created_at: '2026-08-25T10:00:00Z',
+    images: [
+      {
+        id: 'gimg-1',
+        gallery_id: 'gal-mumbai-ganeshotsav',
+        image_url: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=1600&q=80',
+        thumbnail_url: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=400&q=80',
+        caption_hi: 'लालबागचा राजा के दर्शन हेतु उमड़ी लाखों श्रद्धालुओं की ऐतिहासिक कतार।',
+        caption_mr: 'लालबागच्या राजाच्या दर्शनासाठी उसळलेली लाखो भाविकांची रीघ.',
+        caption_en: 'Hundreds of thousands of devotees queuing for darshan at Lalbaugcha Raja.',
+        credit: 'जगत समीक्षा फोटो',
+        sort_order: 1,
+        created_at: '2026-08-25T10:00:00Z',
+      },
+      {
+        id: 'gimg-2',
+        gallery_id: 'gal-mumbai-ganeshotsav',
+        image_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80',
+        thumbnail_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80',
+        caption_hi: 'पारंपरिक ढोल-ताशा पथकों द्वारा प्रस्तुत ओजस्वी वादन।',
+        caption_mr: 'पारंपरिक ढोल-ताशा पथकांचे मनमोहक आणि चैतन्यमय वादन.',
+        caption_en: 'Traditional Dhol-Tasha troupes energizing Mumbai streets.',
+        credit: 'जगत समीक्षा फोटो',
+        sort_order: 2,
+        created_at: '2026-08-25T10:00:00Z',
+      },
+      {
+        id: 'gimg-3',
+        gallery_id: 'gal-mumbai-ganeshotsav',
+        image_url: 'https://images.unsplash.com/photo-1533929736458-ca588d08c8be?auto=format&fit=crop&w=1600&q=80',
+        thumbnail_url: 'https://images.unsplash.com/photo-1533929736458-ca588d08c8be?auto=format&fit=crop&w=400&q=80',
+        caption_hi: 'गिरगांव चौपाटी पर विसर्जन की भव्य संध्या आरती और जनसैलाब।',
+        caption_mr: 'गिरगाव चौपाटीवरील भव्य विसर्जन संध्याकाळ आणि महाआरती.',
+        caption_en: 'Sunset immersion ceremony at Girgaon Chowpatty.',
+        credit: 'जगत समीक्षा फोटो',
+        sort_order: 3,
+        created_at: '2026-08-25T10:00:00Z',
+      },
+    ],
+  },
+  {
+    id: 'gal-nashik-kumbh',
+    slug: 'nashik-godavari-kumbh-heritage',
+    title_hi: 'कुंभ नगरी नासिक: गोदावरी रामकुंड की संध्या महाआरती और सांस्कृतिक वैभव',
+    title_mr: 'कुंभनगरी नाशिक: गोदावरी रामकुंडावरील संध्या महाआरती व सांस्कृतिक वैभव',
+    title_en: 'Historic Nashik: Evening Godavari Maha Aarti at Holy Ramkund',
+    cover_image_url: 'https://images.unsplash.com/photo-1596178065887-1198b6148b2b?auto=format&fit=crop&w=1200&q=80',
+    credit: 'दैनिक जगत समीक्षा उत्तर महाराष्ट्र ब्यूरो',
+    is_published: true,
+    published_at: '2026-08-24T12:00:00Z',
+    created_at: '2026-08-24T12:00:00Z',
+    images: [
+      {
+        id: 'gimg-4',
+        gallery_id: 'gal-nashik-kumbh',
+        image_url: 'https://images.unsplash.com/photo-1596178065887-1198b6148b2b?auto=format&fit=crop&w=1600&q=80',
+        thumbnail_url: 'https://images.unsplash.com/photo-1596178065887-1198b6148b2b?auto=format&fit=crop&w=400&q=80',
+        caption_hi: 'दीपदान के साथ गोदावरी तट पर प्रज्ज्वलित सहस्त्र दीप।',
+        caption_mr: 'दीपदानाने उजळलेला गोदामाईचा पावन रामकुंड परिसर.',
+        caption_en: 'Thousands of floating clay lamps lighting the Ramkund ghats.',
+        credit: 'जगत समीक्षा फोटो',
+        sort_order: 1,
+        created_at: '2026-08-24T12:00:00Z',
+      },
+    ],
+  },
+];
+
+export const INITIAL_VIDEOS: VideoItem[] = [
+  {
+    id: 'vid-mumbai-coastal-road',
+    slug: 'mumbai-coastal-road-expansion-ground-report',
+    provider: 'youtube',
+    video_id_or_url: 'dQw4w9WgXcQ',
+    title_hi: 'मुंबई कोस्टल रोड फेज 2 का ग्राउंड रियलिटी चेक; दैनिक जगत समीक्षा विशेष रिपोर्ट',
+    title_mr: 'मुंबई कोस्टल रोड टप्पा २ चे प्रत्यक्ष वास्तव; दैनिक जगत समीक्षा विशेष वृत्तांत',
+    title_en: 'Mumbai Coastal Road Phase 2 Ground Reality Check: Dainik Jagat Sameeksha Special',
+    description_hi: 'वरली से कांदिवली तक जोड़ने वाले तटीय महामार्ग की प्रगति, सुरंग निर्माण तकनीक और नागरिकों के फीडबैक पर विशेष ग्राउंड रिपोर्ट।',
+    description_mr: 'वरळी ते कांदिवली सागरी महामार्गाची सद्यस्थिती व प्रगती यावर सविस्तर वृत्त.',
+    description_en: 'Comprehensive ground investigation into the Worli-Kandivali coastal corridor progress.',
+    thumbnail_url: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80',
+    duration_seconds: 485,
+    is_published: true,
+    published_at: '2026-08-26T08:30:00Z',
+    created_at: '2026-08-26T08:30:00Z',
+  },
+  {
+    id: 'vid-editor-analysis-budget',
+    slug: 'chief-editor-arun-tiwari-analysis-budget',
+    provider: 'youtube',
+    video_id_or_url: 'dQw4w9WgXcQ',
+    title_hi: 'संपादकीय विश्लेषण: प्रधान संपादक अरुण रमाकांत तिवारी के साथ महाराष्ट्र बजट 2026',
+    title_mr: 'संपादकीय विश्लेषण: मुख्य संपादक अरुण रमाकांत तिवारी यांच्या समवेत महाराष्ट्र अर्थसंकल्प २०२६',
+    title_en: 'Editorial Breakdown: Chief Editor Arun Ramakant Tiwari Analyzes Maharashtra Budget 2026',
+    description_hi: 'दैनिक जगत समीक्षा के प्रधान संपादक अरुण रमाकांत तिवारी द्वारा राज्य बजट की प्राथमिकताओं, ऋण भार और किसान राहत पैकेजों का निष्पक्ष विश्लेषण।',
+    description_mr: 'राज्य अर्थसंकल्पाची बलस्थाने आणि त्रुटी यावर मुख्य संपादकांचे रोखठोक भाष्य.',
+    description_en: 'In-depth editorial critique of Maharashtra state budget by Chief Editor Arun Ramakant Tiwari.',
+    thumbnail_url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',
+    duration_seconds: 720,
+    is_published: true,
+    published_at: '2026-08-26T07:15:00Z',
+    created_at: '2026-08-26T07:15:00Z',
+  },
+];
+
+export const INITIAL_BRIEFS: BriefItem[] = [
+  {
+    id: 'brf-1',
+    language: 'hi',
+    content: 'मुंबई उपनगरीय रेलवे: मध्य रेलवे ने छत्रपति शिवाजी महाराज टर्मिनस और कल्याण के बीच आज से 12 नई एसी लोकल ट्रेनें शुरू कीं।',
+    target_url: '/category/mumbai',
+    is_published: true,
+    created_at: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+  },
+  {
+    id: 'brf-2',
+    language: 'hi',
+    content: 'शेयर बाजार अपडेट: सेंसेक्स 420 अंक चढ़कर 82,650 पर पहुंचा; निफ्टी 25,200 के पार बंद। बैंकिंग सेक्टर में भारी लिवाली।',
+    target_url: '/category/business',
+    is_published: true,
+    created_at: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+  },
+  {
+    id: 'brf-3',
+    language: 'hi',
+    content: 'मौसम विभाग: विदर्भ एवं मराठवाड़ा के 8 जिलों में अगले 24 घंटों में मध्यम से भारी बारिश का यलो अलर्ट जारी।',
+    target_url: '/category/maharashtra',
+    is_published: true,
+    created_at: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+  },
+  {
+    id: 'brf-4',
+    language: 'hi',
+    content: 'टी-20 अभ्यास मैच: भारतीय टीम ने अभ्यास मैच में ऑस्ट्रेलिया को 5 विकेट से हराया; कप्तान हार्दिक पांड्या का ऑलराउंड प्रदर्शन।',
+    target_url: '/category/sports',
+    is_published: true,
+    created_at: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
+  },
+];
+
+export const INITIAL_HOROSCOPES: HoroscopeItem[] = [
+  {
+    id: 'horo-aries',
+    period: 'daily',
+    date_for: new Date().toISOString().split('T')[0],
+    sign: 'aries',
+    content_hi: 'कार्यक्षेत्र में नए अवसरों की प्राप्ति होगी। पदोन्नति अथवा मान-सम्मान में वृद्धि के योग हैं। पारिवारिक वातावरण सुखद रहेगा। वाणी पर संयम रखें।',
+    content_mr: 'कामाच्या ठिकाणी नवीन संधी मिळतील. मान-सन्मान वाढेल. कुटुंबात आनंदाचे वातावरण राहील.',
+    content_en: 'New professional opportunities arrive today. Harmony prevails at home. Speak prudently.',
+    lucky_number: 9,
+    lucky_color: 'लाल (Red)',
+    author_credit: 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'horo-taurus',
+    period: 'daily',
+    date_for: new Date().toISOString().split('T')[0],
+    sign: 'taurus',
+    content_hi: 'आर्थिक मामलों में सावधानी बरतें। अनावश्यक खर्चों से बचें। व्यापार में साझेदारों का सहयोग मिलेगा। स्वास्थ्य का ध्यान रखें।',
+    content_mr: 'आर्थिक व्यवहारात सावधगिरी बाळगा. अनावश्यक खर्च टाळा. जोडीदाराचे सहकार्य लाभेल.',
+    content_en: 'Exercise financial caution. Avoid impulse expenses. Health requires attention.',
+    lucky_number: 6,
+    lucky_color: 'सफेद (White)',
+    author_credit: 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'horo-gemini',
+    period: 'daily',
+    date_for: new Date().toISOString().split('T')[0],
+    sign: 'gemini',
+    content_hi: 'विद्यार्थियों के लिए आज का दिन अत्यंत शुभ है। साक्षात्कार में सफलता मिलेगी। मित्रों से सुखद समाचार प्राप्त होगा।',
+    content_mr: 'विद्यार्थ्यांसाठी आजचा दिवस शुभ. मुलाखतींमध्ये यश मिळेल. मित्रांकडून चांगली बातमी मिळेल.',
+    content_en: 'Favorable day for students and academics. Interviews will yield positive outcomes.',
+    lucky_number: 5,
+    lucky_color: 'हरा (Green)',
+    author_credit: 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'horo-cancer',
+    period: 'daily',
+    date_for: new Date().toISOString().split('T')[0],
+    sign: 'cancer',
+    content_hi: 'मानसिक शांति का अनुभव होगा। भूमि या वाहन क्रय करने की योजना बन सकती है। माता-पिता का आशीर्वाद लेकर कार्य प्रारंभ करें।',
+    content_mr: 'मानसिक शांतता लाभेल. वाहन खरेदीचे बेत आखाल. ज्येष्ठांचे आशीर्वाद फलदायी ठरतील.',
+    content_en: 'Inner serenity prevails. Property or automobile decisions favor you today.',
+    lucky_number: 2,
+    lucky_color: 'सिल्वर (Silver)',
+    author_credit: 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'horo-leo',
+    period: 'daily',
+    date_for: new Date().toISOString().split('T')[0],
+    sign: 'leo',
+    content_hi: 'आत्मविश्वास में भारी वृद्धि होगी। सरकारी कार्यों में गति आएगी। व्यापारिक यात्रा लाभप्रद सिद्ध होगी। शत्रु परास्त होंगे।',
+    content_mr: 'आत्मविश्वास वाढेल. शासकीय कामांना गती मिळेल. व्यावसायिक प्रवास फायदेशीर ठरेल.',
+    content_en: 'High confidence and leadership power. Government and official work moves rapidly.',
+    lucky_number: 1,
+    lucky_color: 'सुनहरा (Gold)',
+    author_credit: 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'horo-virgo',
+    period: 'daily',
+    date_for: new Date().toISOString().split('T')[0],
+    sign: 'virgo',
+    content_hi: 'प्रबंधन एवं कानूनी मामलों में सफलता प्राप्त होगी। रुका हुआ धन वापस मिलने के योग हैं। खान-पान में सतर्कता बरतें।',
+    content_mr: 'व्यवस्थापन आणि कायदेशीर बाबींमध्ये यश लाभेल. रखडलेली देणी वसूल होतील.',
+    content_en: 'Analytical and legal victories. Delayed payments are likely to be recovered.',
+    lucky_number: 7,
+    lucky_color: 'हल्का हरा (Light Green)',
+    author_credit: 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'horo-libra',
+    period: 'daily',
+    date_for: new Date().toISOString().split('T')[0],
+    sign: 'libra',
+    content_hi: 'दांपत्य जीवन में मधुरता बढ़ेगी। कला, संगीत एवं साहित्य से जुड़े जातकों को विशेष सम्मान मिलेगा। नए अनुबंध संभव हैं।',
+    content_mr: 'वैवाहिक जीवनात गोडवा वाढेल. कला-साहित्यातील व्यक्तींना विशेष सन्मान मिळेल.',
+    content_en: 'Harmony in relationships. Artists and creative professionals earn praise.',
+    lucky_number: 6,
+    lucky_color: 'गुलाबी (Pink)',
+    author_credit: 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'horo-scorpio',
+    period: 'daily',
+    date_for: new Date().toISOString().split('T')[0],
+    sign: 'scorpio',
+    content_hi: 'साहस और पराक्रम में वृद्धि होगी। तकनीकी कार्यों में दक्षता बढ़ेगी। किसी पुराने विवाद का सर्वसम्मत समाधान निकलेगा।',
+    content_mr: 'पराक्रमात वाढ होईल. जुन्या वादावर तोडगा निघेल. आरोग्य चांगले राहील.',
+    content_en: 'Courage and tenacity lead to victory over challenges. Lingering disputes get resolved.',
+    lucky_number: 9,
+    lucky_color: 'मैरून (Maroon)',
+    author_credit: 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'horo-sagittarius',
+    period: 'daily',
+    date_for: new Date().toISOString().split('T')[0],
+    sign: 'sagittarius',
+    content_hi: 'धार्मिक यात्रा एवं सत्संग का योग है। उच्च अधिकारियों का पूर्ण सहयोग प्राप्त होगा। संतान पक्ष से शुभ समाचार मिलेगा।',
+    content_mr: 'धार्मिक प्रवासाचे योग. वरिष्ठांचे सहकार्य लाभेल. मुलांकडून आनंददायी वार्ता मिळेल.',
+    content_en: 'Spiritual upliftment and pilgrimage favor. Support from seniors and mentors.',
+    lucky_number: 3,
+    lucky_color: 'पीला (Yellow)',
+    author_credit: 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'horo-capricorn',
+    period: 'daily',
+    date_for: new Date().toISOString().split('T')[0],
+    sign: 'capricorn',
+    content_hi: 'कठिन परिश्रम का यथेष्ट फल प्राप्त होगा। उद्योग एवं निर्माण कार्यों में प्रगति होगी। वरिष्ठ जनों का मार्गदर्शन उपयोगी रहेगा।',
+    content_mr: 'कठोर परिश्रमाचे फळ मिळेल. उद्योग-व्यवसायात प्रगती. ज्येष्ठ व्यक्तींचे मार्गदर्शन लाभेल.',
+    content_en: 'Hard work brings tangible financial and career rewards. Construction/industry advances.',
+    lucky_number: 8,
+    lucky_color: 'नीला (Navy Blue)',
+    author_credit: 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'horo-aquarius',
+    period: 'daily',
+    date_for: new Date().toISOString().split('T')[0],
+    sign: 'aquarius',
+    content_hi: 'सामाजिक कार्यों में सक्रिय सहभागिता रहेगी। नए संपर्क भविष्य में अत्यंत लाभप्रद सिद्ध होंगे। आर्थिक स्थिति सुदृढ़ होगी।',
+    content_mr: 'सामाजिक कार्यात सहभाग वाढेल. नवीन ओळखी भविष्यात फायदेशीर ठरतील.',
+    content_en: 'Social network expands meaningfully. Innovative projects gain momentum.',
+    lucky_number: 11,
+    lucky_color: 'आसमानी (Sky Blue)',
+    author_credit: 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'horo-pisces',
+    period: 'daily',
+    date_for: new Date().toISOString().split('T')[0],
+    sign: 'pisces',
+    content_hi: 'आध्यात्मिक शांति एवं रचनात्मक ऊर्जा का संचार होगा। विदेश से जुड़े मामलों में अप्रत्याशित सफलता के योग हैं।',
+    content_mr: 'आध्यात्मिक समाधान लाभेल. परदेशाशी संबंधित कामात यश मिळेल. मन प्रसन्न राहील.',
+    content_en: 'Spiritual peace and creative clarity. Cross-border and overseas initiatives flourish.',
+    lucky_number: 12,
+    lucky_color: 'केसरिया (Saffron)',
+    author_credit: 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+    created_at: new Date().toISOString(),
+  },
+];
+
+export const INITIAL_SUPPLEMENTS: SupplementItem[] = [
+  {
+    id: 'sup-diwali-2026',
+    slug: 'diwali-visheshank-2026',
+    title_hi: 'दैनिक जगत समीक्षा: दीपावली महापर्व विशेषांक २०२६',
+    title_mr: 'दैनिक जगत समीक्षा: दिवाळी महाविशेषांक २०२६',
+    title_en: 'Dainik Jagat Sameeksha: Grand Diwali Special Edition 2026',
+    cover_image_url: 'https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=1200&q=80',
+    issue_date: '2026-10-25',
+    description: 'भारतीय संस्कृति, दीपोत्सव का आध्यात्मिक दर्शन, महाराष्ट्र की आर्थिक समृद्धि और शीर्ष विचारकों के सारगर्भित आलेखों का रंगीन विशेषांक।',
+    pdf_url: '/client-assets/DAINIK_JAGAT_SAMEEKSHA_26_AUGUST_2026.pdf',
+    is_published: true,
+    created_at: '2026-10-25T00:00:00Z',
+  },
+  {
+    id: 'sup-krishi-2026',
+    slug: 'krishi-samriddhi-visheshank',
+    title_hi: 'कृषि समृद्धि विशेषांक: उन्नत तकनीक और किसान की प्रगति',
+    title_mr: 'कृषी समृद्धी विशेषांक: प्रगत तंत्रज्ञान व बळीराजाची भरभराट',
+    title_en: 'Agricultural Prosperity Special: Modern Agritech & Rural Empowerment',
+    cover_image_url: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80',
+    issue_date: '2026-08-15',
+    description: 'ड्रोन आधारित खेती, जैविक उर्वरक, ड्रिप सिंचाई और महाराष्ट्र के सफल किसान उत्पादक संगठनों (FPO) की प्रेरणादायी कहानियां।',
+    pdf_url: '/client-assets/DAINIK_JAGAT_SAMEEKSHA_26_AUGUST_2026.pdf',
+    is_published: true,
+    created_at: '2026-08-15T00:00:00Z',
+  },
+];
+
+export const INITIAL_NEWS_TIPS: NewsTip[] = [
+  {
+    id: 'tip-1',
+    sender_name: 'राजेश शेलके',
+    sender_phone: '+919822011234',
+    sender_city: 'पुणे',
+    message: 'पुणे-सोलापूर महामार्गावर हडपसर जवळ खड्ड्यांमुळे भीषण वाहतूक कोंडी. प्रशासनाचे दुर्लक्ष.',
+    image_urls: ['https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=800&q=80'],
+    status: 'reviewed',
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+  },
+  {
+    id: 'tip-2',
+    sender_name: 'अमित कुमार श्रीवास्तव',
+    sender_phone: '+919871122334',
+    sender_city: 'मुंबई',
+    message: 'भांडुप पश्चिम स्टेशन रोड पर अवैध फेरीवालों के कारण पैदल यात्रियों को भारी असुविधा। फोटो संलग्न है।',
+    image_urls: ['https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80'],
+    status: 'new',
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+  },
+];
+
+export const INITIAL_CMS_PAGES: CMSPage[] = [
+  {
+    slug: 'about-us',
+    title_hi: 'हमारे बारे में (About Us) - दैनिक जगत समीक्षा',
+    title_mr: 'आमच्याबद्दल (About Us) - दैनिक जगत समीक्षा',
+    title_en: 'About Us - Dainik Jagat Sameeksha',
+    meta_description: 'दैनिक जगत समीक्षा (RNI: MAHHIN/2014/57312) का इतिहास, संपादकीय नीति और निष्पक्ष पत्रकारिता का संकल्प।',
+    body_hi: `
+<h2>दैनिक जगत समीक्षा का परिचय</h2>
+<p><strong>दैनिक जगत समीक्षा</strong> (Dainik Jagat Sameeksha) भारत का एक प्रतिष्ठित राष्ट्रीय एवं प्रादेशिक दैनिक समाचार पत्र है। भारत सरकार के समाचार पत्र पंजीयक (RNI) द्वारा पंजीकृत संख्या <strong>MAHHIN/2014/57312</strong> के तहत यह समाचार पत्र मुंबई एवं महाराष्ट्र से निरंतर प्रकाशित हो रहा है।</p>
+
+<h3>संपादकीय दृष्टिकोण एवं नेतृत्व</h3>
+<p>समाचार पत्र के संस्थापक एवं <strong>प्रधान संपादक श्री अरुण रमाकांत तिवारी</strong> (Arun Ramakant Tiwari) के सक्षम नेतृत्व में दैनिक जगत समीक्षा ने सदैव निष्पक्ष, निर्भीक और जनसरोकारों से जुड़ी पत्रकारिता के उच्चतम मानकों को स्थापित किया है।</p>
+
+<h3>मुद्रण एवं प्रकाशन विवरण</h3>
+<ul>
+  <li><strong>समाचार पत्र का नाम:</strong> दैनिक जगत समीक्षा (Dainik Jagat Sameeksha)</li>
+  <li><strong>RNI पंजीकरण संख्या:</strong> MAHHIN/2014/57312</li>
+  <li><strong>प्रधान संपादक:</strong> अरुण रमाकांत तिवारी</li>
+  <li><strong>मुद्रक एवं प्रकाशक:</strong> अरुण रमाकांत तिवारी</li>
+  <li><strong>मुद्रण स्थल:</strong> मुंबई, महाराष्ट्र</li>
+  <li><strong>कार्यालय पता:</strong> भांडुप (पश्चिम), मुंबई, महाराष्ट्र - ४०००७८</li>
+  <li><strong>संपर्क दूरभाष:</strong> +91-8369517611, +91-7448193748</li>
+  <li><strong>ईमेल:</strong> jagatsameeksha2014@gmail.com</li>
+</ul>
+    `.trim(),
+    body_mr: `
+<h2>दैनिक जगत समीक्षा ओळख व इतिहास</h2>
+<p><strong>दैनिक जगत समीक्षा</strong> हे मुंबई व महाराष्ट्रातील अग्रगण्य राष्ट्रीय व प्रादेशिक वृत्तपत्र आहे. भारत सरकारच्या वृत्तपत्र निबंधक (RNI) कडे नोंदणी क्रमांक <strong>MAHHIN/2014/57312</strong> अन्वये नियमित प्रकाशित होत आहे.</p>
+
+<h3>संपादकीय नेतृत्व</h3>
+<p>वृत्तपत्राचे संस्थापक आणि <strong>मुख्य संपादक श्री. अरुण रमाकांत तिवारी</strong> यांच्या नेतृत्वाखाली निष्पक्ष व निर्भीक पत्रकारिता केली जाते.</p>
+    `.trim(),
+    body_en: `
+<h2>About Dainik Jagat Sameeksha</h2>
+<p><strong>Dainik Jagat Sameeksha</strong> is a respected Hindi daily broadsheet newspaper published from Mumbai, Maharashtra, under Registrar of Newspapers for India (RNI) registration number <strong>MAHHIN/2014/57312</strong>.</p>
+<p>Founded and led by <strong>Chief Editor Arun Ramakant Tiwari</strong>, the publication delivers investigative journalism, governance analysis, and regional dispatches.</p>
+    `.trim(),
+    is_published: true,
+    updated_at: '2026-10-28T00:00:00Z',
+  },
+  {
+    slug: 'grievance',
+    title_hi: 'शिकायत निवारण तंत्र (Grievance Redressal Mechanism)',
+    title_mr: 'तक्रार निवारण प्रणाली (Grievance Redressal Mechanism)',
+    title_en: 'Grievance Redressal Mechanism - IT Rules 2021 Compliance',
+    meta_description: 'Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 के तहत दैनिक जगत समीक्षा का शिकायत निवारण अधिकारी विवरण।',
+    body_hi: `
+<h2>डिजिटल मीडिया आचार संहिता एवं शिकायत निवारण (IT Rules 2021 Compliance)</h2>
+<p>सूचना प्रौद्योगिकी (मध्यवर्ती दिशानिर्देश और डिजिटल मीडिया आचार संहिता) नियम, २०२१ (Information Technology Rules, 2021) के नियम ११ के अनुपालन में <strong>दैनिक जगत समीक्षा</strong> द्वारा डिजिटल समाचार एवं समसामयिक विषयों के संबंध में शिकायत निवारण अधिकारी की नियुक्ति की गई है:</p>
+
+<div class="p-4 border-2 border-crimson-800 bg-crimson-50 rounded-lg my-4">
+  <h3 class="text-crimson-900 font-bold mb-2">शिकायत निवारण अधिकारी (Grievance Redressal Officer)</h3>
+  <ul class="space-y-1 text-sm text-editorial-900">
+    <li><strong>नाम:</strong> श्री अरुण रमाकांत तिवारी (Arun Ramakant Tiwari)</li>
+    <li><strong>पदनाम:</strong> प्रधान संपादक एवं शिकायत निवारण अधिकारी</li>
+    <li><strong>पंजीकरण संख्या (RNI):</strong> MAHHIN/2014/57312</li>
+    <li><strong>कार्यालय पता:</strong> दैनिक जगत समीक्षा, भांडुप (पश्चिम), मुंबई, महाराष्ट्र - ४०००७८</li>
+    <li><strong>ईमेल:</strong> <a href="mailto:jagatsameeksha2014@gmail.com" class="text-crimson-800 font-bold underline">jagatsameeksha2014@gmail.com</a></li>
+    <li><strong>हेल्पलाइन दूरभाष:</strong> +91-8369517611 / +91-7448193748</li>
+  </ul>
+</div>
+
+<h3>शिकायत दर्ज करने की प्रक्रिया</h3>
+<ol class="list-decimal pl-5 space-y-2 text-sm text-editorial-800">
+  <li>शिकायतकर्ता को संबंधित समाचार/सामग्री का यूआरएल (URL), प्रकाशन दिनांक एवं आपत्ति का स्पष्ट विवरण ईमेल द्वारा भेजना होगा।</li>
+  <li>शिकायत प्राप्ति की पावती <strong>२४ घंटों</strong> के भीतर प्रेषक को ईमेल द्वारा प्रदान की जाएगी।</li>
+  <li>नियमों के अनुसार शिकायत की निष्पक्ष जांच कर उसका निवारण <strong>१५ दिनों</strong> की समयसीमा के भीतर अनिवार्य रूप से किया जाएगा।</li>
+</ol>
+    `.trim(),
+    body_mr: `
+<h2>माहिती तंत्रज्ञान नियम २०२१ तक्रार निवारण अधिकारी</h2>
+<p>माहिती तंत्रज्ञान (डिजिटल मीडिया आचारसंहिता) नियम २०२१ अंतर्गत दैनिक जगत समीक्षाचे तक्रार निवारण अधिकारी तपशील खालीलप्रमाणे:</p>
+<ul>
+  <li><strong>अधिकारी:</strong> श्री. अरुण रमाकांत तिवारी (मुख्य संपादक)</li>
+  <li><strong>पत्ता:</strong> भांडुप (पश्चिम), मुंबई - ४०००७८</li>
+  <li><strong>ईमेल:</strong> jagatsameeksha2014@gmail.com</li>
+  <li><strong>दूरध्वनी:</strong> +91-8369517611</li>
+</ul>
+    `.trim(),
+    body_en: `
+<h2>Grievance Redressal Mechanism under Rule 11 of IT Rules, 2021</h2>
+<p>In accordance with the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021, the Grievance Redressal Officer for Dainik Jagat Sameeksha is:</p>
+<ul>
+  <li><strong>Name:</strong> Mr. Arun Ramakant Tiwari</li>
+  <li><strong>Designation:</strong> Chief Editor & Grievance Officer</li>
+  <li><strong>Address:</strong> Bhandup (West), Mumbai, Maharashtra - 400078</li>
+  <li><strong>Email:</strong> jagatsameeksha2014@gmail.com</li>
+  <li><strong>Phone:</strong> +91-8369517611</li>
+  <li><strong>Resolution Window:</strong> Acknowledged within 24 hours; resolved within 15 days.</li>
+</ul>
+    `.trim(),
+    is_published: true,
+    updated_at: '2026-10-28T00:00:00Z',
+  },
+];
+
