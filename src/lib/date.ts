@@ -101,3 +101,6 @@ export function formatNewsDate(
 export function getCurrentMastheadDate(lang: SupportedLanguage = 'mr'): string {
   return formatNewsDate(new Date(), lang, { format: 'full' });
 }
+
+export const formatDate = formatNewsDate;
+

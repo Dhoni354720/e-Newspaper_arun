@@ -1,5 +1,45 @@
-import { Article, Category, BreakingNewsItem, SiteSettings, MediaAsset, SupportedLanguage, ArticleStatus, EpaperEdition, EpaperPage, AuditLog, ContactMessage, Profile, HomeBlock } from '@/types/database';
-import { INITIAL_CATEGORIES, INITIAL_ARTICLES, INITIAL_BREAKING_NEWS, INITIAL_EPAPER_EDITIONS, INITIAL_PROFILES, INITIAL_HOME_BLOCKS } from '@/data/seedData';
+import { 
+  Article, 
+  Category, 
+  BreakingNewsItem, 
+  SiteSettings, 
+  MediaAsset, 
+  SupportedLanguage, 
+  ArticleStatus, 
+  EpaperEdition, 
+  EpaperPage, 
+  AuditLog, 
+  ContactMessage, 
+  Profile, 
+  HomeBlock,
+  Gallery,
+  VideoItem,
+  BriefItem,
+  HoroscopeItem,
+  HoroscopePeriod,
+  HoroscopeSign,
+  SupplementItem,
+  NewsTip,
+  NewsTipStatus,
+  CMSPage,
+  WeatherData
+} from '@/types/database';
+import { 
+  INITIAL_CATEGORIES, 
+  INITIAL_ARTICLES, 
+  INITIAL_BREAKING_NEWS, 
+  INITIAL_EPAPER_EDITIONS, 
+  INITIAL_PROFILES, 
+  INITIAL_HOME_BLOCKS,
+  INITIAL_GALLERIES,
+  INITIAL_VIDEOS,
+  INITIAL_BRIEFS,
+  INITIAL_HOROSCOPES,
+  INITIAL_SUPPLEMENTS,
+  INITIAL_NEWS_TIPS,
+  INITIAL_CMS_PAGES,
+  SUPPORTED_WEATHER_CITIES
+} from '@/data/seedData';
 import { DEFAULT_SITE_SETTINGS } from '@/config/site';
 import { isSupabaseConfigured, isDemoMode, supabase } from './supabase';
 import { generateSlug, ensureUniqueSlug } from './slug';
@@ -17,6 +57,14 @@ const STORAGE_KEYS = {
   CONTACT_MESSAGES: 'djs_contact_messages_v2',
   PROFILES: 'djs_profiles_v2',
   HOME_BLOCKS: 'djs_home_blocks_v2',
+  GALLERIES: 'djs_galleries_v2',
+  VIDEOS: 'djs_videos_v2',
+  BRIEFS: 'djs_briefs_v2',
+  HOROSCOPES: 'djs_horoscopes_v2',
+  SUPPLEMENTS: 'djs_supplements_v2',
+  NEWS_TIPS: 'djs_news_tips_v2',
+  CMS_PAGES: 'djs_cms_pages_v2',
+  WEATHER_CACHE: 'djs_weather_cache_v2',
 };
 
 // Memory fallback / LocalStorage loader with seed data
@@ -1241,6 +1289,647 @@ export class NewsRepository {
       );
     }
   }
+
+  // --------------------------------------------------------------------------
+  // PHASE 2: PHOTO GALLERIES
+  // --------------------------------------------------------------------------
+  async getGalleries(options: { isPublished?: boolean; limit?: number } = {}): Promise<Gallery[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        let query = supabase
+          .from('galleries')
+          .select('*, images:gallery_images(*)')
+          .order('published_at', { ascending: false });
+        if (options.isPublished !== undefined) {
+          query = query.eq('is_published', options.isPublished);
+        }
+        if (options.limit) {
+          query = query.limit(options.limit);
+        }
+        const { data, error } = await query;
+        if (!error && data && data.length > 0) {
+          return data as Gallery[];
+        }
+      } catch (e) {
+        console.warn('Supabase getGalleries fallback:', e);
+      }
+    }
+    let list = getLocalItem<Gallery[]>(STORAGE_KEYS.GALLERIES, INITIAL_GALLERIES);
+    if (options.isPublished !== undefined) {
+      list = list.filter(g => g.is_published === options.isPublished);
+    }
+    if (options.limit) {
+      list = list.slice(0, options.limit);
+    }
+    return list;
+  }
+
+  async getGalleryBySlug(slug: string): Promise<Gallery | null> {
+    const list = await this.getGalleries();
+    return list.find(g => g.slug === slug) || null;
+  }
+
+  async saveGallery(gallery: Partial<Gallery>): Promise<Gallery> {
+    const list = getLocalItem<Gallery[]>(STORAGE_KEYS.GALLERIES, INITIAL_GALLERIES);
+    let saved: Gallery;
+    const slug = gallery.slug?.trim() || generateSlug(gallery.title_hi || gallery.title_en || 'gallery');
+
+    if (gallery.id) {
+      const idx = list.findIndex(g => g.id === gallery.id);
+      saved = {
+        ...list[idx],
+        ...gallery,
+        slug,
+      } as Gallery;
+      if (idx >= 0) list[idx] = saved;
+      else list.push(saved);
+    } else {
+      saved = {
+        id: `gal-${Date.now()}`,
+        slug,
+        title_hi: gallery.title_hi || '',
+        title_mr: gallery.title_mr || '',
+        title_en: gallery.title_en || '',
+        cover_image_url: gallery.cover_image_url || 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=1200&q=80',
+        credit: gallery.credit,
+        is_published: gallery.is_published !== undefined ? gallery.is_published : true,
+        published_at: gallery.published_at || new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        images: gallery.images || [],
+      };
+      list.push(saved);
+    }
+    setLocalItem(STORAGE_KEYS.GALLERIES, list);
+
+    if (isSupabaseConfigured()) {
+      Promise.resolve(
+        supabase.from('galleries').upsert({
+          id: saved.id,
+          slug: saved.slug,
+          title_hi: saved.title_hi,
+          title_mr: saved.title_mr,
+          title_en: saved.title_en,
+          cover_image_url: saved.cover_image_url,
+          credit: saved.credit,
+          is_published: saved.is_published,
+          published_at: saved.published_at,
+        })
+      ).catch(e => console.warn('Supabase gallery sync error:', e));
+    }
+
+    return saved;
+  }
+
+  async deleteGallery(id: string): Promise<void> {
+    let list = getLocalItem<Gallery[]>(STORAGE_KEYS.GALLERIES, INITIAL_GALLERIES);
+    list = list.filter(g => g.id !== id);
+    setLocalItem(STORAGE_KEYS.GALLERIES, list);
+
+    if (isSupabaseConfigured()) {
+      Promise.resolve(supabase.from('galleries').delete().eq('id', id)).catch(e =>
+        console.warn('Supabase delete gallery error:', e)
+      );
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // PHASE 2: VIDEOS
+  // --------------------------------------------------------------------------
+  async getVideos(options: { isPublished?: boolean; limit?: number } = {}): Promise<VideoItem[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        let query = supabase
+          .from('videos')
+          .select('*')
+          .order('published_at', { ascending: false });
+        if (options.isPublished !== undefined) {
+          query = query.eq('is_published', options.isPublished);
+        }
+        if (options.limit) {
+          query = query.limit(options.limit);
+        }
+        const { data, error } = await query;
+        if (!error && data && data.length > 0) {
+          return data as VideoItem[];
+        }
+      } catch (e) {
+        console.warn('Supabase getVideos fallback:', e);
+      }
+    }
+    let list = getLocalItem<VideoItem[]>(STORAGE_KEYS.VIDEOS, INITIAL_VIDEOS);
+    if (options.isPublished !== undefined) {
+      list = list.filter(v => v.is_published === options.isPublished);
+    }
+    if (options.limit) {
+      list = list.slice(0, options.limit);
+    }
+    return list;
+  }
+
+  async getVideoBySlug(slug: string): Promise<VideoItem | null> {
+    const list = await this.getVideos();
+    return list.find(v => v.slug === slug) || null;
+  }
+
+  async saveVideo(video: Partial<VideoItem>): Promise<VideoItem> {
+    const list = getLocalItem<VideoItem[]>(STORAGE_KEYS.VIDEOS, INITIAL_VIDEOS);
+    let saved: VideoItem;
+    const slug = video.slug?.trim() || generateSlug(video.title_hi || video.title_en || 'video');
+
+    if (video.id) {
+      const idx = list.findIndex(v => v.id === video.id);
+      saved = {
+        ...list[idx],
+        ...video,
+        slug,
+      } as VideoItem;
+      if (idx >= 0) list[idx] = saved;
+      else list.push(saved);
+    } else {
+      saved = {
+        id: `vid-${Date.now()}`,
+        slug,
+        provider: video.provider || 'youtube',
+        video_id_or_url: video.video_id_or_url || '',
+        title_hi: video.title_hi || '',
+        title_mr: video.title_mr || '',
+        title_en: video.title_en || '',
+        description_hi: video.description_hi,
+        description_mr: video.description_mr,
+        description_en: video.description_en,
+        thumbnail_url: video.thumbnail_url || 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80',
+        duration_seconds: video.duration_seconds || 300,
+        is_published: video.is_published !== undefined ? video.is_published : true,
+        published_at: video.published_at || new Date().toISOString(),
+        created_at: new Date().toISOString(),
+      };
+      list.push(saved);
+    }
+    setLocalItem(STORAGE_KEYS.VIDEOS, list);
+
+    if (isSupabaseConfigured()) {
+      Promise.resolve(supabase.from('videos').upsert(saved)).catch(e =>
+        console.warn('Supabase video sync error:', e)
+      );
+    }
+    return saved;
+  }
+
+  async deleteVideo(id: string): Promise<void> {
+    let list = getLocalItem<VideoItem[]>(STORAGE_KEYS.VIDEOS, INITIAL_VIDEOS);
+    list = list.filter(v => v.id !== id);
+    setLocalItem(STORAGE_KEYS.VIDEOS, list);
+
+    if (isSupabaseConfigured()) {
+      Promise.resolve(supabase.from('videos').delete().eq('id', id)).catch(e =>
+        console.warn('Supabase delete video error:', e)
+      );
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // PHASE 2: BRIEFS / FLASH NEWS (फटाफट खबरें)
+  // --------------------------------------------------------------------------
+  async getBriefs(options: { language?: SupportedLanguage; limit?: number } = {}): Promise<BriefItem[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        let query = supabase
+          .from('briefs')
+          .select('*')
+          .eq('is_published', true)
+          .order('created_at', { ascending: false });
+        if (options.language) {
+          query = query.eq('language', options.language);
+        }
+        if (options.limit) {
+          query = query.limit(options.limit);
+        }
+        const { data, error } = await query;
+        if (!error && data && data.length > 0) {
+          return data as BriefItem[];
+        }
+      } catch (e) {
+        console.warn('Supabase getBriefs fallback:', e);
+      }
+    }
+    let list = getLocalItem<BriefItem[]>(STORAGE_KEYS.BRIEFS, INITIAL_BRIEFS);
+    list = list.filter(b => b.is_published !== false);
+    if (options.language) {
+      list = list.filter(b => b.language === options.language);
+    }
+    if (options.limit) {
+      list = list.slice(0, options.limit);
+    }
+    return list;
+  }
+
+  async saveBrief(brief: Partial<BriefItem>): Promise<BriefItem> {
+    const list = getLocalItem<BriefItem[]>(STORAGE_KEYS.BRIEFS, INITIAL_BRIEFS);
+    let saved: BriefItem;
+
+    if (brief.id) {
+      const idx = list.findIndex(b => b.id === brief.id);
+      saved = { ...list[idx], ...brief } as BriefItem;
+      if (idx >= 0) list[idx] = saved;
+      else list.push(saved);
+    } else {
+      saved = {
+        id: `brf-${Date.now()}`,
+        language: brief.language || 'hi',
+        content: brief.content || '',
+        image_url: brief.image_url,
+        target_url: brief.target_url,
+        category_id: brief.category_id,
+        is_published: brief.is_published !== undefined ? brief.is_published : true,
+        created_at: new Date().toISOString(),
+      };
+      list.unshift(saved);
+    }
+    setLocalItem(STORAGE_KEYS.BRIEFS, list);
+
+    if (isSupabaseConfigured()) {
+      Promise.resolve(supabase.from('briefs').upsert(saved)).catch(e =>
+        console.warn('Supabase brief sync error:', e)
+      );
+    }
+    return saved;
+  }
+
+  async deleteBrief(id: string): Promise<void> {
+    let list = getLocalItem<BriefItem[]>(STORAGE_KEYS.BRIEFS, INITIAL_BRIEFS);
+    list = list.filter(b => b.id !== id);
+    setLocalItem(STORAGE_KEYS.BRIEFS, list);
+
+    if (isSupabaseConfigured()) {
+      Promise.resolve(supabase.from('briefs').delete().eq('id', id)).catch(e =>
+        console.warn('Supabase delete brief error:', e)
+      );
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // PHASE 2: HOROSCOPES (राशिफल)
+  // --------------------------------------------------------------------------
+  async getHoroscopes(period: HoroscopePeriod = 'daily', dateFor?: string): Promise<HoroscopeItem[]> {
+    const targetDate = dateFor || new Date().toISOString().split('T')[0];
+
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase
+          .from('horoscopes')
+          .select('*')
+          .eq('period', period)
+          .eq('date_for', targetDate);
+        if (!error && data && data.length > 0) {
+          return data as HoroscopeItem[];
+        }
+      } catch (e) {
+        console.warn('Supabase getHoroscopes fallback:', e);
+      }
+    }
+    const list = getLocalItem<HoroscopeItem[]>(STORAGE_KEYS.HOROSCOPES, INITIAL_HOROSCOPES);
+    const filtered = list.filter(h => h.period === period);
+    return filtered.length > 0 ? filtered : list;
+  }
+
+  async getHoroscopeForSign(
+    sign: HoroscopeSign,
+    period: HoroscopePeriod = 'daily',
+    dateFor?: string
+  ): Promise<HoroscopeItem | null> {
+    const all = await this.getHoroscopes(period, dateFor);
+    return all.find(h => h.sign === sign) || null;
+  }
+
+  async saveHoroscope(item: Partial<HoroscopeItem> & { sign: HoroscopeSign; period: HoroscopePeriod }): Promise<HoroscopeItem> {
+    const list = getLocalItem<HoroscopeItem[]>(STORAGE_KEYS.HOROSCOPES, INITIAL_HOROSCOPES);
+    const dateFor = item.date_for || new Date().toISOString().split('T')[0];
+    const existingIdx = list.findIndex(h => h.sign === item.sign && h.period === item.period);
+
+    let saved: HoroscopeItem;
+    if (existingIdx >= 0) {
+      saved = { ...list[existingIdx], ...item, date_for: dateFor };
+      list[existingIdx] = saved;
+    } else {
+      saved = {
+        id: `horo-${item.sign}-${Date.now()}`,
+        period: item.period,
+        date_for: dateFor,
+        sign: item.sign,
+        content_hi: item.content_hi || '',
+        content_mr: item.content_mr,
+        content_en: item.content_en,
+        lucky_number: item.lucky_number,
+        lucky_color: item.lucky_color,
+        author_credit: item.author_credit || 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+        created_at: new Date().toISOString(),
+      };
+      list.push(saved);
+    }
+    setLocalItem(STORAGE_KEYS.HOROSCOPES, list);
+
+    if (isSupabaseConfigured()) {
+      Promise.resolve(supabase.from('horoscopes').upsert(saved)).catch(e =>
+        console.warn('Supabase horoscope sync error:', e)
+      );
+    }
+    return saved;
+  }
+
+  async saveHoroscopesBatch(items: Array<Partial<HoroscopeItem> & { sign: HoroscopeSign; period: HoroscopePeriod }>): Promise<HoroscopeItem[]> {
+    const results: HoroscopeItem[] = [];
+    for (const item of items) {
+      const saved = await this.saveHoroscope(item);
+      results.push(saved);
+    }
+    return results;
+  }
+
+  // --------------------------------------------------------------------------
+  // PHASE 2: SUPPLEMENTS (विशेषांक)
+  // --------------------------------------------------------------------------
+  async getSupplements(options: { isPublished?: boolean } = {}): Promise<SupplementItem[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        let query = supabase.from('supplements').select('*').order('issue_date', { ascending: false });
+        if (options.isPublished !== undefined) {
+          query = query.eq('is_published', options.isPublished);
+        }
+        const { data, error } = await query;
+        if (!error && data && data.length > 0) {
+          return data as SupplementItem[];
+        }
+      } catch (e) {
+        console.warn('Supabase getSupplements fallback:', e);
+      }
+    }
+    let list = getLocalItem<SupplementItem[]>(STORAGE_KEYS.SUPPLEMENTS, INITIAL_SUPPLEMENTS);
+    if (options.isPublished !== undefined) {
+      list = list.filter(s => s.is_published === options.isPublished);
+    }
+    return list;
+  }
+
+  async getSupplementBySlug(slug: string): Promise<SupplementItem | null> {
+    const list = await this.getSupplements();
+    return list.find(s => s.slug === slug) || null;
+  }
+
+  async saveSupplement(supplement: Partial<SupplementItem>): Promise<SupplementItem> {
+    const list = getLocalItem<SupplementItem[]>(STORAGE_KEYS.SUPPLEMENTS, INITIAL_SUPPLEMENTS);
+    let saved: SupplementItem;
+    const slug = supplement.slug?.trim() || generateSlug(supplement.title_hi || supplement.title_en || 'supplement');
+
+    if (supplement.id) {
+      const idx = list.findIndex(s => s.id === supplement.id);
+      saved = { ...list[idx], ...supplement, slug } as SupplementItem;
+      if (idx >= 0) list[idx] = saved;
+      else list.push(saved);
+    } else {
+      saved = {
+        id: `sup-${Date.now()}`,
+        slug,
+        title_hi: supplement.title_hi || '',
+        title_mr: supplement.title_mr || '',
+        title_en: supplement.title_en || '',
+        cover_image_url: supplement.cover_image_url || 'https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=1200&q=80',
+        issue_date: supplement.issue_date || new Date().toISOString().split('T')[0],
+        description: supplement.description,
+        pdf_url: supplement.pdf_url,
+        is_published: supplement.is_published !== undefined ? supplement.is_published : true,
+        created_at: new Date().toISOString(),
+      };
+      list.push(saved);
+    }
+    setLocalItem(STORAGE_KEYS.SUPPLEMENTS, list);
+
+    if (isSupabaseConfigured()) {
+      Promise.resolve(supabase.from('supplements').upsert(saved)).catch(e =>
+        console.warn('Supabase supplement sync error:', e)
+      );
+    }
+    return saved;
+  }
+
+  // --------------------------------------------------------------------------
+  // PHASE 2: NEWS TIPS (समाचार भेजें)
+  // --------------------------------------------------------------------------
+  async submitNewsTip(tip: {
+    sender_name: string;
+    sender_phone: string;
+    sender_city: string;
+    message: string;
+    image_urls?: string[];
+    honeypot?: string;
+    actionKey?: string;
+  }): Promise<{ success: boolean; id?: string; error?: string }> {
+    const formKey = tip.actionKey || 'news_tips_submit';
+    const secValidation = validateFormSecurity(formKey, tip.honeypot, 10, 600000);
+    if (!secValidation.allowed) {
+      return { success: false, error: secValidation.error || 'सुरक्षा सत्यापन असफल रहा।' };
+    }
+
+    if (!tip.sender_name?.trim() || !tip.sender_phone?.trim() || !tip.message?.trim()) {
+      return { success: false, error: 'कृपया सभी आवश्यक फ़ील्ड भरें।' };
+    }
+
+    const newTip: NewsTip = {
+      id: `tip-${Date.now()}`,
+      sender_name: tip.sender_name.trim(),
+      sender_phone: tip.sender_phone.trim(),
+      sender_city: tip.sender_city?.trim() || 'महाराष्ट्र',
+      message: tip.message.trim(),
+      image_urls: tip.image_urls || [],
+      status: 'new',
+      created_at: new Date().toISOString(),
+    };
+
+    const tips = getLocalItem<NewsTip[]>(STORAGE_KEYS.NEWS_TIPS, INITIAL_NEWS_TIPS);
+    tips.unshift(newTip);
+    setLocalItem(STORAGE_KEYS.NEWS_TIPS, tips);
+
+    if (isSupabaseConfigured()) {
+      Promise.resolve(
+        supabase.from('news_tips').insert({
+          id: newTip.id,
+          sender_name: newTip.sender_name,
+          sender_phone: newTip.sender_phone,
+          sender_city: newTip.sender_city,
+          message: newTip.message,
+          image_urls: newTip.image_urls,
+          status: newTip.status,
+        })
+      ).catch(e => console.warn('Supabase news tips insert error:', e));
+    }
+
+    return { success: true, id: newTip.id };
+  }
+
+  async getNewsTips(options: { status?: NewsTipStatus } = {}): Promise<NewsTip[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        let query = supabase.from('news_tips').select('*').order('created_at', { ascending: false });
+        if (options.status) {
+          query = query.eq('status', options.status);
+        }
+        const { data, error } = await query;
+        if (!error && data) {
+          return data as NewsTip[];
+        }
+      } catch (e) {
+        console.warn('Supabase getNewsTips fallback:', e);
+      }
+    }
+    let list = getLocalItem<NewsTip[]>(STORAGE_KEYS.NEWS_TIPS, INITIAL_NEWS_TIPS);
+    if (options.status) {
+      list = list.filter(t => t.status === options.status);
+    }
+    return list;
+  }
+
+  async updateNewsTipStatus(id: string, status: NewsTipStatus): Promise<void> {
+    const list = getLocalItem<NewsTip[]>(STORAGE_KEYS.NEWS_TIPS, INITIAL_NEWS_TIPS);
+    const idx = list.findIndex(t => t.id === id);
+    if (idx >= 0) {
+      list[idx].status = status;
+      setLocalItem(STORAGE_KEYS.NEWS_TIPS, list);
+    }
+
+    if (isSupabaseConfigured()) {
+      Promise.resolve(supabase.from('news_tips').update({ status }).eq('id', id)).catch(e =>
+        console.warn('Supabase updateNewsTipStatus error:', e)
+      );
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // PHASE 2: CMS EDITABLE PAGES
+  // --------------------------------------------------------------------------
+  async getPage(slug: string): Promise<CMSPage | null> {
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase.from('pages').select('*').eq('slug', slug).single();
+        if (!error && data) {
+          return data as CMSPage;
+        }
+      } catch (e) {
+        console.warn('Supabase getPage fallback:', e);
+      }
+    }
+    const pages = getLocalItem<CMSPage[]>(STORAGE_KEYS.CMS_PAGES, INITIAL_CMS_PAGES);
+    return pages.find(p => p.slug === slug) || null;
+  }
+
+  async getAllPages(): Promise<CMSPage[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase.from('pages').select('*');
+        if (!error && data && data.length > 0) {
+          return data as CMSPage[];
+        }
+      } catch (e) {
+        console.warn('Supabase getAllPages fallback:', e);
+      }
+    }
+    return getLocalItem<CMSPage[]>(STORAGE_KEYS.CMS_PAGES, INITIAL_CMS_PAGES);
+  }
+
+  async savePage(page: CMSPage): Promise<CMSPage> {
+    const pages = getLocalItem<CMSPage[]>(STORAGE_KEYS.CMS_PAGES, INITIAL_CMS_PAGES);
+    const idx = pages.findIndex(p => p.slug === page.slug);
+    const updated = {
+      ...page,
+      updated_at: new Date().toISOString(),
+    };
+    if (idx >= 0) pages[idx] = updated;
+    else pages.push(updated);
+    setLocalItem(STORAGE_KEYS.CMS_PAGES, pages);
+
+    if (isSupabaseConfigured()) {
+      Promise.resolve(supabase.from('pages').upsert(updated)).catch(e =>
+        console.warn('Supabase savePage error:', e)
+      );
+    }
+    return updated;
+  }
+
+  // --------------------------------------------------------------------------
+  // PHASE 2: LIVE WEATHER SERVICE (Open-Meteo Integration)
+  // --------------------------------------------------------------------------
+  async fetchCityWeather(cityKey: string): Promise<WeatherData> {
+    const city = SUPPORTED_WEATHER_CITIES.find(c => c.key === cityKey) || SUPPORTED_WEATHER_CITIES[0];
+    const cacheKey = `${STORAGE_KEYS.WEATHER_CACHE}_${city.key}`;
+
+    try {
+      // 10-minute client cache to prevent API flooding
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached) as WeatherData;
+        const age = Date.now() - new Date(parsed.updatedAt).getTime();
+        if (age < 1000 * 60 * 10) {
+          return parsed;
+        }
+      }
+
+      // Fetch live weather from Open-Meteo
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.latitude}&longitude=${city.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m`;
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        const current = data.current;
+        const code = current?.weather_code ?? 0;
+
+        // Map weather code to Hindi/Marathi/English
+        const conditions = getWeatherConditionText(code);
+        const weather: WeatherData = {
+          cityKey: city.key,
+          cityName: city.name_hi,
+          temperature: Math.round(current?.temperature_2m ?? 28),
+          weatherCode: code,
+          condition_hi: conditions.hi,
+          condition_mr: conditions.mr,
+          condition_en: conditions.en,
+          windSpeed: Math.round(current?.wind_speed_10m ?? 12),
+          humidity: current?.relative_humidity_2m,
+          updatedAt: new Date().toISOString(),
+        };
+
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify(weather));
+        } catch {
+          // ignore storage quota issues
+        }
+        return weather;
+      }
+    } catch (e) {
+      console.warn('Open-Meteo fetch error, returning fallback:', e);
+    }
+
+    // High quality offline fallback
+    return {
+      cityKey: city.key,
+      cityName: city.name_hi,
+      temperature: city.key === 'delhi' ? 31 : city.key === 'pune' ? 26 : 29,
+      weatherCode: 1,
+      condition_hi: 'साफ एवं सुहावना मौसम',
+      condition_mr: 'स्वच्छ आणि आल्हाददायक हवामान',
+      condition_en: 'Clear and pleasant',
+      windSpeed: 14,
+      humidity: 68,
+      updatedAt: new Date().toISOString(),
+    };
+  }
+}
+
+// Helper to map WMO Weather Codes to Devanagari text
+function getWeatherConditionText(code: number): { hi: string; mr: string; en: string } {
+  if (code === 0) return { hi: 'स्वच्छ आकाश (धूप)', mr: 'निरभ्र आकाश (ऊन)', en: 'Clear sky' };
+  if (code <= 3) return { hi: 'आंशिक बादल', mr: 'अंशतः ढगाळ', en: 'Partly cloudy' };
+  if (code <= 48) return { hi: 'कोहरा एवं धुंध', mr: 'धुके व धुसर', en: 'Foggy / Haze' };
+  if (code <= 55) return { hi: 'हल्की बूंदाबांदी', mr: 'हलका रिमझिम पाऊस', en: 'Light drizzle' };
+  if (code <= 65) return { hi: 'मध्यम से भारी बारिश', mr: 'मध्यम ते मुसळधार पाऊस', en: 'Rain showers' };
+  if (code <= 82) return { hi: 'गरज के साथ बौछारें', mr: 'विजांसह पाऊस', en: 'Thunderstorms' };
+  return { hi: 'सामान्य मौसम', mr: 'सामान्य हवामान', en: 'Fair weather' };
 }
 
 export const repository = NewsRepository.getInstance();
