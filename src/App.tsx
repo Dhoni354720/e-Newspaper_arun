@@ -14,6 +14,14 @@ import { TagPage } from '@/pages/TagPage';
 import { AuthorDetailPage } from '@/pages/AuthorDetailPage';
 import { SearchPage } from '@/pages/SearchPage';
 import { EpaperPage } from '@/pages/EpaperPage';
+import { PhotoGalleryPage } from '@/pages/PhotoGalleryPage';
+import { PhotoGalleryDetailPage } from '@/pages/PhotoGalleryDetailPage';
+import { VideoHubPage } from '@/pages/VideoHubPage';
+import { FlashNewsPage } from '@/pages/FlashNewsPage';
+import { RashifalPage } from '@/pages/RashifalPage';
+import { SupplementDetailPage } from '@/pages/SupplementDetailPage';
+import { NewsTipsPage } from '@/pages/NewsTipsPage';
+import { DynamicPage } from '@/pages/DynamicPage';
 import { AboutPage, ContactPage, PrivacyPolicyPage, TermsPage, NotFoundPage } from '@/pages/StaticPages';
 
 // Admin CMS Pages
@@ -25,6 +33,12 @@ import { AdminArticleEditorPage } from '@/pages/admin/AdminArticleEditorPage';
 import { AdminCategoriesPage } from '@/pages/admin/AdminCategoriesPage';
 import { AdminHomeBlocksPage } from '@/pages/admin/AdminHomeBlocksPage';
 import { AdminBreakingNewsPage } from '@/pages/admin/AdminBreakingNewsPage';
+import { AdminFlashNewsPage } from '@/pages/admin/AdminFlashNewsPage';
+import { AdminRashifalPage } from '@/pages/admin/AdminRashifalPage';
+import { AdminNewsTipsPage } from '@/pages/admin/AdminNewsTipsPage';
+import { AdminGalleriesPage } from '@/pages/admin/AdminGalleriesPage';
+import { AdminVideosPage } from '@/pages/admin/AdminVideosPage';
+import { AdminPagesManager } from '@/pages/admin/AdminPagesManager';
 import { AdminEpaperPage } from '@/pages/admin/AdminEpaperPage';
 import { AdminMediaPage } from '@/pages/admin/AdminMediaPage';
 import { AdminSettingsPage } from '@/pages/admin/AdminSettingsPage';
@@ -65,6 +79,15 @@ export const App: React.FC = () => {
               <Route path="/article/:slug" element={<ArticleDetailPage />} />
               <Route path="/tag/:slug" element={<TagPage />} />
               <Route path="/author/:slug" element={<AuthorDetailPage />} />
+              <Route path="/photos" element={<PhotoGalleryPage />} />
+              <Route path="/photos/:slug" element={<PhotoGalleryDetailPage />} />
+              <Route path="/videos" element={<VideoHubPage />} />
+              <Route path="/flash" element={<FlashNewsPage />} />
+              <Route path="/rashifal" element={<RashifalPage />} />
+              <Route path="/supplement/:slug" element={<SupplementDetailPage />} />
+              <Route path="/submit-news" element={<NewsTipsPage />} />
+              <Route path="/page/:slug" element={<DynamicPage />} />
+              <Route path="/grievance" element={<DynamicPage fixedSlug="grievance" />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
@@ -81,6 +104,12 @@ export const App: React.FC = () => {
                 <Route path="articles" element={<AdminArticlesPage />} />
                 <Route path="articles/new" element={<AdminArticleEditorPage />} />
                 <Route path="articles/:id/edit" element={<AdminArticleEditorPage />} />
+                <Route path="flash" element={<AdminFlashNewsPage />} />
+                <Route path="rashifal" element={<AdminRashifalPage />} />
+                <Route path="news-tips" element={<AdminNewsTipsPage />} />
+                <Route path="galleries" element={<AdminGalleriesPage />} />
+                <Route path="videos" element={<AdminVideosPage />} />
+                <Route path="pages" element={<AdminPagesManager />} />
                 <Route path="epaper" element={<AdminEpaperPage />} />
                 <Route path="categories" element={<AdminCategoriesPage />} />
                 <Route path="home-blocks" element={<AdminHomeBlocksPage />} />

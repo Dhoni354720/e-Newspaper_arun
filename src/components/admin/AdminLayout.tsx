@@ -15,7 +15,13 @@ import {
   Menu, 
   X,
   ShieldAlert,
-  Sparkles
+  Sparkles,
+  Zap,
+  Sun,
+  Send,
+  Camera,
+  Video,
+  Files
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useSettings } from '@/context/SettingsContext';
@@ -57,6 +63,12 @@ export const AdminLayout: React.FC = () => {
     { label: 'ई-वृत्तपत्र (E-Paper)', href: '/admin/epaper', icon: Newspaper },
     { label: 'विभाग व्यवस्थापन (Categories)', href: '/admin/categories', icon: Layers },
     { label: 'होमपेज ब्लॉक्स (Home Blocks)', href: '/admin/home-blocks', icon: Sparkles },
+    { label: 'फटाफट बातम्या (Flash News)', href: '/admin/flash', icon: Zap },
+    { label: 'दैनिक राशीभविष्य (Horoscope)', href: '/admin/rashifal', icon: Sun },
+    { label: 'फोटो गॅलरी (Galleries)', href: '/admin/galleries', icon: Camera },
+    { label: 'व्हिडिओ बातमी (Videos)', href: '/admin/videos', icon: Video },
+    { label: 'नागरिक पत्रकारिता (News Tips)', href: '/admin/news-tips', icon: Send },
+    { label: 'डायनामिक पृष्ठे (Pages)', href: '/admin/pages', icon: Files },
     { label: 'ब्रेकिंग न्यूज (Breaking News)', href: '/admin/breaking-news', icon: Flame },
     { label: 'मीडिया लायब्ररी (Media)', href: '/admin/media', icon: ImageIcon },
     { label: 'संपादकीय सेटिंग्ज (Settings)', href: '/admin/settings', icon: Settings },
