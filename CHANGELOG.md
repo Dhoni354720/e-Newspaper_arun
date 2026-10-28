@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Phase 4: Production Polish, SEO, Feeds, Accessibility & Vercel Deployment] - 2026-10-28
+### Branch: `feat/phase-4-production-polish`
+
+### Added
+- **Automated Feed & Sitemap Generator (`scripts/generate-feeds.mjs`)**:
+  - `public/sitemap.xml`: Complete search engine sitemap with `<loc>`, `<lastmod>`, `<changefreq>`, and `<priority>` across all 24 broadsheet categories, content hubs, e-paper editions, and published articles.
+  - `public/news-sitemap.xml`: Google News compliant sitemap specification (`<news:news>` with `<news:publication>`, `<news:language>hi</news:language>`, publication dates, and titles) for Google News indexing.
+  - `public/rss.xml`: Full RSS 2.0 feed with Dainik Jagat Sameeksha title, description, Chief Editor Arun Ramakant Tiwari attribution, official email, and item enclosures.
+  - Integrated into `package.json` (`npm run build:feeds` and automated invocation during `npm run build`).
+- **Dynamic SEO & Schema.org JSON-LD (`src/components/common/SEOHead.tsx`)**:
+  - Updated fallback share image to official high-resolution crest logo (`/images/logo.png`).
+  - Added RNI Registration `MAHHIN/2014/57312`, founding date `2014`, Chief Editor Arun Ramakant Tiwari founder data, and Bhandup West Mumbai address to `NewsMediaOrganization` JSON-LD schema.
+  - Added OpenGraph (`og:title`, `og:description`, `og:site_name`, `og:image`, `og:locale`), Twitter Card (`summary_large_image`), and canonical URL tags across all pages.
+- **Enhanced 404 Not Found Page (`src/pages/StaticPages.tsx`)**:
+  - Branded Devanagari numerals (`४०४`), bilingual typography, and responsive discoverability navigation buttons (Home, E-Paper, Flash News, and News Search).
+- **Robots.txt & Deployment Security (`public/robots.txt`, `vercel.json`)**:
+  - Linked `sitemap.xml` and `news-sitemap.xml` in `robots.txt`.
+  - Added immutable caching headers for `/epaper/(.*)`, `/images/(.*)`, `/client-assets/(.*)`, and XML feeds with `stale-while-revalidate`.
+  - Content-Security-Policy (CSP), `X-Frame-Options: SAMEORIGIN`, and `X-Content-Type-Options: nosniff`.
+- **Phase 4 Integration Test Suite (`src/test/integration/productionPolishAndSEO.test.tsx`)**:
+  - 6 comprehensive tests covering dynamic SEO, JSON-LD schema injection, sitemap validity, Google News sitemap specifications, RSS 2.0 structure, 404 user experience, and Vercel security headers.
+  - All 12 test suites and 61 tests passing (100% green).
+
 ---
 
 ## [Phase 3: Digital E-Paper Reader Pipeline & Interactive Clipping] - 2026-10-28
