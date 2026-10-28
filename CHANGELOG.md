@@ -6,6 +6,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Phase 3: Digital E-Paper Reader Pipeline & Interactive Clipping] - 2026-10-28
+### Branch: `feat/phase-3-epaper`
+
+### Added
+- **Database Migration (`supabase/migrations/20261028_04_epaper_pipeline.sql`)**:
+  - `epaper_editions` and `epaper_pages` tables with foreign keys, cascading deletes, and performance indexes.
+  - `epaper_clips` table for saving, indexing, and sharing interactive broadsheet crops.
+  - Strict Row Level Security policies: public read for published editions/pages, staff-only mutation for editors and admins.
+- **Genuine Client Broadsheet Processing**:
+  - Processed `DAINIK_JAGAT_SAMEEKSHA_26_AUGUST_2026.pdf` (client broadsheet dated 26 August 2026, 4 pages, RNI `MAHHIN/2014/57312`, Editor: Arun Ramakant Tiwari).
+  - Generated web-view (`page-*.jpg`), thumbnail (`page-*-thumb.jpg`), and ultra-high-resolution deep-zoom (`page-*-zoom.jpg`) images in `public/epaper/2026-08-26/`.
+  - Copied official broadsheet PDF to `public/client-assets/DAINIK_JAGAT_SAMEEKSHA_26_AUGUST_2026.pdf` for direct reader downloads.
+- **Interactive Article Clipping Tool (`src/components/epaper/EpaperClipper.tsx`)**:
+  - Drag-to-select marquee box overlay over broadsheet pages on desktop and mobile touch devices.
+  - HTML5 Canvas high-resolution composite generator:
+    - Official Dainik Jagat Sameeksha Brand Red and Gold masthead banner.
+    - Publication metadata (Date, Page Number, RNI `MAHHIN/2014/57312`, Chief Editor Arun Ramakant Tiwari).
+    - Extracted broadsheet story with border styling.
+    - Official digital footer with website URL and Bhandup West, Mumbai office address.
+  - Direct WhatsApp sharing with encoded intent.
+  - One-click PNG image download and clipboard copy.
+- **Reader Viewer Enhancements (`src/pages/EpaperPage.tsx`)**:
+  - Parameterized routes for direct page and edition linking: `/epaper`, `/epaper/:editionId`, `/epaper/:editionId/page/:pageNumber`.
+  - Deep-zoom switching to 3000px high-resolution scans when zoom exceeds 1.25x.
+  - Double-click to zoom toggle (1x <-> 1.75x).
+  - Single-page view, keyboard arrow navigation (`ArrowLeft`, `ArrowRight`), fullscreen toggle.
+  - Real-time view and download counter tracking.
+- **Admin E-Paper CMS Updates (`src/pages/admin/AdminEpaperPage.tsx`)**:
+  - Dainik Jagat Sameeksha branding, Mumbai main edition defaults, 4-page broadsheet default, and regional filtering.
+- **Integration Test Suite (`src/test/integration/epaperPipeline.test.tsx`)**:
+  - 7 comprehensive tests verifying broadsheet page loading, date/region filtering, parameterized routing, interactive clipper canvas generation, view tracking, and admin CMS management.
+
+---
+
 ## [Phase 2: New Content Types & Multimedia Subsystems] - 2026-10-28
 ### Branch: `feat/phase-2-content-types`
 
