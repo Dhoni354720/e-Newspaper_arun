@@ -7,8 +7,21 @@ export type UserRole = 'admin' | 'editor' | 'author';
 export interface Profile {
   id: string;
   display_name: string;
+  slug?: string;
   role: UserRole;
   avatar_url?: string;
+  bio_hi?: string;
+  bio_mr?: string;
+  bio_en?: string;
+  designation?: string;
+  social_links?: {
+    twitter?: string;
+    facebook?: string;
+    instagram?: string;
+    linkedin?: string;
+  };
+  is_columnist?: boolean;
+  is_active?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -18,6 +31,7 @@ export interface SiteSettings {
   publication_name: string;
   publication_name_mr: string;
   publication_name_hi: string;
+  publication_name_en?: string;
   tagline: string;
   tagline_mr?: string;
   tagline_hi?: string;
@@ -28,6 +42,8 @@ export interface SiteSettings {
   contact_email: string;
   contact_phone: string;
   office_address: string;
+  editor_name?: string;
+  rni_number?: string;
   social_links: {
     twitter?: string;
     facebook?: string;
@@ -38,20 +54,27 @@ export interface SiteSettings {
   };
   theme_settings: {
     accentColor: string;
-    mastheadStyle: 'classic' | 'modern' | 'minimal';
+    mastheadStyle: 'broadsheet' | 'classic' | 'modern' | 'minimal';
     enableBreakingTicker: boolean;
   };
   updated_at: string;
 }
 
+export type CategoryKind = 'news' | 'city' | 'opinion' | 'supplement' | 'special';
+
 export interface Category {
   id: string;
   slug: string;
   parent_id?: string | null;
+  kind?: CategoryKind;
+  show_in_nav?: boolean;
+  nav_order?: number;
+  color_hex?: string;
   sort_order: number;
   is_active: boolean;
   created_at: string;
   translations?: Record<SupportedLanguage, CategoryTranslation>;
+  subcategories?: Category[];
 }
 
 export interface CategoryTranslation {
@@ -62,6 +85,8 @@ export interface CategoryTranslation {
   description?: string;
 }
 
+export type ArticleKind = 'standard' | 'lead' | 'feature' | 'opinion' | 'brief';
+
 export interface Article {
   id: string;
   slug: string;
@@ -71,6 +96,13 @@ export interface Article {
   subtitle?: string;
   excerpt: string;
   body: string;
+  dateline?: string; // e.g., 'दिल्ली:-', 'इंदौर:-'
+  credit_line?: string; // e.g., 'जगत समीक्षा डेस्क', 'अरुण तिवारी'
+  kind?: ArticleKind;
+  is_top?: boolean;
+  top_rank?: number;
+  epaper_edition_id?: string | null;
+  epaper_page_number?: number | null;
   featured_image_path?: string;
   image_alt?: string;
   image_caption?: string;
@@ -88,6 +120,52 @@ export interface Article {
   category_ids?: string[];
   categories?: Category[];
   tags?: string[];
+}
+
+export type HomeBlockType =
+  | 'hero'
+  | 'ticker'
+  | 'top_news'
+  | 'latest'
+  | 'city'
+  | 'opinion'
+  | 'crime'
+  | 'sports'
+  | 'entertainment'
+  | 'lifestyle'
+  | 'photo_strip'
+  | 'video_strip'
+  | 'rashifal'
+  | 'weather'
+  | 'epaper_promo'
+  | 'ad_slot';
+
+export interface HomeBlock {
+  id: string;
+  block_type: HomeBlockType;
+  category_id?: string | null;
+  category?: Category;
+  title_override_hi?: string;
+  title_override_mr?: string;
+  title_override_en?: string;
+  item_count: number;
+  sort_order: number;
+  is_active: boolean;
+  config?: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ArticleRevision {
+  id: string;
+  article_id: string;
+  author_id?: string;
+  author?: Profile;
+  headline: string;
+  body: string;
+  excerpt?: string;
+  change_summary?: string;
+  created_at: string;
 }
 
 export interface MediaAsset {
