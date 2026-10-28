@@ -35,7 +35,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
     : `${publicationName} — ${settings.tagline}`;
   const metaDescription = description || settings.tagline;
   const currentUrl = canonicalUrl || window.location.href;
-  const shareImage = ogImage || `${window.location.origin}/favicon.svg`;
+  const shareImage = ogImage || `${window.location.origin}/images/logo.png`;
 
   useEffect(() => {
     // Set document title
@@ -96,36 +96,59 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
       'dateModified': modifiedTime || publishedTime,
       'author': [{
         '@type': 'Person',
-        'name': authorName || 'Editorial Bureau',
+        'name': authorName || 'अरुण रमाकांत तिवारी (मुख्य संपादक)',
       }],
       'publisher': {
         '@type': 'NewsMediaOrganization',
         'name': publicationName,
+        'alternateName': 'Dainik Jagat Sameeksha',
         'url': window.location.origin,
         'logo': {
           '@type': 'ImageObject',
-          'url': `${window.location.origin}/favicon.svg`,
+          'url': `${window.location.origin}/images/logo.png`,
         },
       },
-      'articleSection': articleCategory || 'News',
+      'articleSection': articleCategory || 'समाचार',
       'inLanguage': language,
     } : {
       '@context': 'https://schema.org',
       '@type': 'NewsMediaOrganization',
       'name': publicationName,
+      'alternateName': 'Dainik Jagat Sameeksha',
       'url': window.location.origin,
-      'logo': `${window.location.origin}/favicon.svg`,
+      'logo': `${window.location.origin}/images/logo.png`,
       'description': settings.tagline,
+      'foundingDate': '2014',
+      'identifier': {
+        '@type': 'PropertyValue',
+        'name': 'RNI Registration',
+        'value': 'MAHHIN/2014/57312',
+      },
       'address': {
         '@type': 'PostalAddress',
-        'streetAddress': settings.office_address,
+        'streetAddress': settings.office_address || 'भांडुप (पश्चिम), मुंबई, महाराष्ट्र 400078',
+        'addressLocality': 'मुंबई',
+        'addressRegion': 'महाराष्ट्र',
+        'postalCode': '400078',
         'addressCountry': 'IN',
       },
-      'contactPoint': {
-        '@type': 'ContactPoint',
-        'telephone': settings.contact_phone,
-        'contactType': 'customer support',
-        'email': settings.contact_email,
+      'contactPoint': [
+        {
+          '@type': 'ContactPoint',
+          'telephone': settings.contact_phone || '+91-8369517611',
+          'contactType': 'editorial',
+          'email': settings.contact_email || 'jagatsameeksha2014@gmail.com',
+        },
+        {
+          '@type': 'ContactPoint',
+          'telephone': '+91-7448193748',
+          'contactType': 'advertising',
+        }
+      ],
+      'founder': {
+        '@type': 'Person',
+        'name': 'अरुण रमाकांत तिवारी',
+        'jobTitle': 'Chief Editor (मुख्य संपादक)',
       },
     };
 

@@ -6,8 +6,7 @@ import { Footer } from '@/components/common/Footer';
 import { SEOHead } from '@/components/common/SEOHead';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSettings } from '@/context/SettingsContext';
-import { repository } from '@/lib/repository';
-import { Mail, Phone, MapPin, Send, CheckCircle2, Shield, FileText, ArrowLeft, Award, Users, Globe2, AlertCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, Shield, FileText, ArrowLeft, Award, Users, Globe2, AlertCircle, Newspaper, Zap, Search } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
   const { t, language } = useLanguage();
@@ -22,7 +21,7 @@ export const AboutPage: React.FC = () => {
       p2: 'निष्पक्षता : कोणत्याही राजकीय, आर्थिक किंवा वैयक्तिक दबावाखाली न येता सर्व बाजू मांडणे.',
       p3: 'बहुभाषिक पोहोच : मराठी, हिंदी आणि इंग्रजी या तिन्ही भाषांमध्ये वाचकांपर्यंत माहिती पोहोचवणे.',
       p4: 'स्थानिक ते जागतिक : मुंबई, पुणे, मराठवाडा, विदर्भापासून ते देश-विदेशातील महत्त्वाच्या घटनांचे संतुलित विश्लेषण.',
-      note: 'टीप: जनवाणी वृत्तपत्र हे स्वतंत्र डिजिटल पत्रकारीता तत्त्वांवर आधारित असून वाचकहित हेच आमचे अंतिम ध्येय आहे.',
+      note: `टीप: ${publicationName} हे स्वतंत्र डिजिटल पत्रकारीता तत्त्वांवर आधारित असून वाचकहित हेच आमचे अंतिम ध्येय आहे.`,
     },
     hi: {
       missionBadge: 'संपादकीय उद्देश्य',
@@ -478,18 +477,42 @@ export const NotFoundPage: React.FC = () => {
       <SEOHead title={t('pageNotFound')} description={t('pageNotFoundDesc')} />
       <div>
         <Header />
-        <main className="max-w-md mx-auto px-4 py-24 text-center">
-          <span className="font-serif text-7xl font-black text-crimson-800 block mb-2">
+        <main className="max-w-xl mx-auto px-4 py-20 text-center">
+          <span className="font-serif text-8xl font-black text-crimson-800 tracking-tight block mb-3">
             {language === 'mr' ? '४०४' : language === 'hi' ? '४०४' : '404'}
           </span>
-          <h1 className="font-serif text-2xl font-bold text-editorial-950 mb-2">{t('pageNotFound')}</h1>
-          <p className="text-sm text-editorial-600 mb-6">{t('pageNotFoundDesc')}</p>
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-crimson-800 hover:bg-crimson-900 text-white rounded font-bold text-xs transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" /> {t('backToHome')}
-          </Link>
+          <h1 className="font-serif text-3xl font-bold text-editorial-950 mb-3">{t('pageNotFound')}</h1>
+          <p className="text-base text-editorial-600 mb-8 max-w-md mx-auto">{t('pageNotFoundDesc')}</p>
+
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-crimson-800 hover:bg-crimson-900 text-white rounded-lg font-bold text-sm shadow-sm transition-all"
+            >
+              <ArrowLeft className="w-4 h-4" /> {t('backToHome')}
+            </Link>
+            <Link
+              to="/epaper"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-editorial-900 rounded-lg font-semibold text-sm transition-all"
+            >
+              <Newspaper className="w-4 h-4 text-crimson-700" />
+              <span>{language === 'hi' ? 'ई-पेपर पढ़ें' : language === 'mr' ? 'ई-पेपर वाचा' : 'Read E-Paper'}</span>
+            </Link>
+            <Link
+              to="/flash"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-editorial-900 rounded-lg font-semibold text-sm transition-all"
+            >
+              <Zap className="w-4 h-4 text-amber-600" />
+              <span>{language === 'hi' ? 'फ़्लैश न्यूज़' : language === 'mr' ? 'फ्लॅश न्यूज' : 'Flash News'}</span>
+            </Link>
+            <Link
+              to="/search"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-editorial-900 rounded-lg font-semibold text-sm transition-all"
+            >
+              <Search className="w-4 h-4 text-editorial-600" />
+              <span>{language === 'hi' ? 'समाचार खोजें' : language === 'mr' ? 'बातम्या शोधा' : 'Search News'}</span>
+            </Link>
+          </div>
         </main>
       </div>
       <Footer />
