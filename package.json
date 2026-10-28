@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build:feeds": "node scripts/generate-feeds.mjs",
+    "build": "node scripts/generate-feeds.mjs && tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run"
   },

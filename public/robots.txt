@@ -3,4 +3,5 @@ Allow: /
 Disallow: /admin/
 Disallow: /admin
 
-Sitemap: https://jagatsameeksha.com/sitemap.xml
+Sitemap: https://dainikjagatsameeksha.com/sitemap.xml
+Sitemap: https://dainikjagatsameeksha.com/news-sitemap.xml
