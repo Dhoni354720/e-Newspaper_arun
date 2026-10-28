@@ -1,17 +1,20 @@
-import { Article, Category, BreakingNewsItem, SiteSettings, MediaAsset, SupportedLanguage, ArticleStatus, EpaperEdition, EpaperPage } from '@/types/database';
+import { Article, Category, BreakingNewsItem, SiteSettings, MediaAsset, SupportedLanguage, ArticleStatus, EpaperEdition, EpaperPage, AuditLog, ContactMessage } from '@/types/database';
 import { INITIAL_CATEGORIES, INITIAL_ARTICLES, INITIAL_BREAKING_NEWS, INITIAL_EPAPER_EDITIONS } from '@/data/seedData';
 import { DEFAULT_SITE_SETTINGS } from '@/config/site';
-import { isSupabaseConfigured, supabase } from './supabase';
+import { isSupabaseConfigured, isDemoMode, supabase } from './supabase';
 import { generateSlug, ensureUniqueSlug } from './slug';
+import { sanitizeHtml } from './sanitize';
+import { validateFormSecurity } from './security/formProtection';
 
 const STORAGE_KEYS = {
-  ARTICLES: 'janvani_articles_v2',
-  CATEGORIES: 'janvani_categories_v2',
-  BREAKING_NEWS: 'janvani_breaking_v2',
-  SETTINGS: 'janvani_settings_v2',
-  MEDIA: 'janvani_media_v2',
-  EPAPER: 'janvani_epaper_v2',
-  AUDIT_LOGS: 'janvani_audit_v2',
+  ARTICLES: 'djs_articles_v2',
+  CATEGORIES: 'djs_categories_v2',
+  BREAKING_NEWS: 'djs_breaking_v2',
+  SETTINGS: 'djs_settings_v2',
+  MEDIA: 'djs_media_v2',
+  EPAPER: 'djs_epaper_v2',
+  AUDIT_LOGS: 'djs_audit_v2',
+  CONTACT_MESSAGES: 'djs_contact_messages_v2',
 };
 
 // Memory fallback / LocalStorage loader with seed data
@@ -66,15 +69,17 @@ export class NewsRepository {
   private static instance: NewsRepository;
 
   private constructor() {
-    // Initialize default local store if empty
-    getLocalItem(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
-    const initialArticles = getLocalItem(STORAGE_KEYS.ARTICLES, INITIAL_ARTICLES);
+    // Strip seed articles from production; seed only in dev or explicit demo mode
+    const shouldSeed = !import.meta.env.PROD && (isDemoMode() || import.meta.env.DEV);
+
+    getLocalItem(STORAGE_KEYS.CATEGORIES, shouldSeed ? INITIAL_CATEGORIES : []);
+    const initialArticles = getLocalItem(STORAGE_KEYS.ARTICLES, shouldSeed ? INITIAL_ARTICLES : []);
     const { updatedArticles } = checkAndAutoPublishScheduled(initialArticles);
     setLocalItem(STORAGE_KEYS.ARTICLES, updatedArticles);
 
-    getLocalItem(STORAGE_KEYS.BREAKING_NEWS, INITIAL_BREAKING_NEWS);
+    getLocalItem(STORAGE_KEYS.BREAKING_NEWS, shouldSeed ? INITIAL_BREAKING_NEWS : []);
     getLocalItem(STORAGE_KEYS.SETTINGS, DEFAULT_SITE_SETTINGS);
-    getLocalItem(STORAGE_KEYS.EPAPER, INITIAL_EPAPER_EDITIONS);
+    getLocalItem(STORAGE_KEYS.EPAPER, shouldSeed ? INITIAL_EPAPER_EDITIONS : []);
   }
 
   public static getInstance(): NewsRepository {
@@ -265,7 +270,7 @@ export class NewsRepository {
   }
 
   async saveArticle(articleData: Partial<Article>): Promise<Article> {
-    const articles = getLocalItem<Article[]>(STORAGE_KEYS.ARTICLES, INITIAL_ARTICLES);
+    const articles = getLocalItem<Article[]>(STORAGE_KEYS.ARTICLES, []);
     const existingSlugs = articles.map(a => a.slug).filter(s => s !== articleData.slug);
 
     let slug = articleData.slug || generateSlug(articleData.headline || 'news-item');
@@ -278,6 +283,9 @@ export class NewsRepository {
       published_at = now;
     }
 
+    // Phase 0 rule 6: Sanitize article HTML body on save
+    const cleanBody = articleData.body !== undefined ? sanitizeHtml(articleData.body) : undefined;
+
     if (articleData.id) {
       // Update existing
       const index = articles.findIndex(a => a.id === articleData.id);
@@ -287,12 +295,26 @@ export class NewsRepository {
         ...articles[index],
         ...articleData,
         slug,
+        body: cleanBody !== undefined ? cleanBody : articles[index].body,
         published_at: articleData.status === 'published' ? (published_at || now) : null,
         updated_at: now,
       };
 
       articles[index] = updatedArticle;
       setLocalItem(STORAGE_KEYS.ARTICLES, articles);
+
+      // Audit log on article update / publish
+      await this.logAudit({
+        action: updatedArticle.status === 'published' ? 'publish' : 'update',
+        entity_type: 'articles',
+        entity_id: updatedArticle.id,
+        metadata: {
+          headline: updatedArticle.headline,
+          status: updatedArticle.status,
+          language: updatedArticle.language,
+        },
+      });
+
       return updatedArticle;
     } else {
       // Create new
@@ -304,15 +326,15 @@ export class NewsRepository {
         headline: articleData.headline || '',
         subtitle: articleData.subtitle || '',
         excerpt: articleData.excerpt || '',
-        body: articleData.body || '',
+        body: cleanBody || '',
         featured_image_path: articleData.featured_image_path || '',
         image_alt: articleData.image_alt || '',
         image_caption: articleData.image_caption || '',
-        author_id: articleData.author_id || 'usr-admin-01',
+        author_id: articleData.author_id || 'usr-author-01',
         author: {
-          id: 'usr-admin-01',
+          id: articleData.author_id || 'usr-author-01',
           display_name: 'संपादकीय प्रतिनिधी',
-          role: 'admin',
+          role: 'author', // Phase 0 rule 2: Default to least-privilege author
           created_at: now,
           updated_at: now,
         },
@@ -331,6 +353,19 @@ export class NewsRepository {
 
       articles.unshift(newArticle);
       setLocalItem(STORAGE_KEYS.ARTICLES, articles);
+
+      // Audit log on article create / publish
+      await this.logAudit({
+        action: newArticle.status === 'published' ? 'publish' : 'create',
+        entity_type: 'articles',
+        entity_id: newArticle.id,
+        metadata: {
+          headline: newArticle.headline,
+          status: newArticle.status,
+          language: newArticle.language,
+        },
+      });
+
       return newArticle;
     }
   }
@@ -355,13 +390,20 @@ export class NewsRepository {
   }
 
   async deleteArticle(articleId: string): Promise<void> {
-    const articles = getLocalItem<Article[]>(STORAGE_KEYS.ARTICLES, INITIAL_ARTICLES);
+    const articles = getLocalItem<Article[]>(STORAGE_KEYS.ARTICLES, []);
     const filtered = articles.filter(a => a.id !== articleId);
     setLocalItem(STORAGE_KEYS.ARTICLES, filtered);
 
     // Also remove from breaking news if present
-    const breaking = getLocalItem<BreakingNewsItem[]>(STORAGE_KEYS.BREAKING_NEWS, INITIAL_BREAKING_NEWS);
+    const breaking = getLocalItem<BreakingNewsItem[]>(STORAGE_KEYS.BREAKING_NEWS, []);
     setLocalItem(STORAGE_KEYS.BREAKING_NEWS, breaking.filter(b => b.article_id !== articleId));
+
+    // Audit log on article delete
+    await this.logAudit({
+      action: 'delete',
+      entity_type: 'articles',
+      entity_id: articleId,
+    });
   }
 
   // --------------------------------------------------------------------------
@@ -484,6 +526,15 @@ export class NewsRepository {
       updated_at: new Date().toISOString(),
     };
     setLocalItem(STORAGE_KEYS.SETTINGS, updated);
+
+    // Audit log on settings update
+    await this.logAudit({
+      action: 'update',
+      entity_type: 'site_settings',
+      entity_id: 'default',
+      metadata: { publication_name: updated.publication_name },
+    });
+
     return updated;
   }
 
@@ -699,13 +750,21 @@ export class NewsRepository {
         updated_at: now,
       };
       setLocalItem(STORAGE_KEYS.EPAPER, editions);
+
+      await this.logAudit({
+        action: editions[idx].is_published ? 'publish' : 'update',
+        entity_type: 'epaper_editions',
+        entity_id: editions[idx].id,
+        metadata: { date: editions[idx].edition_date, title: editions[idx].title },
+      });
+
       return editions[idx];
     } else {
       const newEdition: EpaperEdition = {
         id: `ep-${Date.now()}`,
         edition_date: data.edition_date || new Date().toISOString().split('T')[0],
-        edition_region: data.edition_region || 'pune',
-        title: data.title || 'जनवाणी वृत्तपत्र - डिजिटल आवृत्ती',
+        edition_region: data.edition_region || 'mumbai',
+        title: data.title || 'दैनिक जगत समीक्षा - डिजिटल ई-पेपर',
         title_mr: data.title_mr || data.title,
         title_hi: data.title_hi || data.title,
         description: data.description || '',
@@ -731,13 +790,27 @@ export class NewsRepository {
       };
       editions.unshift(newEdition);
       setLocalItem(STORAGE_KEYS.EPAPER, editions);
+
+      await this.logAudit({
+        action: newEdition.is_published ? 'publish' : 'create',
+        entity_type: 'epaper_editions',
+        entity_id: newEdition.id,
+        metadata: { date: newEdition.edition_date, title: newEdition.title },
+      });
+
       return newEdition;
     }
   }
 
   async deleteEpaperEdition(id: string): Promise<void> {
-    const editions = getLocalItem<EpaperEdition[]>(STORAGE_KEYS.EPAPER, INITIAL_EPAPER_EDITIONS);
+    const editions = getLocalItem<EpaperEdition[]>(STORAGE_KEYS.EPAPER, []);
     setLocalItem(STORAGE_KEYS.EPAPER, editions.filter(e => e.id !== id));
+
+    await this.logAudit({
+      action: 'delete',
+      entity_type: 'epaper_editions',
+      entity_id: id,
+    });
   }
 
   async saveEpaperPage(editionId: string, pageData: Partial<EpaperPage>): Promise<EpaperPage> {
@@ -804,6 +877,147 @@ export class NewsRepository {
       edition.downloads_count = (edition.downloads_count || 0) + 1;
       setLocalItem(STORAGE_KEYS.EPAPER, editions);
     }
+  }
+
+  // --------------------------------------------------------------------------
+  // AUDIT LOGS & COMPLIANCE
+  // --------------------------------------------------------------------------
+  async logAudit(entry: {
+    actor_id?: string;
+    action: 'create' | 'update' | 'delete' | 'publish' | 'auto_publish';
+    entity_type: string;
+    entity_id?: string;
+    metadata?: Record<string, unknown>;
+  }): Promise<void> {
+    const now = new Date().toISOString();
+
+    // 1. Always record to local storage store for resilience / offline inspection
+    const logs = getLocalItem<AuditLog[]>(STORAGE_KEYS.AUDIT_LOGS, []);
+    const newLog: AuditLog = {
+      id: `audit-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+      actor_id: entry.actor_id,
+      action: entry.action,
+      entity_type: entry.entity_type,
+      entity_id: entry.entity_id,
+      metadata: entry.metadata,
+      created_at: now,
+    };
+    logs.unshift(newLog);
+    setLocalItem(STORAGE_KEYS.AUDIT_LOGS, logs.slice(0, 500));
+
+    // 2. Also sync to live Supabase backend if configured
+    if (isSupabaseConfigured()) {
+      try {
+        await supabase.from('audit_logs').insert({
+          actor_id: entry.actor_id || null,
+          action: entry.action,
+          entity_type: entry.entity_type,
+          entity_id: entry.entity_id || null,
+          metadata: entry.metadata || {},
+          created_at: now,
+        });
+      } catch {
+        // Graceful non-blocking fallback if remote migration is pending
+      }
+    }
+  }
+
+  async getAuditLogs(limit: number = 50): Promise<AuditLog[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase
+          .from('audit_logs')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(limit);
+        if (!error && data && data.length > 0) return data as AuditLog[];
+      } catch {
+        // Fall back to local
+      }
+    }
+    const logs = getLocalItem<AuditLog[]>(STORAGE_KEYS.AUDIT_LOGS, []);
+    return logs.slice(0, limit);
+  }
+
+  // --------------------------------------------------------------------------
+  // CONTACT & PUBLIC FORM INBOX
+  // --------------------------------------------------------------------------
+  async submitContactMessage(data: {
+    name: string;
+    email: string;
+    phone?: string;
+    subject?: string;
+    message: string;
+    honeypot?: string;
+  }): Promise<{ success: boolean; error?: string }> {
+    const secCheck = validateFormSecurity('contact_messages', data.honeypot);
+    if (!secCheck.allowed) {
+      return { success: false, error: secCheck.error || 'सुरक्षा जाँच विफल (Security check failed)' };
+    }
+
+    if (!data.name?.trim() || !data.email?.trim() || !data.message?.trim()) {
+      return { success: false, error: 'कृपया सभी आवश्यक फ़ील्ड भरें (Please fill all required fields).' };
+    }
+
+    const now = new Date().toISOString();
+    const record = {
+      name: data.name.trim(),
+      email: data.email.trim().toLowerCase(),
+      phone: data.phone?.trim() || undefined,
+      subject: data.subject?.trim() || 'सामान्य संपर्क',
+      message: data.message.trim(),
+      status: 'unread' as const,
+    };
+
+    // 1. Always record in local store for resilience
+    const messages = getLocalItem<ContactMessage[]>(STORAGE_KEYS.CONTACT_MESSAGES, []);
+    const newMsg: ContactMessage = {
+      id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+      ...record,
+      created_at: now,
+      updated_at: now,
+    };
+    messages.unshift(newMsg);
+    setLocalItem(STORAGE_KEYS.CONTACT_MESSAGES, messages);
+
+    // 2. Also persist to Supabase if configured
+    if (isSupabaseConfigured()) {
+      try {
+        await supabase.from('contact_messages').insert({
+          ...record,
+          phone: record.phone || null,
+          created_at: now,
+          updated_at: now,
+        });
+      } catch {
+        // Table may be in pending migration on remote database
+      }
+    }
+
+    await this.logAudit({
+      action: 'create',
+      entity_type: 'contact_messages',
+      metadata: { name: record.name, email: record.email, subject: record.subject },
+    });
+
+    return { success: true };
+  }
+
+  async getContactMessages(limit: number = 50): Promise<ContactMessage[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase
+          .from('contact_messages')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(limit);
+        if (!error && data && data.length > 0) return data as ContactMessage[];
+      } catch {
+        // Fall back to local
+      }
+    }
+    const messages = getLocalItem<ContactMessage[]>(STORAGE_KEYS.CONTACT_MESSAGES, []);
+    return messages.slice(0, limit);
   }
 }
 

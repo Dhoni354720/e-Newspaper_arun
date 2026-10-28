@@ -9,6 +9,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 import { repository } from '@/lib/repository';
 import { formatNewsDate } from '@/lib/date';
+import { sanitizeHtml } from '@/lib/sanitize';
 import { Article } from '@/types/database';
 import { 
   Calendar, 
@@ -303,7 +304,7 @@ export const ArticleDetailPage: React.FC = () => {
           {/* 7. Rich Text Article Body */}
           <div
             className="tiptap-content text-editorial-900 leading-relaxed font-sans text-base sm:text-lg mb-10 prose max-w-none"
-            dangerouslySetInnerHTML={{ __html: article.body }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.body) }}
           />
 
           {/* 8. Tags Strip */}

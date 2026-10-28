@@ -12,6 +12,10 @@ export const isSupabaseConfigured = (): boolean => {
   );
 };
 
+export const isDemoMode = (): boolean => {
+  return !import.meta.env.PROD && import.meta.env.VITE_DEMO_MODE === 'true';
+};
+
 // Singleton Supabase Client (initialized only if valid URL is present)
 export const supabase: SupabaseClient = createClient(
   supabaseUrl || 'https://placeholder-project.supabase.co',

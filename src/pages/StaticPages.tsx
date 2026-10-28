@@ -6,7 +6,8 @@ import { Footer } from '@/components/common/Footer';
 import { SEOHead } from '@/components/common/SEOHead';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSettings } from '@/context/SettingsContext';
-import { Mail, Phone, MapPin, Send, CheckCircle2, Shield, FileText, ArrowLeft, Award, Users, Globe2 } from 'lucide-react';
+import { repository } from '@/lib/repository';
+import { Mail, Phone, MapPin, Send, CheckCircle2, Shield, FileText, ArrowLeft, Award, Users, Globe2, AlertCircle } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
   const { t, language } = useLanguage();
@@ -93,7 +94,16 @@ export const ContactPage: React.FC = () => {
   const { t, language } = useLanguage();
   const { settings, publicationName } = useSettings();
   const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: '',
+    honeypot: '',
+  });
 
   const labels = {
     mr: {
@@ -152,9 +162,27 @@ export const ContactPage: React.FC = () => {
     },
   }[language];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setFormError(null);
+    setIsSubmitting(true);
+
+    const res = await repository.submitContactMessage({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      subject: formData.subject,
+      message: formData.message,
+      honeypot: formData.honeypot,
+    });
+
+    setIsSubmitting(false);
+
+    if (res.success) {
+      setSubmitted(true);
+    } else {
+      setFormError(res.error || 'त्रुटी आढळली');
+    }
   };
 
   return (
@@ -208,6 +236,13 @@ export const ContactPage: React.FC = () => {
                 {labels.formTitle}
               </h2>
 
+              {formError && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 text-xs rounded-lg flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+                  <span>{formError}</span>
+                </div>
+              )}
+
               {submitted ? (
                 <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-lg text-center space-y-3">
                   <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
@@ -216,7 +251,10 @@ export const ContactPage: React.FC = () => {
                     {labels.successMsg}
                   </p>
                   <button
-                    onClick={() => { setSubmitted(false); setFormData({ name: '', email: '', subject: '', message: '' }); }}
+                    onClick={() => {
+                      setSubmitted(false);
+                      setFormData({ name: '', email: '', phone: '', subject: '', message: '', honeypot: '' });
+                    }}
                     className="text-xs font-semibold text-emerald-800 underline mt-2"
                   >
                     {labels.sendAnother}
@@ -224,6 +262,20 @@ export const ContactPage: React.FC = () => {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Honeypot field (hidden from legitimate users, catches spam bots) */}
+                  <div className="hidden" aria-hidden="true" style={{ display: 'none' }}>
+                    <label htmlFor="hp_website">Leave this field blank</label>
+                    <input
+                      id="hp_website"
+                      type="text"
+                      name="website"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={formData.honeypot}
+                      onChange={(e) => setFormData({ ...formData, honeypot: e.target.value })}
+                    />
+                  </div>
+
                   <div>
                     <label className="text-xs font-semibold text-editorial-700 block mb-1">
                       {labels.name}
@@ -247,6 +299,18 @@ export const ContactPage: React.FC = () => {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder={labels.emailPlaceholder}
+                      className="w-full px-3 py-2 text-sm bg-white border border-editorial-300 rounded focus:ring-1 focus:ring-crimson-800 focus:border-crimson-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-editorial-700 block mb-1">
+                      {language === 'mr' ? 'फोन क्रमांक' : language === 'hi' ? 'फ़ोन नंबर' : 'Phone Number'}
+                    </label>
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      placeholder="+91 XXXXX XXXXX"
                       className="w-full px-3 py-2 text-sm bg-white border border-editorial-300 rounded focus:ring-1 focus:ring-crimson-800 focus:border-crimson-800"
                     />
                   </div>
@@ -277,10 +341,11 @@ export const ContactPage: React.FC = () => {
                   </div>
                   <button
                     type="submit"
-                    className="w-full py-2.5 bg-crimson-800 hover:bg-crimson-900 text-white font-bold text-xs rounded transition-colors flex items-center justify-center gap-2"
+                    disabled={isSubmitting}
+                    className="w-full py-2.5 bg-crimson-800 hover:bg-crimson-900 disabled:opacity-50 text-white font-bold text-xs rounded transition-colors flex items-center justify-center gap-2"
                   >
                     <Send className="w-3.5 h-3.5" />
-                    {labels.sendBtn}
+                    {isSubmitting ? (language === 'mr' ? 'पाठवत आहे...' : language === 'hi' ? 'भेजा जा रहा है...' : 'Sending...') : labels.sendBtn}
                   </button>
                 </form>
               )}

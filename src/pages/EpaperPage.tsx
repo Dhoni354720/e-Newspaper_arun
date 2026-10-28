@@ -201,7 +201,7 @@ export const EpaperPage: React.FC = () => {
                 {currentEdition && (
                   <span className="inline-flex items-center gap-1.5 text-xs text-stone-600 bg-stone-100 px-3 py-1.5 rounded-lg border border-stone-200 font-medium mr-2">
                     <Eye className="w-4 h-4 text-crimson-700" />
-                    <span>{(currentEdition.views_count || 1200).toLocaleString()} {t('totalViews')}</span>
+                    <span>{(currentEdition.views_count || 0).toLocaleString()} {t('totalViews')}</span>
                   </span>
                 )}
 
@@ -509,10 +509,10 @@ export const EpaperPage: React.FC = () => {
 
                     <div className="flex items-center gap-3 text-[11px] text-stone-500 pt-2 border-t border-stone-100">
                       <span className="flex items-center gap-1">
-                        <Eye className="w-3 h-3 text-stone-400" /> {(ed.views_count || 1200).toLocaleString()}
+                        <Eye className="w-3 h-3 text-stone-400" /> {(ed.views_count || 0).toLocaleString()}
                       </span>
                       <span className="flex items-center gap-1">
-                        <Download className="w-3 h-3 text-stone-400" /> {(ed.downloads_count || 320).toLocaleString()}
+                        <Download className="w-3 h-3 text-stone-400" /> {(ed.downloads_count || 0).toLocaleString()}
                       </span>
                     </div>
                   </div>
