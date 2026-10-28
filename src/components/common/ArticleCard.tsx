@@ -229,6 +229,9 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
 
           {showExcerpt && article.excerpt && (
             <p className="text-editorial-600 text-xs sm:text-sm leading-relaxed line-clamp-3">
+              {article.dateline && (
+                <strong className="text-editorial-950 font-bold mr-1.5">{article.dateline}</strong>
+              )}
               {article.excerpt}
             </p>
           )}
@@ -236,9 +239,18 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
       </div>
 
       <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-2 flex items-center justify-between border-t border-paper-border/60">
-        <span className="text-xs text-editorial-500 truncate max-w-[150px]">
-          {article.author?.display_name || 'संपादकीय प्रतिनिधी'}
-        </span>
+        {article.author?.slug ? (
+          <Link
+            to={`/author/${article.author.slug}`}
+            className="text-xs text-editorial-600 hover:text-crimson-800 font-medium truncate max-w-[150px] transition-colors"
+          >
+            {article.author.display_name}
+          </Link>
+        ) : (
+          <span className="text-xs text-editorial-500 truncate max-w-[150px]">
+            {article.author?.display_name || 'संपादकीय ब्यूरो'}
+          </span>
+        )}
         <Link
           to={`/article/${article.slug}`}
           className="text-xs font-bold text-crimson-800 inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
