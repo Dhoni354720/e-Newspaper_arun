@@ -33,9 +33,10 @@ describe('Editorial Workflow & Public Portal E2E Component Tests', () => {
     );
 
     // Publication name is rendered
-    expect(screen.getByText(/जनवाणी न्यूज|JANVANI NEWS/i)).toBeInTheDocument();
+    expect(screen.getByText(/दैनिक जगत समीक्षा|Dainik Jagat Sameeksha|जनवाणी/i)).toBeInTheDocument();
 
     // Language switcher buttons exist
+    expect(screen.getByRole('button', { name: 'हिन्दी' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'मराठी' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'English' })).toBeInTheDocument();
   });
@@ -48,7 +49,7 @@ describe('Editorial Workflow & Public Portal E2E Component Tests', () => {
     );
 
     await waitFor(() => {
-      const breakingBadge = screen.getByText(/महत्त्वाच्या घडामोडी|BREAKING/i);
+      const breakingBadge = screen.getByText(/ब्रेकिंग न्यूज़|महत्त्वाच्या घडामोडी|BREAKING/i);
       expect(breakingBadge).toBeInTheDocument();
     });
   });

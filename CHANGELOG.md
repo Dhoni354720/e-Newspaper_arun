@@ -6,6 +6,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Phase 1: Sections, Menus, Homepage, and Authors] - 2026-10-28
+### Branch: `feat/phase-1-sections-home`
+
+### Added
+- **Database Migration (`supabase/migrations/20261028_02_categories_authors_homeblocks.sql`)**:
+  - Extended `categories` with `parent_id` (hierarchical tree), `kind`, `show_in_nav`, `nav_order`, and `color_hex`.
+  - Added `slug`, `designation`, `bio_hi`, `bio_mr`, `bio_en`, `is_columnist`, and `is_active` to `profiles`.
+  - Created `home_blocks` table with `block_type`, `item_count`, `sort_order`, `is_active`, and multilingual title overrides.
+  - Added `article_revisions` table for editorial versioning and rollback capability.
+  - Added `is_top`, `top_rank`, `kind`, `dateline`, and `credit_line` to `articles`.
+- **Branding & Assets**:
+  - Extracted client logo from PDF to `public/images/logo.png` and `public/logo.png`.
+  - Added broadsheet color tokens to `tailwind.config.js` (`brand-red: #ed1c24`, `brand-gold: #fbc707`, highlight colors).
+  - Print masthead CSS styling and typography in `src/index.css`.
+- **Hierarchical Categories & Authors Seed Data (`src/data/seedData.ts`)**:
+  - Seeded 24 broadsheet categories (Maharashtra, Vidarbha, Marathwada, Western Maharashtra, Mumbai, Pune, Thane, Nagpur, Nashik, Editorial, National, Business, Sports, Entertainment, Crime).
+  - Seeded Chief Editor Arun Ramakant Tiwari (`arun-ramakant-tiwari`), Special Correspondent Bureau, Legal Bureau, and Sports Desk.
+  - Seeded 9 configurable home blocks (`hero`, `top_news`, `city_tabs`, `opinion`, `crime`, `sports`, `epaper_promo`, `weather`).
+  - Added Dainik Jagat Sameeksha print issue metadata (RNI `MAHHIN/2014/57312`, Vol 12, Issue 24).
+- **Mega Menu Component (`src/components/common/MegaMenu.tsx`)**:
+  - Full broadsheet section directory grouped by Kind (Maharashtra, Rashtriya, Editorial, Crime, Sports, Business, Entertainment).
+  - Direct links to subcategories with active dispatch counters and latest headlines.
+- **Dedicated Public Pages**:
+  - `TopNewsPage.tsx` (`/top-news`): Dedicated view for chief editorial picks and top ranked breaking stories.
+  - `TagPage.tsx` (`/tag/:slug`): Tag-based news archive with datelines and reading times.
+  - `AuthorDetailPage.tsx` (`/author/:slug`): Editorial profile page for Chief Editor Arun Ramakant Tiwari and columnists, including bio, designation pill, and published articles archive.
+- **Admin CMS Customizer (`src/pages/admin/AdminHomeBlocksPage.tsx`)**:
+  - Interactive management UI for homepage blocks with reordering, active/inactive toggles, item count control, and custom multilingual titles.
+- **Test Suites**:
+  - `src/test/integration/i18nCompleteness.test.ts`: Verifies complete 1:1 key parity across `hi`, `mr`, and `en` translations with zero missing keys.
+  - `src/test/integration/categoryAndMegaMenu.test.tsx`: Verifies hierarchical category retrieval, author profile routing, and Mega Menu navigation.
+
+### Changed
+- **Default Language & Navigation**:
+  - Switched default publication language to Hindi (`'hi'`), with language order `हिन्दी | मराठी | English`.
+  - Header updated with Dainik Jagat Sameeksha logo, RNI registration strip, Gold print issue bar, and Mega Menu trigger.
+  - Article cards updated with bold print datelines (`dateline`) and author bylines linking to `/author/:slug`.
+- **Dynamic Homepage (`src/pages/HomePage.tsx`)**:
+  - Replaced static layout with dynamic block engine rendering configured blocks (Hero Lead, Big 4, City Dispatches with tabs, Editor's Column, Crime, Sports, E-paper promo).
+
+---
+
 ## [Phase 0: Security and Production Foundation] - 2026-10-28
 ### Branch: `feat/phase-0-security`
 
