@@ -56,6 +56,7 @@ export const AdminLayout: React.FC = () => {
     { label: 'नवीन बातमी (Write New)', href: '/admin/articles/new', icon: PlusCircle },
     { label: 'ई-वृत्तपत्र (E-Paper)', href: '/admin/epaper', icon: Newspaper },
     { label: 'विभाग व्यवस्थापन (Categories)', href: '/admin/categories', icon: Layers },
+    { label: 'होमपेज ब्लॉक्स (Home Blocks)', href: '/admin/home-blocks', icon: Sparkles },
     { label: 'ब्रेकिंग न्यूज (Breaking News)', href: '/admin/breaking-news', icon: Flame },
     { label: 'मीडिया लायब्ररी (Media)', href: '/admin/media', icon: ImageIcon },
     { label: 'संपादकीय सेटिंग्ज (Settings)', href: '/admin/settings', icon: Settings },

@@ -9,6 +9,9 @@ import { HomePage } from '@/pages/HomePage';
 import { NewsFeedPage } from '@/pages/NewsFeedPage';
 import { CategoryPage } from '@/pages/CategoryPage';
 import { ArticleDetailPage } from '@/pages/ArticleDetailPage';
+import { TopNewsPage } from '@/pages/TopNewsPage';
+import { TagPage } from '@/pages/TagPage';
+import { AuthorDetailPage } from '@/pages/AuthorDetailPage';
 import { SearchPage } from '@/pages/SearchPage';
 import { EpaperPage } from '@/pages/EpaperPage';
 import { AboutPage, ContactPage, PrivacyPolicyPage, TermsPage, NotFoundPage } from '@/pages/StaticPages';
@@ -20,6 +23,7 @@ import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
 import { AdminArticlesPage } from '@/pages/admin/AdminArticlesPage';
 import { AdminArticleEditorPage } from '@/pages/admin/AdminArticleEditorPage';
 import { AdminCategoriesPage } from '@/pages/admin/AdminCategoriesPage';
+import { AdminHomeBlocksPage } from '@/pages/admin/AdminHomeBlocksPage';
 import { AdminBreakingNewsPage } from '@/pages/admin/AdminBreakingNewsPage';
 import { AdminEpaperPage } from '@/pages/admin/AdminEpaperPage';
 import { AdminMediaPage } from '@/pages/admin/AdminMediaPage';
@@ -55,9 +59,12 @@ export const App: React.FC = () => {
               {/* Public Portal Routes */}
               <Route path="/" element={<HomePage />} />
               <Route path="/news" element={<NewsFeedPage />} />
+              <Route path="/top-news" element={<TopNewsPage />} />
               <Route path="/epaper" element={<EpaperPage />} />
               <Route path="/category/:slug" element={<CategoryPage />} />
               <Route path="/article/:slug" element={<ArticleDetailPage />} />
+              <Route path="/tag/:slug" element={<TagPage />} />
+              <Route path="/author/:slug" element={<AuthorDetailPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
@@ -76,6 +83,7 @@ export const App: React.FC = () => {
                 <Route path="articles/:id/edit" element={<AdminArticleEditorPage />} />
                 <Route path="epaper" element={<AdminEpaperPage />} />
                 <Route path="categories" element={<AdminCategoriesPage />} />
+                <Route path="home-blocks" element={<AdminHomeBlocksPage />} />
                 <Route path="media" element={<AdminMediaPage />} />
                 <Route path="breaking-news" element={<AdminBreakingNewsPage />} />
                 <Route path="settings" element={<AdminSettingsPage />} />
