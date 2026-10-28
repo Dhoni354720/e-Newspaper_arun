@@ -905,20 +905,20 @@ export class NewsRepository {
     logs.unshift(newLog);
     setLocalItem(STORAGE_KEYS.AUDIT_LOGS, logs.slice(0, 500));
 
-    // 2. Also sync to live Supabase backend if configured
+    // 2. Non-blocking sync to live Supabase backend if configured
     if (isSupabaseConfigured()) {
-      try {
-        await supabase.from('audit_logs').insert({
+      Promise.resolve(
+        supabase.from('audit_logs').insert({
           actor_id: entry.actor_id || null,
           action: entry.action,
           entity_type: entry.entity_type,
           entity_id: entry.entity_id || null,
           metadata: entry.metadata || {},
           created_at: now,
-        });
-      } catch {
+        })
+      ).catch(() => {
         // Graceful non-blocking fallback if remote migration is pending
-      }
+      });
     }
   }
 
@@ -980,18 +980,18 @@ export class NewsRepository {
     messages.unshift(newMsg);
     setLocalItem(STORAGE_KEYS.CONTACT_MESSAGES, messages);
 
-    // 2. Also persist to Supabase if configured
+    // 2. Non-blocking sync to Supabase if configured
     if (isSupabaseConfigured()) {
-      try {
-        await supabase.from('contact_messages').insert({
+      Promise.resolve(
+        supabase.from('contact_messages').insert({
           ...record,
           phone: record.phone || null,
           created_at: now,
           updated_at: now,
-        });
-      } catch {
+        })
+      ).catch(() => {
         // Table may be in pending migration on remote database
-      }
+      });
     }
 
     await this.logAudit({
