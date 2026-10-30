@@ -7,6 +7,7 @@ import { repository } from '@/lib/repository';
 import { SupplementItem } from '@/types/database';
 import { useLanguage } from '@/context/LanguageContext';
 import { formatDate } from '@/lib/date';
+import { safeUrl } from '@/lib/sanitize';
 import { BookOpen, Download, ArrowLeft, Calendar, FileText, CheckCircle2 } from 'lucide-react';
 
 export const SupplementDetailPage: React.FC = () => {
@@ -138,7 +139,7 @@ export const SupplementDetailPage: React.FC = () => {
                   <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-editorial-100">
                     {supplement.pdf_url && (
                       <a
-                        href={supplement.pdf_url}
+                        href={safeUrl(supplement.pdf_url)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-crimson-800 hover:bg-crimson-900 text-white text-xs font-bold shadow-sm transition-colors"

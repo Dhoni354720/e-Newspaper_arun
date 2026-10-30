@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { repository } from '@/lib/repository';
 import { NewsTip, NewsTipStatus } from '@/types/database';
+import { safeUrl } from '@/lib/sanitize';
 import { Send, PhoneCall, MapPin, CheckCircle, XCircle, Clock, CheckCircle2, ExternalLink } from 'lucide-react';
 
 export const AdminNewsTipsPage: React.FC = () => {
@@ -113,7 +114,7 @@ export const AdminNewsTipsPage: React.FC = () => {
                     </span>
                     <span>•</span>
                     <a
-                      href={`tel:${tip.sender_phone}`}
+                      href={safeUrl(`tel:${tip.sender_phone.replace(/[^0-9+]/g, '')}`)}
                       className="flex items-center gap-1 font-bold text-editorial-800 hover:text-crimson-800"
                     >
                       <PhoneCall className="w-3.5 h-3.5 text-emerald-600" />
@@ -137,7 +138,7 @@ export const AdminNewsTipsPage: React.FC = () => {
                     {tip.image_urls.map((img, i) => (
                       <a
                         key={i}
-                        href={img}
+                        href={safeUrl(img)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="relative group w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shrink-0"

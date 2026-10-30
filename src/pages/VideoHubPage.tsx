@@ -7,6 +7,7 @@ import { repository } from '@/lib/repository';
 import { VideoItem } from '@/types/database';
 import { useLanguage } from '@/context/LanguageContext';
 import { formatDate } from '@/lib/date';
+import { validateVideoEmbedUrl } from '@/lib/sanitize';
 import { Video, Play, ArrowLeft, Clock, Calendar, Share2 } from 'lucide-react';
 
 export const VideoHubPage: React.FC = () => {
@@ -54,17 +55,8 @@ export const VideoHubPage: React.FC = () => {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  // Convert raw youtube ID or URL into privacy-friendly youtube-nocookie embed URL
-  const getEmbedUrl = (v: VideoItem): string => {
-    let videoId = v.video_id_or_url;
-    if (videoId.includes('v=')) {
-      const parts = videoId.split('v=');
-      videoId = parts[1].split('&')[0];
-    } else if (videoId.includes('youtu.be/')) {
-      const parts = videoId.split('youtu.be/');
-      videoId = parts[1].split('?')[0];
-    }
-    return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`;
+  const getEmbedUrl = (v: VideoItem): string | null => {
+    return validateVideoEmbedUrl(v.video_id_or_url);
   };
 
   const handleShare = (v: VideoItem) => {
@@ -149,13 +141,19 @@ export const VideoHubPage: React.FC = () => {
                 <div className="bg-white border-2 border-editorial-200 rounded-xl overflow-hidden shadow-sm">
                   {/* YouTube Privacy Embed */}
                   <div className="relative aspect-16/9 w-full bg-black">
-                    <iframe
-                      src={getEmbedUrl(activeVideo)}
-                      title={getTitle(activeVideo)}
-                      className="absolute inset-0 w-full h-full border-0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
+                    {getEmbedUrl(activeVideo) ? (
+                      <iframe
+                        src={getEmbedUrl(activeVideo)!}
+                        title={getTitle(activeVideo)}
+                        className="absolute inset-0 w-full h-full border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-xs font-mono">
+                        अवैध व्हिडिओ स्रोत (Invalid or unsupported video source)
+                      </div>
+                    )}
                   </div>
 
                   {/* Video Meta Info */}

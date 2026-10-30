@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSettings } from '@/context/SettingsContext';
+import { safeJsonStringify } from '@/lib/sanitize';
 
 interface SEOHeadProps {
   title?: string;
@@ -13,6 +14,7 @@ interface SEOHeadProps {
   articleCategory?: string;
   articleType?: 'article' | 'website';
   translations?: Array<{ language: string; url: string }>;
+  jsonLd?: unknown;
 }
 
 export const SEOHead: React.FC<SEOHeadProps> = ({
@@ -26,6 +28,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
   articleCategory,
   articleType = 'website',
   translations = [],
+  jsonLd: customJsonLd,
 }) => {
   const { language } = useLanguage();
   const { publicationName, settings } = useSettings();
@@ -152,8 +155,9 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
       },
     };
 
-    script.textContent = JSON.stringify(jsonLd);
-  }, [fullTitle, metaDescription, currentUrl, shareImage, articleType, publishedTime, modifiedTime, authorName, articleCategory, language, publicationName, settings]);
+    const finalData = customJsonLd || jsonLd;
+    script.textContent = safeJsonStringify(finalData);
+  }, [fullTitle, metaDescription, currentUrl, shareImage, articleType, publishedTime, modifiedTime, authorName, articleCategory, language, publicationName, settings, customJsonLd]);
 
   return null;
 };
