@@ -91,35 +91,45 @@ export const AdminLayout: React.FC = () => {
         </button>
       </div>
 
+      {/* Mobile Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-xs transition-opacity"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-editorial-950 text-gray-300 flex flex-col justify-between transition-transform transform md:translate-x-0 md:static ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-editorial-950 text-gray-300 flex flex-col h-full md:h-screen md:sticky md:top-0 transition-transform duration-300 ease-in-out ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
-        <div>
-          {/* Masthead Header in Sidebar */}
-          <div className="p-6 border-b border-editorial-800 flex items-center justify-between">
-            <div>
-              <Link to="/admin" className="block">
-                <span className="font-masthead text-xl font-black text-white tracking-tight">
-                  {publicationName}
-                </span>
-                <span className="block text-[11px] text-crimson-400 font-medium tracking-wide">
-                  संपादकीय कक्ष (Editorial CMS)
-                </span>
-              </Link>
-            </div>
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="md:hidden p-1 text-gray-400 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        {/* Masthead Header in Sidebar */}
+        <div className="p-5 border-b border-editorial-800 flex items-center justify-between shrink-0">
+          <div>
+            <Link to="/admin" onClick={() => setSidebarOpen(false)} className="block">
+              <span className="font-masthead text-xl font-black text-white tracking-tight">
+                {publicationName}
+              </span>
+              <span className="block text-[11px] text-crimson-400 font-medium tracking-wide">
+                संपादकीय कक्ष (Editorial CMS)
+              </span>
+            </Link>
           </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="md:hidden p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-editorial-900 transition-colors"
+            aria-label="Close sidebar"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-          {/* Navigation Items */}
-          <nav className="p-4 space-y-1">
+        {/* Scrollable Navigation Items */}
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4">
+          <nav className="space-y-1 pb-4">
             {navItems.map((item) => {
               const isActive = item.exact
                 ? location.pathname === item.href
@@ -138,8 +148,8 @@ export const AdminLayout: React.FC = () => {
                       : 'text-gray-400 hover:text-white hover:bg-editorial-900'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-gray-400'}`} />
-                  <span>{item.label}</span>
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-gray-400'}`} />
+                  <span className="truncate">{item.label}</span>
                 </Link>
               );
             })}
@@ -147,13 +157,13 @@ export const AdminLayout: React.FC = () => {
         </div>
 
         {/* Bottom Section: User profile & Logout */}
-        <div className="p-4 border-t border-editorial-800 space-y-3">
+        <div className="p-4 border-t border-editorial-800 space-y-3 shrink-0 bg-editorial-950">
           {/* Public site link */}
           <Link
             to="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between w-full px-3 py-2 bg-editorial-900 hover:bg-editorial-800 text-xs text-gray-300 hover:text-white rounded transition-colors"
+            className="flex items-center justify-between w-full px-3 py-2 bg-editorial-900 hover:bg-editorial-800 text-xs text-gray-300 hover:text-white rounded-lg transition-colors"
           >
             <span className="flex items-center gap-2">
               <ExternalLink className="w-3.5 h-3.5 text-crimson-400" />
@@ -164,18 +174,18 @@ export const AdminLayout: React.FC = () => {
           {/* User profile card */}
           <div className="flex items-center justify-between px-2 pt-1">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 rounded-full bg-crimson-900 border border-crimson-700 flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-8 h-8 rounded-full bg-crimson-900 border border-crimson-700 flex items-center justify-center text-white text-xs font-bold shrink-0">
                 {(user.display_name || user.role || 'A').charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-semibold text-white truncate">{user.display_name || 'Admin'}</p>
-                <p className="text-[10px] text-gray-400 capitalize">{user.role}</p>
+                <p className="text-[10px] text-gray-400 capitalize truncate">{user.role}</p>
               </div>
             </div>
 
             <button
               onClick={handleLogout}
-              className="p-1.5 text-gray-400 hover:text-red-400 rounded transition-colors"
+              className="p-1.5 text-gray-400 hover:text-red-400 rounded-lg hover:bg-editorial-900 transition-colors shrink-0"
               title="लॉग आऊट (Sign out)"
             >
               <LogOut className="w-4 h-4" />
