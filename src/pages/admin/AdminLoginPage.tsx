@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useSettings } from '@/context/SettingsContext';
 import { isSupabaseConfigured, isDemoMode } from '@/lib/supabase';
+import { checkRateLimit } from '@/lib/security/rateLimiter';
 import { ShieldCheck, Lock, Mail, AlertCircle, ArrowLeft, Database, CheckCircle2 } from 'lucide-react';
 
 export const AdminLoginPage: React.FC = () => {
@@ -28,13 +29,20 @@ export const AdminLoginPage: React.FC = () => {
     setError(null);
     setIsSubmitting(true);
 
+    const rateCheck = await checkRateLimit('login_attempt', 5, 300);
+    if (!rateCheck.allowed) {
+      setIsSubmitting(false);
+      setError(`अनेक अयशस्वी प्रयत्न. कृपया ${Math.ceil(rateCheck.resetSeconds / 60)} मिनिटे प्रतीक्षा करा. (Too many login attempts. Please wait.)`);
+      return;
+    }
+
     const res = await login(email, password);
     setIsSubmitting(false);
 
     if (res.success) {
       navigate(from, { replace: true });
     } else {
-      setError(res.error || 'लॉगिन विफल रहा। कृपया अपनी साख (credentials) की जाँच करें।');
+      setError('अवैध ईमेल किंवा पासवर्ड. कृपया माहिती तपासा. (Invalid email or password.)');
     }
   };
 
