@@ -338,6 +338,23 @@ export const ContactPage: React.FC = () => {
                       className="w-full px-3 py-2 text-sm bg-white border border-editorial-300 rounded focus:ring-1 focus:ring-crimson-800 focus:border-crimson-800"
                     ></textarea>
                   </div>
+                  <div className="flex items-start gap-2 pt-1 text-xs text-editorial-600">
+                    <input
+                      type="checkbox"
+                      id="privacy-consent-contact"
+                      required
+                      className="mt-0.5 rounded border-editorial-300 text-crimson-800 focus:ring-crimson-800"
+                    />
+                    <label htmlFor="privacy-consent-contact" className="leading-tight">
+                      {language === 'hi' ? (
+                        <>मैं दैनिक जगत समीक्षा की <Link to="/privacy-policy" className="text-crimson-800 underline font-semibold">गोपनीयता नीति (Privacy Policy)</Link> से सहमत हूँ और संपर्क विवरण के उपयोग की सहमति देता/देती हूँ।</>
+                      ) : language === 'mr' ? (
+                        <>मी दैनिक जगत समीक्षाच्या <Link to="/privacy-policy" className="text-crimson-800 underline font-semibold">गोपनीयता धोरण (Privacy Policy)</Link> शी सहमत आहे आणि संपर्क तपशील वापरास संमती देतो/देते.</>
+                      ) : (
+                        <>I agree to the <Link to="/privacy-policy" className="text-crimson-800 underline font-semibold">Privacy Policy</Link> and consent to the processing of my contact details.</>
+                      )}
+                    </label>
+                  </div>
                   <button
                     type="submit"
                     disabled={isSubmitting}
@@ -363,31 +380,40 @@ export const PrivacyPolicyPage: React.FC = () => {
 
   const content = {
     mr: {
+      draftNotice: 'प्रारूप सूचना: हे गोपनीयता धोरण भारताच्या डिजिटल वैयक्तिक डेटा संरक्षण कायदा (DPDP Act, 2023) च्या अनुषंगाने तयार केलेले प्रारूप असून अंतिम कायदेशीर पुनरावलोकनाच्या अधीन आहे.',
       p1: `${publicationName} आमच्या सर्व वाचकांच्या वैयक्तिक गोपनीयतेचा संपूर्ण आदर करते.`,
-      s1Title: '१. आम्ही कोणती माहिती संकलित करतो',
-      s1Text: 'आम्ही केवळ सेवा सुधारणे, तांत्रिक विश्लेषण आणि वापरकर्ता अनुभवासाठी आवश्यक असणारी किमान माहिती (उदा. कुकीज व तांत्रिक नोंदी) वापरतो. आम्ही वाचकांची कोणतीही संवेदनशील वैयक्तिक माहिती अनधिकृत तृतीय पक्षांना विकत किंवा सामायिक करत नाही.',
-      s2Title: '२. कुकीजचे व्यवस्थापन',
-      s2Text: 'वाचकांची भाषा प्राधान्ये आणि वाचन सुलभतेसाठी तात्पुरत्या कुकीज वापरल्या जातात. वापरकर्ता आपल्या ब्राऊझर सेटिंग्जमधून कुकीज नियंत्रित करू शकतो.',
-      s3Title: '३. संपर्क',
-      s3Text: 'गोपनीयता धोरणाबाबत काही प्रश्न असल्यास आपण आमच्या संपादकीय ईमेलवर संपर्क साधू शकता.',
+      s1Title: '१. आम्ही कोणती माहिती संकलित करतो (Data Collected)',
+      s1Text: 'आम्ही केवळ सेवा पुरवठा, तांत्रिक विश्लेषण आणि नागरिक पत्रकारिता पडताळणीसाठी आवश्यक किमान माहिती संकलित करतो: नागरिक पत्रकारिता संदेश आणि संपर्क फॉर्मद्वारे दिलेले नाव, फोन नंबर, शहर आणि ईमेल. सायबर सुरक्षा व गैरवापर रोखण्यासाठी क्लायंट आयपी पत्ता SHA-256 सह क्रिप्टोग्राफिकरित्या हॅश (ip_hash) केला जातो; मूळ आयपी पत्ता थेट साठवला जात नाही.',
+      s2Title: '२. डेटा धारणा व नष्टीकरण (Data Retention & Deletion)',
+      s2Text: 'नागरिक पत्रकारिता बातम्या आणि संपर्क संदेश संपादकीय पुनरावलोकनानंतर जास्तीत जास्त १८० दिवसांच्या (६ महिने) कालावधीनंतर स्वयंचलितरित्या नष्ट केले जातात. वाचकांना त्यांच्या डेटाचे संपूर्ण निष्कासन (Right to Erasure) मागण्याचा अधिकार आहे.',
+      s3Title: '३. कुकीज व तृतीय पक्ष सेवा (Cookies & Third Parties)',
+      s3Text: 'स्थानिक सत्र आणि भाषा प्राधान्यांसाठी आवश्यक कुकीज वापरल्या जातात. क्लाउडफ्लेअर टर्नस्टाइल (स्पॅम प्रतिबंध) आणि ओपन-मेटिओ (हवामान माहिती) या किमान तृतीय-पक्ष सेवा वापरल्या जातात, ज्यांना वाचकांचा कोणताही वैयक्तिक डेटा विकला जात नाही.',
+      s4Title: '४. डेटा संरक्षण अधिकारी व संपर्क (Grievance Redressal)',
+      s4Text: 'DPDP कायद्यांतर्गत डेटा अधिकार किंवा तक्रारींसाठी संपर्क: अरुण रमाकांत तिवारी (संपादक), ईमेल: jagatsameeksha2014@gmail.com, पत्ता: भांडुप (पश्चिम), मुंबई ४०००७८.',
     },
     hi: {
+      draftNotice: 'प्रारूप सूचना: यह गोपनीयता नीति भारत के डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम (DPDP Act, 2023) के अनुपालन में तैयार किया गया एक प्रारूप है तथा अंतिम कानूनी समीक्षा के अधीन है।',
       p1: `${publicationName} अपने सभी पाठकों की व्यक्तिगत गोपनीयता का पूर्ण सम्मान करता है।`,
-      s1Title: '१. हम कौन सी जानकारी एकत्र करते हैं',
-      s1Text: 'हम केवल सेवा सुधार, तकनीकी विश्लेषण और उपयोगकर्ता अनुभव को बेहतर बनाने के लिए आवश्यक न्यूनतम तकनीकी जानकारी (जैसे कुकीज और सर्वर लॉग्स) एकत्र करते हैं। हम पाठकों का संवेदनशील डेटा किसी तीसरे पक्ष को कभी नहीं बेचते।',
-      s2Title: '२. कुकीज का प्रबंधन',
-      s2Text: 'भाषा प्राथमिकताओं और पठन अनुभव को सहेजने के लिए सत्र कुकीज का उपयोग किया जाता है जिसे आप अपने ब्राउज़र से नियंत्रित कर सकते हैं।',
-      s3Title: '३. संपर्क सूत्र',
-      s3Text: 'गोपनीयता नीति से संबंधित प्रश्नों के लिए आप हमारे संपादकीय डेस्क से संपर्क कर सकते हैं।',
+      s1Title: '१. एकत्रित की जाने वाली जानकारी (Data Collected)',
+      s1Text: 'हम केवल सेवा संचालन, पाठक संवाद और नागरिक पत्रकारिता सत्यापन हेतु न्यूनतम आवश्यक जानकारी एकत्र करते हैं: नागरिक पत्रकारिता और संपर्क फॉर्म के माध्यम से नाम, फोन नंबर, शहर एवं संदेश। सुरक्षा एवं स्पैम रोकथाम हेतु क्लाइंट आईपी एड्रेस को SHA-256 साल्टेड हैश (ip_hash) के रूप में संग्रहीत किया जाता है; कच्चा (raw) आईपी कभी भी डेटाबेस में नहीं रखा जाता।',
+      s2Title: '२. डेटा अवधारण एवं निस्तारण (Data Retention & Erasure)',
+      s2Text: 'नागरिक पत्रकारिता संदेश और संपर्क प्रविष्टियां संपादकीय उपयोग के पश्चात अधिकतम १८० दिनों (६ माह) तक सुरक्षित रखी जाती हैं, जिसके बाद उन्हें सुरक्षित रूप से मिटा दिया जाता है। पाठकों को अपने व्यक्तिगत डेटा को हटाने का पूर्ण अधिकार है।',
+      s3Title: '३. कुकीज एवं थर्ड-पार्टी सेवाएं (Cookies & Third Parties)',
+      s3Text: 'वेबसाइट पर केवल आवश्यक सत्र कुकीज (भाषा चयन एवं प्रमाणीकरण) का उपयोग किया जाता है। स्पैम सुरक्षा हेतु Cloudflare Turnstile तथा मौसम पूर्वानुमान हेतु Open-Meteo API का उपयोग होता है। हम कोई भी व्यक्तिगत डेटा कभी किसी विज्ञापनदाता या तीसरे पक्ष को नहीं बेचते।',
+      s4Title: '४. शिकायत निवारण एवं संपर्क (Data Grievance Officer)',
+      s4Text: 'डेटा गोपनीयता अथवा सुधार अनुरोध हेतु संपर्क सूत्र: अरुण रमाकांत तिवारी (मुख्य संपादक), ईमेल: jagatsameeksha2014@gmail.com, कार्यालय: भांडुप (पश्चिम), मुंबई ४०००७८।',
     },
     en: {
-      p1: `${publicationName} respects and protects the personal privacy of all our readers and subscribers.`,
-      s1Title: '1. Information We Collect',
-      s1Text: 'We collect minimal necessary analytical data (such as language preferences and anonymous telemetry) solely to optimize user experience and platform reliability. We never sell or transfer personal data to unauthorized third parties.',
-      s2Title: '2. Cookies & Local Storage',
-      s2Text: 'Lightweight cookies and local storage tokens are utilized to remember selected language preferences and secure authenticated sessions.',
-      s3Title: '3. Data Rights & Contact',
-      s3Text: 'For queries regarding privacy or data requests, please write to our editorial compliance desk.',
+      draftNotice: 'Legal Draft Notice: This privacy policy is a compliance draft formulated in accordance with the Digital Personal Data Protection Act (DPDP Act), 2023 of India, and is subject to final legal counsel review.',
+      p1: `${publicationName} respects and protects the personal privacy of all our readers and digital subscribers.`,
+      s1Title: '1. Personal Data Collected & Purpose',
+      s1Text: 'We collect strictly minimal necessary data when voluntarily submitted via Contact or Citizen News Tip forms: Sender Name, Phone Number, City, and Message. To prevent automated abuse while respecting privacy, client IP addresses are cryptographically salted and hashed using SHA-256 (ip_hash); raw IP addresses are never persisted in our database.',
+      s2Title: '2. Data Retention & Erasure Rights',
+      s2Text: 'Citizen news tips and contact inquiries are retained for a maximum retention window of 180 days for editorial follow-up, after which they are purged. Readers maintain full rights to access, correction, and erasure under DPDP Act 2023.',
+      s3Title: '3. Third-Party Integrations',
+      s3Text: 'Our platform utilizes Cloudflare Turnstile for CAPTCHA bot defense and Open-Meteo for regional weather bulletins. No user personal data is ever commercialized or sold to third-party ad networks.',
+      s4Title: '4. Grievance Redressal & Contact',
+      s4Text: 'For privacy inquiries or statutory data rights requests under DPDP Act 2023, contact: Arun Ramakant Tiwari (Chief Editor), Email: jagatsameeksha2014@gmail.com, Address: Bhandup West, Mumbai 400078.',
     },
   }[language];
 
@@ -398,6 +424,11 @@ export const PrivacyPolicyPage: React.FC = () => {
         <Header />
         <BreakingNewsTicker />
         <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+          {/* Draft Disclaimer Banner */}
+          <div className="mb-6 p-4 bg-amber-50 border-l-4 border-amber-600 text-amber-900 text-xs rounded-r-lg font-sans">
+            <p className="font-semibold">{content.draftNotice}</p>
+          </div>
+
           <h1 className="font-serif text-3xl sm:text-4xl font-black text-editorial-950 mb-6 pb-4 border-b border-paper-border">
             {t('privacyPolicy')}
           </h1>
@@ -409,6 +440,8 @@ export const PrivacyPolicyPage: React.FC = () => {
             <p>{content.s2Text}</p>
             <h2 className="font-serif text-xl font-bold text-editorial-950 pt-3">{content.s3Title}</h2>
             <p>{content.s3Text}</p>
+            <h2 className="font-serif text-xl font-bold text-editorial-950 pt-3">{content.s4Title}</h2>
+            <p>{content.s4Text}</p>
           </div>
         </main>
       </div>

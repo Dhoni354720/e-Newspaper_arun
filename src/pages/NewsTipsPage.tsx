@@ -262,6 +262,24 @@ export const NewsTipsPage: React.FC = () => {
                     )}
                   </div>
 
+                  <div className="flex items-start gap-2 pt-2 text-xs text-editorial-700">
+                    <input
+                      type="checkbox"
+                      id="privacy-consent-tip"
+                      required
+                      className="mt-0.5 rounded border-editorial-300 text-crimson-800 focus:ring-crimson-800"
+                    />
+                    <label htmlFor="privacy-consent-tip" className="leading-tight">
+                      {language === 'hi' ? (
+                        <>मैं प्रमाणित करता/करती हूँ कि दी गई जानकारी सत्य है और दैनिक जगत समीक्षा की <Link to="/privacy-policy" className="text-crimson-800 underline font-semibold">गोपनीयता नीति (Privacy Policy)</Link> के तहत संपर्क विवरण सत्यापन हेतु उपयोग की सहमति देता/देती हूँ।</>
+                      ) : language === 'mr' ? (
+                        <>मी प्रमाणित करतो/करते की दिलेली माहिती खरी आहे आणि दैनिक जगत समीक्षाच्या <Link to="/privacy-policy" className="text-crimson-800 underline font-semibold">गोपनीयता धोरण (Privacy Policy)</Link> अंतर्गत संपर्क पडताळणीस संमती देतो/देते.</>
+                      ) : (
+                        <>I certify this tip is accurate and consent to verification of my contact details under the <Link to="/privacy-policy" className="text-crimson-800 underline font-semibold">Privacy Policy</Link> (DPDP Act, 2023).</>
+                      )}
+                    </label>
+                  </div>
+
                   <button
                     type="submit"
                     disabled={isSubmitting}
