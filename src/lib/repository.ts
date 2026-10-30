@@ -121,22 +121,34 @@ export class NewsRepository {
 
   private constructor() {
     getLocalItem(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
-    const initialArticles = getLocalItem(STORAGE_KEYS.ARTICLES, INITIAL_ARTICLES);
-    const { updatedArticles } = checkAndAutoPublishScheduled(initialArticles);
-    setLocalItem(STORAGE_KEYS.ARTICLES, updatedArticles);
+    if (!isSupabaseConfigured()) {
+      const initialArticles = getLocalItem(STORAGE_KEYS.ARTICLES, INITIAL_ARTICLES);
+      const { updatedArticles } = checkAndAutoPublishScheduled(initialArticles);
+      setLocalItem(STORAGE_KEYS.ARTICLES, updatedArticles);
 
-    getLocalItem(STORAGE_KEYS.BREAKING_NEWS, INITIAL_BREAKING_NEWS);
-    getLocalItem(STORAGE_KEYS.SETTINGS, DEFAULT_SITE_SETTINGS);
-    getLocalItem(STORAGE_KEYS.EPAPER, INITIAL_EPAPER_EDITIONS);
-    getLocalItem(STORAGE_KEYS.PROFILES, INITIAL_PROFILES);
-    getLocalItem(STORAGE_KEYS.HOME_BLOCKS, INITIAL_HOME_BLOCKS);
-    getLocalItem(STORAGE_KEYS.GALLERIES, INITIAL_GALLERIES);
-    getLocalItem(STORAGE_KEYS.VIDEOS, INITIAL_VIDEOS);
-    getLocalItem(STORAGE_KEYS.BRIEFS, INITIAL_BRIEFS);
-    getLocalItem(STORAGE_KEYS.HOROSCOPES, INITIAL_HOROSCOPES);
-    getLocalItem(STORAGE_KEYS.SUPPLEMENTS, INITIAL_SUPPLEMENTS);
-    getLocalItem(STORAGE_KEYS.NEWS_TIPS, INITIAL_NEWS_TIPS);
-    getLocalItem(STORAGE_KEYS.CMS_PAGES, INITIAL_CMS_PAGES);
+      getLocalItem(STORAGE_KEYS.BREAKING_NEWS, INITIAL_BREAKING_NEWS);
+      getLocalItem(STORAGE_KEYS.SETTINGS, DEFAULT_SITE_SETTINGS);
+      getLocalItem(STORAGE_KEYS.EPAPER, INITIAL_EPAPER_EDITIONS);
+      getLocalItem(STORAGE_KEYS.PROFILES, INITIAL_PROFILES);
+      getLocalItem(STORAGE_KEYS.HOME_BLOCKS, INITIAL_HOME_BLOCKS);
+      getLocalItem(STORAGE_KEYS.GALLERIES, INITIAL_GALLERIES);
+      getLocalItem(STORAGE_KEYS.VIDEOS, INITIAL_VIDEOS);
+      getLocalItem(STORAGE_KEYS.BRIEFS, INITIAL_BRIEFS);
+      getLocalItem(STORAGE_KEYS.HOROSCOPES, INITIAL_HOROSCOPES);
+      getLocalItem(STORAGE_KEYS.SUPPLEMENTS, INITIAL_SUPPLEMENTS);
+      getLocalItem(STORAGE_KEYS.NEWS_TIPS, INITIAL_NEWS_TIPS);
+      getLocalItem(STORAGE_KEYS.CMS_PAGES, INITIAL_CMS_PAGES);
+    } else {
+      // In live Supabase mode, clear any cached local dummy articles and breaking news
+      if (typeof window !== 'undefined' && window.localStorage) {
+        try {
+          localStorage.removeItem(STORAGE_KEYS.ARTICLES);
+          localStorage.removeItem(STORAGE_KEYS.BREAKING_NEWS);
+        } catch {
+          // ignore
+        }
+      }
+    }
   }
 
   public static getInstance(): NewsRepository {
@@ -567,6 +579,23 @@ export class NewsRepository {
   // BREAKING NEWS
   // --------------------------------------------------------------------------
   async getBreakingNews(language: SupportedLanguage = 'mr', includeInactive: boolean = false): Promise<BreakingNewsItem[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        let query = supabase.from('breaking_news').select('*, article:articles(*)');
+        if (!includeInactive) {
+          query = query.eq('is_active', true);
+        }
+        if (language) {
+          query = query.eq('language', language);
+        }
+        const { data, error } = await query.order('display_order', { ascending: true });
+        if (!error && data) {
+          return data as BreakingNewsItem[];
+        }
+      } catch (err) {
+        console.warn('Supabase getBreakingNews error:', err);
+      }
+    }
     const items = getLocalItem<BreakingNewsItem[]>(STORAGE_KEYS.BREAKING_NEWS, INITIAL_BREAKING_NEWS);
     const articlesResult = await this.getArticles({ limit: 1000, includePrivate: false });
     const publishedArticleMap = new Map(articlesResult.articles.map(a => [a.id, a]));
@@ -588,6 +617,19 @@ export class NewsRepository {
   }
 
   async getAllBreakingNewsAdmin(): Promise<BreakingNewsItem[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase
+          .from('breaking_news')
+          .select('*, article:articles(*)')
+          .order('display_order', { ascending: true });
+        if (!error && data) {
+          return data as BreakingNewsItem[];
+        }
+      } catch (err) {
+        console.warn('Supabase getAllBreakingNewsAdmin error:', err);
+      }
+    }
     const items = getLocalItem<BreakingNewsItem[]>(STORAGE_KEYS.BREAKING_NEWS, INITIAL_BREAKING_NEWS);
     const articlesResult = await this.getArticles({ limit: 1000, includePrivate: true });
     const articleMap = new Map(articlesResult.articles.map(a => [a.id, a]));
@@ -599,8 +641,48 @@ export class NewsRepository {
   }
 
   async saveBreakingNewsItem(itemData: Partial<BreakingNewsItem>): Promise<BreakingNewsItem> {
-    const items = getLocalItem<BreakingNewsItem[]>(STORAGE_KEYS.BREAKING_NEWS, INITIAL_BREAKING_NEWS);
     const now = new Date().toISOString();
+    if (isSupabaseConfigured()) {
+      try {
+        if (itemData.id && !itemData.id.startsWith('brk-')) {
+          const { data, error } = await supabase
+            .from('breaking_news')
+            .update({
+              article_id: itemData.article_id || null,
+              language: itemData.language || 'mr',
+              custom_headline: itemData.custom_headline || '',
+              display_order: itemData.display_order || 1,
+              is_active: itemData.is_active ?? true,
+              expires_at: itemData.expires_at || null,
+              updated_at: now,
+            })
+            .eq('id', itemData.id)
+            .select()
+            .single();
+          if (!error && data) return data as BreakingNewsItem;
+        } else {
+          const { data, error } = await supabase
+            .from('breaking_news')
+            .insert({
+              article_id: itemData.article_id || null,
+              language: itemData.language || 'mr',
+              custom_headline: itemData.custom_headline || '',
+              display_order: itemData.display_order || 1,
+              is_active: itemData.is_active ?? true,
+              expires_at: itemData.expires_at || null,
+              created_at: now,
+              updated_at: now,
+            })
+            .select()
+            .single();
+          if (!error && data) return data as BreakingNewsItem;
+        }
+      } catch (e) {
+        console.warn('Supabase saveBreakingNewsItem error:', e);
+      }
+    }
+
+    const items = getLocalItem<BreakingNewsItem[]>(STORAGE_KEYS.BREAKING_NEWS, INITIAL_BREAKING_NEWS);
 
     if (itemData.id) {
       const idx = items.findIndex(i => i.id === itemData.id);
@@ -627,6 +709,13 @@ export class NewsRepository {
   }
 
   async deleteBreakingNewsItem(id: string): Promise<void> {
+    if (isSupabaseConfigured()) {
+      try {
+        await supabase.from('breaking_news').delete().eq('id', id);
+      } catch (e) {
+        console.warn('Supabase deleteBreakingNewsItem error:', e);
+      }
+    }
     const items = getLocalItem<BreakingNewsItem[]>(STORAGE_KEYS.BREAKING_NEWS, INITIAL_BREAKING_NEWS);
     setLocalItem(STORAGE_KEYS.BREAKING_NEWS, items.filter(i => i.id !== id));
   }
@@ -635,6 +724,16 @@ export class NewsRepository {
   // SITE SETTINGS
   // --------------------------------------------------------------------------
   async getSiteSettings(): Promise<SiteSettings> {
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase.from('site_settings').select('*').eq('id', 'default').single();
+        if (!error && data) {
+          return data as SiteSettings;
+        }
+      } catch (e) {
+        console.warn('Supabase getSiteSettings error:', e);
+      }
+    }
     return getLocalItem<SiteSettings>(STORAGE_KEYS.SETTINGS, DEFAULT_SITE_SETTINGS);
   }
 
@@ -645,6 +744,16 @@ export class NewsRepository {
       ...settings,
       updated_at: new Date().toISOString(),
     };
+    if (isSupabaseConfigured()) {
+      try {
+        await supabase.from('site_settings').upsert({
+          id: 'default',
+          ...updated,
+        });
+      } catch (e) {
+        console.warn('Supabase updateSiteSettings error:', e);
+      }
+    }
     setLocalItem(STORAGE_KEYS.SETTINGS, updated);
 
     // Audit log on settings update
@@ -773,6 +882,39 @@ export class NewsRepository {
     totalCategories: number;
     recentActivity: Article[];
   }> {
+    if (isSupabaseConfigured()) {
+      try {
+        const [
+          { count: publishedCount, error: errPub },
+          { count: draftsCount, error: errDraft },
+          { count: scheduledCount, error: errSched },
+          { count: breakingCount, error: errBrk },
+          { count: categoriesCount, error: errCat },
+          { data: recentData, error: errRecent }
+        ] = await Promise.all([
+          supabase.from('articles').select('*', { count: 'exact', head: true }).eq('status', 'published'),
+          supabase.from('articles').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
+          supabase.from('articles').select('*', { count: 'exact', head: true }).eq('status', 'scheduled'),
+          supabase.from('breaking_news').select('*', { count: 'exact', head: true }).eq('is_active', true),
+          supabase.from('categories').select('*', { count: 'exact', head: true }),
+          supabase.from('articles').select('*, categories:article_categories(category:categories(*)), author:profiles(*)').order('updated_at', { ascending: false }).limit(5),
+        ]);
+
+        if (!errPub && !errDraft && !errSched && !errBrk && !errCat && !errRecent) {
+          return {
+            publishedCount: publishedCount || 0,
+            draftsCount: draftsCount || 0,
+            scheduledCount: scheduledCount || 0,
+            breakingCount: breakingCount || 0,
+            totalCategories: categoriesCount || 0,
+            recentActivity: (recentData as Article[]) || [],
+          };
+        }
+      } catch (err) {
+        console.warn('Supabase getDashboardStats error:', err);
+      }
+    }
+
     const articles = getLocalItem<Article[]>(STORAGE_KEYS.ARTICLES, INITIAL_ARTICLES);
     const breaking = getLocalItem<BreakingNewsItem[]>(STORAGE_KEYS.BREAKING_NEWS, INITIAL_BREAKING_NEWS);
     const categories = getLocalItem<Category[]>(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
@@ -1230,7 +1372,7 @@ export class NewsRepository {
           .from('home_blocks')
           .select('*, category:categories(*)')
           .order('sort_order', { ascending: true });
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           return data as HomeBlock[];
         }
       } catch (err) {
@@ -1350,7 +1492,7 @@ export class NewsRepository {
           query = query.limit(options.limit);
         }
         const { data, error } = await query;
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           return data as Gallery[];
         }
       } catch (e) {
@@ -1452,7 +1594,7 @@ export class NewsRepository {
           query = query.limit(options.limit);
         }
         const { data, error } = await query;
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           return data as VideoItem[];
         }
       } catch (e) {
@@ -1548,7 +1690,7 @@ export class NewsRepository {
           query = query.limit(options.limit);
         }
         const { data, error } = await query;
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           return data as BriefItem[];
         }
       } catch (e) {
@@ -1623,7 +1765,7 @@ export class NewsRepository {
           .select('*')
           .eq('period', period)
           .eq('date_for', targetDate);
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           return data as HoroscopeItem[];
         }
       } catch (e) {
@@ -1699,7 +1841,7 @@ export class NewsRepository {
           query = query.eq('is_published', options.isPublished);
         }
         const { data, error } = await query;
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           return data as SupplementItem[];
         }
       } catch (e) {
@@ -1867,7 +2009,7 @@ export class NewsRepository {
     if (isSupabaseConfigured()) {
       try {
         const { data, error } = await supabase.from('pages').select('*');
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           return data as CMSPage[];
         }
       } catch (e) {
