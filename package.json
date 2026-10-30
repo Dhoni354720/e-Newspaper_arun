@@ -14,7 +14,7 @@
     "@hookform/resolvers": "^3.10.0",
     "@supabase/supabase-js": "^2.48.1",
     "@tanstack/react-query": "^5.66.0",
-    "@tiptap/extension-image": "^2.11.5",
+    "@tiptap/extension-image": "^3.32.0",
     "@tiptap/extension-link": "^2.11.5",
     "@tiptap/react": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",
