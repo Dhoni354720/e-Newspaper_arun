@@ -33,7 +33,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               .single();
 
             if (profile) {
-              setUser(profile as Profile);
+              setUser({
+                ...(profile as Profile),
+                display_name: (profile as Profile).display_name || session.user.email?.split('@')[0] || 'User',
+              });
             } else {
               // Least privilege fallback: default to 'author', NEVER 'admin'
               setUser({
@@ -78,7 +81,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             .single();
 
           if (profile) {
-            setUser(profile as Profile);
+            setUser({
+              ...(profile as Profile),
+              display_name: (profile as Profile).display_name || session.user.email?.split('@')[0] || 'User',
+            });
           } else {
             setUser({
               id: session.user.id,
@@ -141,9 +147,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             .eq('id', data.user.id)
             .single();
 
-          const userProfile: Profile = profile || {
+          const userProfile: Profile = profile ? {
+            ...(profile as Profile),
+            display_name: (profile as Profile).display_name || email.split('@')[0] || 'User',
+          } : {
             id: data.user.id,
-            display_name: email.split('@')[0],
+            display_name: email.split('@')[0] || 'User',
             role: 'author', // Default to least-privilege author
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),

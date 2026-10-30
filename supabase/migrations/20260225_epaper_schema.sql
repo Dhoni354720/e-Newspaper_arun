@@ -5,11 +5,14 @@
 
 -- 1. EPAPER EDITIONS TABLE
 CREATE TABLE IF NOT EXISTS public.epaper_editions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   title TEXT NOT NULL,
+  title_hi TEXT,
+  title_mr TEXT,
+  title_en TEXT,
   edition_date DATE NOT NULL,
-  region TEXT NOT NULL DEFAULT 'Pune',
-  total_pages INT NOT NULL DEFAULT 1,
+  edition_region TEXT NOT NULL DEFAULT 'mumbai',
+  total_pages INT NOT NULL DEFAULT 4,
   pdf_url TEXT,
   thumbnail_url TEXT NOT NULL,
   is_published BOOLEAN NOT NULL DEFAULT true,
@@ -21,19 +24,20 @@ CREATE TABLE IF NOT EXISTS public.epaper_editions (
 
 -- 2. EPAPER PAGES TABLE
 CREATE TABLE IF NOT EXISTS public.epaper_pages (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  edition_id UUID NOT NULL REFERENCES public.epaper_editions(id) ON DELETE CASCADE,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  edition_id TEXT NOT NULL REFERENCES public.epaper_editions(id) ON DELETE CASCADE,
   page_number INT NOT NULL,
   image_url TEXT NOT NULL,
   page_title TEXT,
   thumbnail_url TEXT,
+  zoom_image_url TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc', now()),
   CONSTRAINT unique_edition_page UNIQUE (edition_id, page_number)
 );
 
 -- 3. INDEXES FOR HIGH-TRAFFIC SCALABILITY
 CREATE INDEX IF NOT EXISTS idx_epaper_editions_date ON public.epaper_editions(edition_date DESC);
-CREATE INDEX IF NOT EXISTS idx_epaper_editions_region ON public.epaper_editions(region);
+CREATE INDEX IF NOT EXISTS idx_epaper_editions_region ON public.epaper_editions(edition_region);
 CREATE INDEX IF NOT EXISTS idx_epaper_editions_published ON public.epaper_editions(is_published, edition_date DESC);
 CREATE INDEX IF NOT EXISTS idx_epaper_pages_edition_num ON public.epaper_pages(edition_id, page_number ASC);
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
+import { Link, useLocation, useNavigate, Outlet, Navigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -47,8 +47,7 @@ export const AdminLayout: React.FC = () => {
 
   // Enforce server/auth guard: If user not authenticated or not authorized staff, redirect to login
   if (!isStaff || !user) {
-    navigate('/admin/login', { replace: true, state: { from: location.pathname } });
-    return null;
+    return <Navigate to="/admin/login" replace state={{ from: location.pathname }} />;
   }
 
   const handleLogout = async () => {
@@ -166,10 +165,10 @@ export const AdminLayout: React.FC = () => {
           <div className="flex items-center justify-between px-2 pt-1">
             <div className="flex items-center gap-2 min-w-0">
               <div className="w-8 h-8 rounded-full bg-crimson-900 border border-crimson-700 flex items-center justify-center text-white text-xs font-bold">
-                {user.display_name.charAt(0).toUpperCase()}
+                {(user.display_name || user.role || 'A').charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-semibold text-white truncate">{user.display_name}</p>
+                <p className="text-xs font-semibold text-white truncate">{user.display_name || 'Admin'}</p>
                 <p className="text-[10px] text-gray-400 capitalize">{user.role}</p>
               </div>
             </div>

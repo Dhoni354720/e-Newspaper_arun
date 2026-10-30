@@ -19,17 +19,17 @@ INSERT INTO public.site_settings (
   theme_settings
 ) VALUES (
   'default',
-  'JANVANI NEWS',
-  'जनवाणी न्यूज',
-  'जनवाणी न्यूज़',
+  'दैनिक जगत समीक्षा',
+  'दैनिक जगत समीक्षा',
+  'दैनिक जगत समीक्षा',
   'सत्य, निष्पक्ष आणि निर्भीक वृत्तपत्र',
-  'mr',
-  ARRAY['mr', 'hi', 'en'],
-  'editorial@janvaninews.com',
-  '+91 20 2550 0000',
-  'Janvani Bhavan, FC Road, Shivaji Nagar, Pune, Maharashtra 411005',
-  '{"twitter": "https://twitter.com/janvaninews", "facebook": "https://facebook.com/janvaninews", "youtube": "https://youtube.com/@janvaninews", "telegram": "https://t.me/janvaninews"}'::jsonb,
-  '{"accentColor": "#991b1b", "mastheadStyle": "classic", "enableBreakingTicker": true}'::jsonb
+  'hi',
+  ARRAY['hi', 'mr', 'en'],
+  'jagatsameeksha2014@gmail.com',
+  '+91 8369517611',
+  'भांडुप (पश्चिम), मुंबई, महाराष्ट्र 400078',
+  '{"twitter": "https://twitter.com/jagatsameeksha", "facebook": "https://facebook.com/jagatsameeksha", "youtube": "https://youtube.com/@jagatsameeksha"}'::jsonb,
+  '{"accentColor": "#ed1c24", "mastheadStyle": "classic", "enableBreakingTicker": true}'::jsonb
 )
 ON CONFLICT (id) DO UPDATE SET
   publication_name = EXCLUDED.publication_name,

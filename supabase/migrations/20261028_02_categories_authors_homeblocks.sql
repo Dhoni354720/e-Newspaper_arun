@@ -33,7 +33,7 @@ ALTER TABLE public.articles
   ADD COLUMN IF NOT EXISTS kind TEXT NOT NULL DEFAULT 'standard' CHECK (kind IN ('standard', 'lead', 'feature', 'opinion', 'brief')),
   ADD COLUMN IF NOT EXISTS is_top BOOLEAN NOT NULL DEFAULT false,
   ADD COLUMN IF NOT EXISTS top_rank INT NOT NULL DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS epaper_edition_id UUID REFERENCES public.epaper_editions(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS epaper_edition_id TEXT REFERENCES public.epaper_editions(id) ON DELETE SET NULL,
   ADD COLUMN IF NOT EXISTS epaper_page_number INT;
 
 CREATE INDEX IF NOT EXISTS idx_articles_top ON public.articles(is_top, top_rank ASC) WHERE is_top = true;
