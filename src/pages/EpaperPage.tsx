@@ -166,7 +166,7 @@ export const EpaperPage: React.FC = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: currentEdition?.title || 'Janvani E-Paper',
+          title: currentEdition?.title || 'दैनिक जगत समीक्षा ई-पेपर',
           text: currentEdition?.description || '',
           url,
         });

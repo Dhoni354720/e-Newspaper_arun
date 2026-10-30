@@ -6,8 +6,8 @@ export const AdminSettingsPage: React.FC = () => {
   const { settings, updateSettings } = useSettings();
 
   const [pubNameEn, setPubNameEn] = useState(settings.publication_name);
-  const [pubNameMr, setPubNameMr] = useState(settings.publication_name_mr || 'जनवाणी न्यूज');
-  const [pubNameHi, setPubNameHi] = useState(settings.publication_name_hi || 'जनवाणी न्यूज़');
+  const [pubNameMr, setPubNameMr] = useState(settings.publication_name_mr || 'दैनिक जगत समीक्षा');
+  const [pubNameHi, setPubNameHi] = useState(settings.publication_name_hi || 'दैनिक जगत समीक्षा');
   const [tagline, setTagline] = useState(settings.tagline);
   const [email, setEmail] = useState(settings.contact_email);
   const [phone, setPhone] = useState(settings.contact_phone);
@@ -95,7 +95,7 @@ export const AdminSettingsPage: React.FC = () => {
                 required
                 value={pubNameEn}
                 onChange={(e) => setPubNameEn(e.target.value)}
-                placeholder="JANVANI NEWS"
+                placeholder="Dainik Jagat Sameeksha"
                 className="w-full px-3 py-2 text-sm border rounded font-bold"
               />
             </div>
@@ -109,7 +109,7 @@ export const AdminSettingsPage: React.FC = () => {
                 required
                 value={pubNameMr}
                 onChange={(e) => setPubNameMr(e.target.value)}
-                placeholder="जनवाणी न्यूज"
+                placeholder="दैनिक जगत समीक्षा"
                 className="w-full px-3 py-2 text-sm border rounded font-serif font-bold text-gray-900"
               />
             </div>
@@ -123,7 +123,7 @@ export const AdminSettingsPage: React.FC = () => {
                 required
                 value={pubNameHi}
                 onChange={(e) => setPubNameHi(e.target.value)}
-                placeholder="जनवाणी न्यूज़"
+                placeholder="दैनिक जगत समीक्षा"
                 className="w-full px-3 py-2 text-sm border rounded font-serif font-bold text-gray-900"
               />
             </div>
@@ -205,7 +205,7 @@ export const AdminSettingsPage: React.FC = () => {
                 type="url"
                 value={twitter}
                 onChange={(e) => setTwitter(e.target.value)}
-                placeholder="https://twitter.com/janvaninews"
+                placeholder="https://twitter.com/jagatsameeksha"
                 className="w-full px-3 py-2 border rounded"
               />
             </div>
@@ -216,7 +216,7 @@ export const AdminSettingsPage: React.FC = () => {
                 type="url"
                 value={facebook}
                 onChange={(e) => setFacebook(e.target.value)}
-                placeholder="https://facebook.com/janvaninews"
+                placeholder="https://facebook.com/jagatsameeksha"
                 className="w-full px-3 py-2 border rounded"
               />
             </div>
@@ -227,7 +227,7 @@ export const AdminSettingsPage: React.FC = () => {
                 type="url"
                 value={youtube}
                 onChange={(e) => setYoutube(e.target.value)}
-                placeholder="https://youtube.com/@janvaninews"
+                placeholder="https://youtube.com/@jagatsameeksha"
                 className="w-full px-3 py-2 border rounded"
               />
             </div>
@@ -238,7 +238,7 @@ export const AdminSettingsPage: React.FC = () => {
                 type="url"
                 value={telegram}
                 onChange={(e) => setTelegram(e.target.value)}
-                placeholder="https://t.me/janvaninews"
+                placeholder="https://t.me/jagatsameeksha"
                 className="w-full px-3 py-2 border rounded"
               />
             </div>

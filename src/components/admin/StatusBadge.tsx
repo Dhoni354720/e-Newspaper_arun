@@ -17,6 +17,13 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, scheduledAt })
           प्रकाशित (Published)
         </span>
       );
+    case 'submitted':
+      return (
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+          <Clock className="w-3.5 h-3.5" />
+          पुनरावलोकन प्रलंबित (Submitted)
+        </span>
+      );
     case 'scheduled':
       return (
         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">

@@ -12,10 +12,11 @@ export async function verifyTurnstileToken(
   token: string | undefined | null,
   clientIp?: string
 ): Promise<TurnstileVerificationResult> {
-  const secretKey = process.env.TURNSTILE_SECRET_KEY;
+  const secretKey = typeof process !== 'undefined' && process.env ? process.env.TURNSTILE_SECRET_KEY : undefined;
+  const isProd = typeof process !== 'undefined' && process.env ? process.env.NODE_ENV === 'production' : false;
 
   if (!secretKey) {
-    if (process.env.NODE_ENV === 'production') {
+    if (isProd) {
       console.warn('[Turnstile] WARNING: TURNSTILE_SECRET_KEY is not configured in production. Turnstile verification skipped.');
     }
     return { success: true };

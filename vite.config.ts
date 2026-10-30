@@ -44,6 +44,9 @@ function apiRoutesPlugin(): Plugin {
 }
 
 export default defineConfig({
+  define: {
+    'process.env': {},
+  },
   plugins: [react(), apiRoutesPlugin()],
   server: {
     host: true,

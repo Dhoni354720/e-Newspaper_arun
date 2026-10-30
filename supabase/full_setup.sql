@@ -1444,12 +1444,15 @@ ON CONFLICT (category_id, language) DO UPDATE SET
   name = EXCLUDED.name,
   description = EXCLUDED.description;
 
--- ==============================================================================
--- INITIAL ADMIN ACCOUNT PROVISIONING
--- ==============================================================================
-SELECT public.setup_initial_admin(
-  'jagatsameeksha2014@gmail.com',
-  'Admin@12345',
-  'अरुण रमाकांत तिवारी (मुख्य संपादक)'
-);
+-- ------------------------------------------------------------------------------
+-- SAFE ADMINISTRATIVE ONBOARDING NOTICE (No Hardcoded Passwords)
+-- ------------------------------------------------------------------------------
+-- Never commit plain-text admin credentials to source control or SQL setup files.
+-- To provision your initial administrator:
+-- 1. In Supabase Dashboard: Navigate to Authentication -> Users -> 'Add user'
+--    Enter the administrator's email and a secure password.
+-- 2. In Supabase SQL Editor: Promote the provisioned user to administrator:
+--    UPDATE public.profiles SET role = 'admin' WHERE id = '<user_uuid_from_auth>';
+-- See docs/ADMIN_SETUP.md for complete instructions.
+-- ------------------------------------------------------------------------------
 

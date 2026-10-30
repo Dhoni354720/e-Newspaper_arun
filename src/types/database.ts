@@ -1,6 +1,6 @@
 export type SupportedLanguage = 'mr' | 'hi' | 'en';
 
-export type ArticleStatus = 'draft' | 'scheduled' | 'published' | 'archived';
+export type ArticleStatus = 'draft' | 'submitted' | 'scheduled' | 'published' | 'archived';
 
 export type UserRole = 'admin' | 'editor' | 'author';
 

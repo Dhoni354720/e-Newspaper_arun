@@ -211,12 +211,12 @@ export class NewsRepository {
         const orderColumn = options.isTop ? 'top_rank' : 'published_at';
         const { data, count, error } = await query.order(orderColumn, { ascending: options.isTop ? true : false }).range(from, to);
 
-        if (!error && data && (data.length > 0 || options.includePrivate)) {
+        if (!error && data) {
           return {
             articles: data as Article[],
-            total: count || data.length,
+            total: count !== null && count !== undefined ? count : data.length,
             page,
-            totalPages: Math.ceil((count || data.length) / limit),
+            totalPages: Math.ceil((count !== null && count !== undefined ? count : data.length) / limit) || 1,
           };
         }
       } catch (err) {

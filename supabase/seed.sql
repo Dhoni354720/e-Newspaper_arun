@@ -34,7 +34,27 @@ INSERT INTO public.site_settings (
 ON CONFLICT (id) DO UPDATE SET
   publication_name = EXCLUDED.publication_name,
   publication_name_mr = EXCLUDED.publication_name_mr,
-  publication_name_hi = EXCLUDED.publication_name_hi;
+  publication_name_hi = EXCLUDED.publication_name_hi,
+  tagline = EXCLUDED.tagline,
+  default_language = EXCLUDED.default_language,
+  supported_languages = EXCLUDED.supported_languages,
+  contact_email = EXCLUDED.contact_email,
+  contact_phone = EXCLUDED.contact_phone,
+  office_address = EXCLUDED.office_address,
+  social_links = EXCLUDED.social_links,
+  theme_settings = EXCLUDED.theme_settings,
+  updated_at = timezone('utc', now());
+
+-- ------------------------------------------------------------------------------
+-- SAFE ADMINISTRATIVE ONBOARDING NOTICE (No Hardcoded Passwords)
+-- ------------------------------------------------------------------------------
+-- Never commit plain-text admin credentials to source control or seed files.
+-- To provision your initial administrator:
+-- 1. In Supabase Dashboard: Navigate to Authentication -> Users -> 'Add user'
+--    Enter the administrator's email and a secure password.
+-- 2. In Supabase SQL Editor: Promote the provisioned user to administrator:
+--    UPDATE public.profiles SET role = 'admin' WHERE id = '<user_uuid_from_auth>';
+-- ------------------------------------------------------------------------------
 
 -- 2. Initial Categories (UUIDs explicitly specified for clean relational linking)
 INSERT INTO public.categories (id, slug, sort_order, is_active) VALUES

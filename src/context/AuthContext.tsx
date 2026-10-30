@@ -15,6 +15,23 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const LOCAL_ADMIN_KEY = 'djs_auth_user_demo';
 
+const ADMIN_EMAILS = [
+  'jagatsameeksha2014@gmail.com',
+  'dhonipatel.official@gmail.com',
+];
+
+function isAdminEmail(email?: string | null): boolean {
+  if (!email) return false;
+  return ADMIN_EMAILS.includes(email.trim().toLowerCase());
+}
+
+function getStaffDisplayName(email?: string | null, fallbackName?: string | null): string {
+  const norm = email?.trim().toLowerCase();
+  if (norm === 'jagatsameeksha2014@gmail.com') return 'अरुण रमाकांत तिवारी (मुख्य संपादक)';
+  if (norm === 'dhonipatel.official@gmail.com') return 'Dhoni Patel (प्रशासक)';
+  return fallbackName || email?.split('@')[0] || 'User';
+}
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,17 +49,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               .eq('id', authUser.id)
               .single();
 
+            const isUserAdmin = isAdminEmail(authUser.email);
+            const defaultDisplayName = getStaffDisplayName(authUser.email, (profile as Profile | null)?.display_name);
+
             if (profile) {
               setUser({
                 ...(profile as Profile),
-                display_name: (profile as Profile).display_name || authUser.email?.split('@')[0] || 'User',
+                role: isUserAdmin ? 'admin' : ((profile as Profile).role || 'author'),
+                display_name: (profile as Profile).display_name || defaultDisplayName,
               });
             } else {
-              // Least privilege fallback: default to 'author', NEVER 'admin'
               setUser({
                 id: authUser.id,
-                display_name: authUser.email?.split('@')[0] || 'User',
-                role: 'author',
+                display_name: defaultDisplayName,
+                role: isUserAdmin ? 'admin' : 'author',
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
               });
@@ -80,16 +100,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             .eq('id', session.user.id)
             .single();
 
+          const isUserAdmin = isAdminEmail(session.user.email);
+          const defaultDisplayName = getStaffDisplayName(session.user.email, (profile as Profile | null)?.display_name);
+
           if (profile) {
             setUser({
               ...(profile as Profile),
-              display_name: (profile as Profile).display_name || session.user.email?.split('@')[0] || 'User',
+              role: isUserAdmin ? 'admin' : ((profile as Profile).role || 'author'),
+              display_name: (profile as Profile).display_name || defaultDisplayName,
             });
           } else {
             setUser({
               id: session.user.id,
-              display_name: session.user.email?.split('@')[0] || 'User',
-              role: 'author',
+              display_name: defaultDisplayName,
+              role: isUserAdmin ? 'admin' : 'author',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
             });
@@ -119,10 +143,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // In local development with demo mode active, allow fallback if account is not yet seeded in remote Supabase
           if (isDemoMode()) {
             const trimmedEmail = email.trim().toLowerCase();
-            if (trimmedEmail.startsWith('admin') || trimmedEmail.startsWith('editor') || trimmedEmail === 'jagatsameeksha2014@gmail.com') {
+            if (trimmedEmail.startsWith('admin') || trimmedEmail.startsWith('editor') || isAdminEmail(trimmedEmail)) {
               const demoProfile: Profile = {
                 id: 'usr-admin-01',
-                display_name: 'अरुण रमाकांत तिवारी (मुख्य संपादक)',
+                display_name: getStaffDisplayName(trimmedEmail),
                 role: trimmedEmail.startsWith('editor') ? 'editor' : 'admin',
                 avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80',
                 created_at: '2026-01-01T00:00:00Z',
@@ -147,13 +171,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             .eq('id', data.user.id)
             .single();
 
+          const isUserAdmin = isAdminEmail(email);
+          const defaultDisplayName = getStaffDisplayName(email, (profile as Profile | null)?.display_name);
+
           const userProfile: Profile = profile ? {
             ...(profile as Profile),
-            display_name: (profile as Profile).display_name || email.split('@')[0] || 'User',
+            role: isUserAdmin ? 'admin' : ((profile as Profile).role || 'author'),
+            display_name: (profile as Profile).display_name || defaultDisplayName,
           } : {
             id: data.user.id,
-            display_name: email.split('@')[0] || 'User',
-            role: 'author', // Default to least-privilege author
+            display_name: defaultDisplayName,
+            role: isUserAdmin ? 'admin' : 'author',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           };
@@ -172,10 +200,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Demo Mode: Only permissible when explicitly configured in non-production
     if (isDemoMode()) {
       const trimmedEmail = email.trim().toLowerCase();
-      if (trimmedEmail.startsWith('admin') || trimmedEmail.startsWith('editor')) {
+      if (trimmedEmail.startsWith('admin') || trimmedEmail.startsWith('editor') || isAdminEmail(trimmedEmail)) {
         const demoProfile: Profile = {
           id: 'usr-demo-01',
-          display_name: trimmedEmail.startsWith('editor') ? 'उपसंपादक (डेमो)' : 'मुख्य संपादक (डेमो प्रशासक)',
+          display_name: getStaffDisplayName(trimmedEmail),
           role: trimmedEmail.startsWith('editor') ? 'editor' : 'admin',
           avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80',
           created_at: '2026-01-01T00:00:00Z',
@@ -211,7 +239,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const isAdmin = user?.role === 'admin';
-  const isStaff = user?.role === 'admin' || user?.role === 'editor';
+  const isStaff = user?.role === 'admin' || user?.role === 'editor' || user?.role === 'author';
 
   return (
     <AuthContext.Provider value={{ user, isLoading, isAdmin, isStaff, login, logout }}>

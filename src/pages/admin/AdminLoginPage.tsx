@@ -29,20 +29,26 @@ export const AdminLoginPage: React.FC = () => {
     setError(null);
     setIsSubmitting(true);
 
-    const rateCheck = await checkRateLimit('login_attempt', 5, 300);
-    if (!rateCheck.allowed) {
+    try {
+      const rateCheck = await checkRateLimit('login_attempt', 5, 300);
+      if (!rateCheck.allowed) {
+        setError(`अनेक अयशस्वी प्रयत्न. कृपया ${Math.ceil(rateCheck.resetSeconds / 60)} मिनिटे प्रतीक्षा करा. (Too many login attempts. Please wait.)`);
+        return;
+      }
+
+      const res = await login(email, password);
+
+      if (res.success) {
+        navigate(from, { replace: true });
+      } else {
+        const errorDetail = res.error ? ` (${res.error})` : '';
+        setError(`अवैध ईमेल किंवा पासवर्ड. कृपया माहिती तपासा.${errorDetail}`);
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'लॉगिन करताना अनपेक्षित त्रुटी आली.';
+      setError(msg);
+    } finally {
       setIsSubmitting(false);
-      setError(`अनेक अयशस्वी प्रयत्न. कृपया ${Math.ceil(rateCheck.resetSeconds / 60)} मिनिटे प्रतीक्षा करा. (Too many login attempts. Please wait.)`);
-      return;
-    }
-
-    const res = await login(email, password);
-    setIsSubmitting(false);
-
-    if (res.success) {
-      navigate(from, { replace: true });
-    } else {
-      setError('अवैध ईमेल किंवा पासवर्ड. कृपया माहिती तपासा. (Invalid email or password.)');
     }
   };
 

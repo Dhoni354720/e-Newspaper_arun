@@ -102,19 +102,24 @@ All SQL schema migrations are located in `supabase/migrations/`:
 
 | Migration File | Description |
 |---|---|
+| `20260221_initial_schema.sql` | Core database schema (profiles, categories, articles, settings, audit logs) |
+| `20260225_epaper_schema.sql` | Legacy epaper schema definition |
 | `20261028_01_security_hardening.sql` | RLS policies, audit logs, rate limiting, and initial admin bootstrap function |
 | `20261028_02_categories_authors_homeblocks.sql` | 24 broadsheet categories, Chief Editor profile, homepage block layouts |
 | `20261028_03_content_types.sql` | Galleries, video items, briefs, horoscopes, supplements, news tips, and CMS pages |
 | `20261028_04_epaper_pipeline.sql` | Broadsheet editions, pages, deep zoom URLs, and digital clipping archives |
+| `20261030_01_lock_functions.sql` | Security hardening: RPC lockdown, search_path enforcement, and audit trigger fixes |
+| `20261030_02_staff_and_epaper_policies.sql` | Role helper functions, epaper reconciliation, and tightened content policies |
+| `20261030_03_author_workflow_and_bylines.sql` | Author workflow ('submitted' status), safe public bylines view, and branding |
 
-### Setting Up the Admin Account
-In the Supabase SQL Editor:
+### Setting Up the Administrator Account
+For security best practices, never run plain-text passwords in SQL migrations. Follow the safe onboarding guide documented in [docs/ADMIN_SETUP.md](docs/ADMIN_SETUP.md):
+1. In the Supabase Dashboard, go to **Authentication** &rarr; **Users** &rarr; **Add user** to create the administrator with email `jagatsameeksha2014@gmail.com` and a strong passphrase.
+2. In the Supabase SQL Editor, assign the `admin` role:
 ```sql
-SELECT public.setup_initial_admin(
-  'jagatsameeksha2014@gmail.com',
-  'YourSecurePassword123!',
-  'अरुण रमाकांत तिवारी (मुख्य संपादक)'
-);
+UPDATE public.profiles
+SET role = 'admin', display_name = 'अरुण रमाकांत तिवारी (मुख्य संपादक)'
+WHERE id = '<USER_UID>';
 ```
 
 ---

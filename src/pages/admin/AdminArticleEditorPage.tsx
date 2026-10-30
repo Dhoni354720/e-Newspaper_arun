@@ -6,7 +6,7 @@ import { calculateReadingTime } from '@/lib/readingTime';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { MediaUploader } from '@/components/admin/MediaUploader';
 import { LanguageIndicator } from '@/components/admin/StatusBadge';
-import { Article, Category, SupportedLanguage, ArticleStatus } from '@/types/database';
+import { useAuth } from '@/context/AuthContext';
 import { 
   Save, 
   Send, 
@@ -26,6 +26,8 @@ export const AdminArticleEditorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAuthorOnly = user?.role === 'author';
 
   const groupQuery = searchParams.get('group');
   const langQuery = searchParams.get('lang') as SupportedLanguage | null;
@@ -242,40 +244,55 @@ export const AdminArticleEditorPage: React.FC = () => {
             मसुदा सेव्ह करा (Save Draft)
           </button>
 
-          {/* Schedule Button */}
-          <button
-            type="button"
-            onClick={() => setShowScheduleModal(true)}
-            disabled={isSaving}
-            className="px-3.5 py-2 bg-blue-50 border border-blue-300 hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
-          >
-            <Clock className="w-3.5 h-3.5 text-blue-600" />
-            नियोजित करा (Schedule)
-          </button>
-
-          {/* Unpublish button if currently published */}
-          {status === 'published' && (
+          {/* Author Only: Submit for Review */}
+          {isAuthorOnly ? (
             <button
               type="button"
-              onClick={() => handleSave('draft')}
+              onClick={() => handleSave('submitted')}
               disabled={isSaving}
-              className="px-3.5 py-2 bg-amber-50 border border-amber-300 hover:bg-amber-100 text-amber-800 text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
+              className="px-4 py-2 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold rounded-lg shadow-sm transition-colors flex items-center gap-1.5 uppercase tracking-wider"
             >
-              <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
-              अप्रकाशित करा
+              <Send className="w-3.5 h-3.5" />
+              पुनरावलोकनासाठी सबमिट करा (Submit for Review)
             </button>
-          )}
+          ) : (
+            <>
+              {/* Schedule Button */}
+              <button
+                type="button"
+                onClick={() => setShowScheduleModal(true)}
+                disabled={isSaving}
+                className="px-3.5 py-2 bg-blue-50 border border-blue-300 hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
+              >
+                <Clock className="w-3.5 h-3.5 text-blue-600" />
+                नियोजित करा (Schedule)
+              </button>
 
-          {/* Publish Button */}
-          <button
-            type="button"
-            onClick={() => handleSave('published')}
-            disabled={isSaving}
-            className="px-4 py-2 bg-crimson-800 hover:bg-crimson-900 text-white text-xs font-bold rounded-lg shadow-sm transition-colors flex items-center gap-1.5 uppercase tracking-wider"
-          >
-            <Send className="w-3.5 h-3.5" />
-            थेट प्रकाशित करा (Publish Now)
-          </button>
+              {/* Unpublish button if currently published */}
+              {status === 'published' && (
+                <button
+                  type="button"
+                  onClick={() => handleSave('draft')}
+                  disabled={isSaving}
+                  className="px-3.5 py-2 bg-amber-50 border border-amber-300 hover:bg-amber-100 text-amber-800 text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
+                  अप्रकाशित करा
+                </button>
+              )}
+
+              {/* Publish Button */}
+              <button
+                type="button"
+                onClick={() => handleSave('published')}
+                disabled={isSaving}
+                className="px-4 py-2 bg-crimson-800 hover:bg-crimson-900 text-white text-xs font-bold rounded-lg shadow-sm transition-colors flex items-center gap-1.5 uppercase tracking-wider"
+              >
+                <Send className="w-3.5 h-3.5" />
+                थेट प्रकाशित करा (Publish Now)
+              </button>
+            </>
+          )}
 
           {/* Preview Public Link */}
           {slug && (

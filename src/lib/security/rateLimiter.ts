@@ -23,8 +23,8 @@ export async function checkRateLimit(
   limit: number = 5,
   windowSeconds: number = 60
 ): Promise<RateLimitResult> {
-  const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
-  const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const upstashUrl = typeof process !== 'undefined' && process.env ? process.env.UPSTASH_REDIS_REST_URL : undefined;
+  const upstashToken = typeof process !== 'undefined' && process.env ? process.env.UPSTASH_REDIS_REST_TOKEN : undefined;
 
   // 1. Upstash Redis distributed rate-limiting
   if (upstashUrl && upstashToken) {

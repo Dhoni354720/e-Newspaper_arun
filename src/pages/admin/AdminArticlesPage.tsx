@@ -175,6 +175,7 @@ export const AdminArticlesPage: React.FC = () => {
             >
               <option value="all">सर्व स्थिती (All Status)</option>
               <option value="published">प्रकाशित (Published)</option>
+              <option value="submitted">पुनरावलोकन प्रलंबित (Submitted)</option>
               <option value="draft">मसुदा (Draft)</option>
               <option value="scheduled">नियोजित (Scheduled)</option>
               <option value="archived">संग्रहित (Archived)</option>

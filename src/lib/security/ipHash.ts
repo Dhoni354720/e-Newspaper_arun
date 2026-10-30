@@ -10,6 +10,6 @@ export function hashClientIp(ip: string | undefined | null): string {
     return '0000000000000000000000000000000000000000000000000000000000000000';
   }
 
-  const salt = process.env.IP_HASH_SALT || 'fallback-dev-salt-replace-in-production-env';
+  const salt = (typeof process !== 'undefined' && process.env ? process.env.IP_HASH_SALT : undefined) || 'fallback-dev-salt-replace-in-production-env';
   return crypto.createHash('sha256').update(`${salt}:${ip}`).digest('hex');
 }
