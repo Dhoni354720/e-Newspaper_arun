@@ -420,6 +420,37 @@ export class NewsRepository {
 
     if (articleData.id) {
       // Update existing
+      if (isSupabaseConfigured()) {
+        try {
+          const dbPayload: Record<string, unknown> = {
+            slug,
+            headline: articleData.headline,
+            subtitle: articleData.subtitle || null,
+            excerpt: articleData.excerpt,
+            body: cleanBody !== undefined ? cleanBody : undefined,
+            language: articleData.language,
+            featured_image_path: articleData.featured_image_path || null,
+            image_alt: articleData.image_alt || null,
+            image_caption: articleData.image_caption || null,
+            status: articleData.status,
+            is_breaking: articleData.is_breaking !== undefined ? Boolean(articleData.is_breaking) : undefined,
+            seo_title: articleData.seo_title || articleData.headline,
+            seo_description: articleData.seo_description || articleData.excerpt,
+            reading_time_minutes: articleData.reading_time_minutes,
+            published_at: articleData.status === 'published' ? (published_at || now) : null,
+            scheduled_at: articleData.scheduled_at || null,
+            updated_at: now,
+          };
+          Object.keys(dbPayload).forEach(k => dbPayload[k] === undefined && delete dbPayload[k]);
+
+          if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(articleData.id)) {
+            await supabase.from('articles').update(dbPayload).eq('id', articleData.id);
+          }
+        } catch (err) {
+          console.warn('Supabase update article error:', err);
+        }
+      }
+
       const index = articles.findIndex(a => a.id === articleData.id);
       if (index === -1) throw new Error('Article not found');
 
@@ -450,8 +481,40 @@ export class NewsRepository {
       return updatedArticle;
     } else {
       // Create new
+      let generatedId = `art-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+      if (isSupabaseConfigured()) {
+        try {
+          const dbPayload: Record<string, unknown> = {
+            slug,
+            headline: articleData.headline || '',
+            subtitle: articleData.subtitle || null,
+            excerpt: articleData.excerpt || '',
+            body: cleanBody || '',
+            language: articleData.language || 'mr',
+            featured_image_path: articleData.featured_image_path || null,
+            image_alt: articleData.image_alt || null,
+            image_caption: articleData.image_caption || null,
+            status: articleData.status || 'draft',
+            is_breaking: Boolean(articleData.is_breaking),
+            seo_title: articleData.seo_title || articleData.headline,
+            seo_description: articleData.seo_description || articleData.excerpt,
+            reading_time_minutes: articleData.reading_time_minutes || 2,
+            published_at: articleData.status === 'published' ? (published_at || now) : null,
+            scheduled_at: articleData.scheduled_at || null,
+            created_at: now,
+            updated_at: now,
+          };
+          const { data: inserted, error: insertErr } = await supabase.from('articles').insert(dbPayload).select('id').single();
+          if (!insertErr && inserted?.id) {
+            generatedId = inserted.id;
+          }
+        } catch (err) {
+          console.warn('Supabase insert article error:', err);
+        }
+      }
+
       const newArticle: Article = {
-        id: `art-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+        id: generatedId,
         slug,
         language: articleData.language || 'mr',
         translation_group_id: articleData.translation_group_id || `grp-${Date.now()}`,
@@ -522,6 +585,14 @@ export class NewsRepository {
   }
 
   async deleteArticle(articleId: string): Promise<void> {
+    if (isSupabaseConfigured()) {
+      try {
+        await supabase.from('articles').delete().eq('id', articleId);
+      } catch (err) {
+        console.warn('Supabase deleteArticle error:', err);
+      }
+    }
+
     const articles = getLocalItem<Article[]>(STORAGE_KEYS.ARTICLES, []);
     const filtered = articles.filter(a => a.id !== articleId);
     setLocalItem(STORAGE_KEYS.ARTICLES, filtered);
@@ -542,11 +613,59 @@ export class NewsRepository {
   // CATEGORIES
   // --------------------------------------------------------------------------
   async getCategories(): Promise<Category[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase
+          .from('categories')
+          .select('*, translations:category_translations(*)')
+          .order('sort_order', { ascending: true });
+        if (!error && data && data.length > 0) {
+          return data.map((c: any) => ({
+            ...c,
+            translations: (c.translations || []).reduce((acc: any, t: any) => {
+              acc[t.language] = t;
+              return acc;
+            }, {})
+          })) as Category[];
+        }
+      } catch (err) {
+        console.warn('Supabase getCategories error:', err);
+      }
+    }
     const categories = getLocalItem<Category[]>(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
     return categories.sort((a, b) => a.sort_order - b.sort_order);
   }
 
   async saveCategory(categoryData: Partial<Category>): Promise<Category> {
+    if (isSupabaseConfigured()) {
+      try {
+        const isValidUUID = categoryData.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryData.id);
+        const catPayload: Record<string, unknown> = {
+          slug: categoryData.slug,
+          sort_order: categoryData.sort_order || 1,
+          is_active: categoryData.is_active ?? true,
+        };
+        if (isValidUUID) {
+          catPayload.id = categoryData.id;
+        }
+        const { data: dbCat, error: catErr } = await supabase.from('categories').upsert(catPayload).select().single();
+        if (!catErr && dbCat && categoryData.translations) {
+          for (const [lang, trans] of Object.entries(categoryData.translations)) {
+            if (trans && (trans as any).name) {
+              await supabase.from('category_translations').upsert({
+                category_id: dbCat.id,
+                language: lang,
+                name: (trans as any).name,
+                description: (trans as any).description || null,
+              }, { onConflict: 'category_id,language' });
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Supabase saveCategory error:', err);
+      }
+    }
+
     const categories = getLocalItem<Category[]>(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
     const now = new Date().toISOString();
 
@@ -868,6 +987,14 @@ export class NewsRepository {
 
   async deleteMedia(id: string): Promise<void> {
     const assets = await this.getMediaAssets();
+    const target = assets.find(a => a.id === id);
+    if (target && isSupabaseConfigured() && target.storage_path && !target.storage_path.startsWith('local/')) {
+      try {
+        await supabase.storage.from('article-media').remove([target.storage_path]);
+      } catch (err) {
+        console.warn('Supabase deleteMedia storage error:', err);
+      }
+    }
     setLocalItem(STORAGE_KEYS.MEDIA, assets.filter(a => a.id !== id));
   }
 
@@ -1024,6 +1151,31 @@ export class NewsRepository {
     const editions = getLocalItem<EpaperEdition[]>(STORAGE_KEYS.EPAPER, INITIAL_EPAPER_EDITIONS);
     const now = new Date().toISOString();
 
+    if (isSupabaseConfigured()) {
+      try {
+        const isValidUUID = data.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.id);
+        const epaperDbPayload: Record<string, unknown> = {
+          edition_date: data.edition_date || new Date().toISOString().split('T')[0],
+          edition_region: data.edition_region || 'mumbai',
+          title: data.title || 'दैनिक जगत समीक्षा - डिजिटल ई-पेपर',
+          title_mr: data.title_mr || data.title,
+          title_hi: data.title_hi || data.title,
+          description: data.description || '',
+          thumbnail_url: data.thumbnail_url || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80',
+          pdf_url: data.pdf_url || null,
+          total_pages: data.total_pages || (data.pages?.length || 1),
+          is_published: data.is_published ?? true,
+          updated_at: now,
+        };
+        if (isValidUUID) {
+          epaperDbPayload.id = data.id;
+        }
+        await supabase.from('epaper_editions').upsert(epaperDbPayload);
+      } catch (err) {
+        console.warn('Supabase saveEpaperEdition error:', err);
+      }
+    }
+
     if (data.id) {
       const idx = editions.findIndex(e => e.id === data.id);
       if (idx === -1) throw new Error('E-Paper edition not found');
@@ -1086,6 +1238,14 @@ export class NewsRepository {
   }
 
   async deleteEpaperEdition(id: string): Promise<void> {
+    if (isSupabaseConfigured()) {
+      try {
+        await supabase.from('epaper_editions').delete().eq('id', id);
+      } catch (err) {
+        console.warn('Supabase deleteEpaperEdition error:', err);
+      }
+    }
+
     const editions = getLocalItem<EpaperEdition[]>(STORAGE_KEYS.EPAPER, []);
     setLocalItem(STORAGE_KEYS.EPAPER, editions.filter(e => e.id !== id));
 
