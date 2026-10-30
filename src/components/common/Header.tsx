@@ -58,9 +58,9 @@ export const Header: React.FC = () => {
 
   const currentDateFormatted = getCurrentMastheadDate(language);
 
-  // Filter top-level navigation categories
+  // Filter top-level navigation categories (exclude duplicate 'top-news' category)
   const navCategories = categories
-    .filter(c => c.show_in_nav && !c.parent_id)
+    .filter(c => c.show_in_nav && !c.parent_id && c.slug !== 'top-news' && c.slug !== 'all' && c.slug !== 'all-news')
     .sort((a, b) => (a.nav_order || a.sort_order) - (b.nav_order || b.sort_order));
 
   return (
@@ -156,7 +156,80 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Main Newspaper Masthead */}
+      {/* 2. Primary Editorial Navigation Bar (Moved to Top, Sticky on Desktop) */}
+      <nav className="border-b border-editorial-900/10 bg-white shadow-xs sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between">
+            {/* Category Ribbon */}
+            <div className="flex items-center overflow-x-auto no-scrollbar scroll-smooth py-1 gap-1 sm:gap-2 text-xs sm:text-sm font-medium tracking-wide">
+              {/* Mega Menu Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setMegaMenuOpen(true)}
+                className="whitespace-nowrap px-3 py-1.5 rounded bg-editorial-100 hover:bg-crimson-800 hover:text-white transition-colors font-bold text-editorial-900 inline-flex items-center gap-1"
+                title={t('megaMenu')}
+              >
+                <Menu className="w-3.5 h-3.5" />
+                <span>{t('megaMenu')}</span>
+                <ChevronDown className="w-3 h-3 opacity-70" />
+              </button>
+
+              <Link
+                to="/"
+                className={`whitespace-nowrap px-3 py-2 rounded transition-colors ${
+                  location.pathname === '/' 
+                    ? 'text-crimson-800 font-bold border-b-2 border-crimson-800' 
+                    : 'text-editorial-800 hover:text-crimson-800'
+                }`}
+              >
+                {t('allNews')}
+              </Link>
+
+              <Link
+                to="/top-news"
+                className={`whitespace-nowrap px-3 py-2 rounded transition-colors ${
+                  location.pathname === '/top-news' 
+                    ? 'text-crimson-800 font-bold border-b-2 border-crimson-800' 
+                    : 'text-editorial-800 hover:text-crimson-800'
+                }`}
+              >
+                {t('topNews')}
+              </Link>
+
+              <Link
+                to="/epaper"
+                className={`sm:hidden whitespace-nowrap px-3 py-1.5 rounded-full font-bold transition-all inline-flex items-center gap-1.5 ml-1 ${
+                  location.pathname === '/epaper'
+                    ? 'bg-crimson-800 text-white shadow-sm'
+                    : 'bg-crimson-50 text-crimson-800 border border-crimson-200'
+                }`}
+              >
+                <Newspaper className="w-3.5 h-3.5" />
+                <span>{t('epaper')}</span>
+              </Link>
+
+              {navCategories.map((cat) => {
+                const isActive = location.pathname === `/category/${cat.slug}`;
+                return (
+                  <Link
+                    key={cat.id}
+                    to={`/category/${cat.slug}`}
+                    className={`whitespace-nowrap px-3 py-2 rounded transition-colors ${
+                      isActive 
+                        ? 'text-crimson-800 font-bold border-b-2 border-crimson-800' 
+                        : 'text-editorial-800 hover:text-crimson-800'
+                    }`}
+                  >
+                    {getCategoryName(cat)}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* 3. Main Newspaper Masthead */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 md:py-6">
         <div className="flex items-center justify-between gap-4">
           {/* Mobile Menu Toggle */}
@@ -260,79 +333,6 @@ export const Header: React.FC = () => {
           </form>
         )}
       </div>
-
-      {/* 3. Primary Editorial Navigation Bar (Sticky on Desktop) */}
-      <nav className="border-t border-b border-editorial-900/10 bg-white shadow-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between">
-            {/* Category Ribbon */}
-            <div className="flex items-center overflow-x-auto no-scrollbar scroll-smooth py-1 gap-1 sm:gap-2 text-xs sm:text-sm font-medium tracking-wide">
-              {/* Mega Menu Toggle Button */}
-              <button
-                type="button"
-                onClick={() => setMegaMenuOpen(true)}
-                className="whitespace-nowrap px-3 py-1.5 rounded bg-editorial-100 hover:bg-crimson-800 hover:text-white transition-colors font-bold text-editorial-900 inline-flex items-center gap-1"
-                title={t('megaMenu')}
-              >
-                <Menu className="w-3.5 h-3.5" />
-                <span>{t('megaMenu')}</span>
-                <ChevronDown className="w-3 h-3 opacity-70" />
-              </button>
-
-              <Link
-                to="/"
-                className={`whitespace-nowrap px-3 py-2 rounded transition-colors ${
-                  location.pathname === '/' 
-                    ? 'text-crimson-800 font-bold border-b-2 border-crimson-800' 
-                    : 'text-editorial-800 hover:text-crimson-800'
-                }`}
-              >
-                {t('allNews')}
-              </Link>
-
-              <Link
-                to="/top-news"
-                className={`whitespace-nowrap px-3 py-2 rounded transition-colors ${
-                  location.pathname === '/top-news' 
-                    ? 'text-crimson-800 font-bold border-b-2 border-crimson-800' 
-                    : 'text-editorial-800 hover:text-crimson-800'
-                }`}
-              >
-                {t('topNews')}
-              </Link>
-
-              <Link
-                to="/epaper"
-                className={`sm:hidden whitespace-nowrap px-3 py-1.5 rounded-full font-bold transition-all inline-flex items-center gap-1.5 ml-1 ${
-                  location.pathname === '/epaper'
-                    ? 'bg-crimson-800 text-white shadow-sm'
-                    : 'bg-crimson-50 text-crimson-800 border border-crimson-200'
-                }`}
-              >
-                <Newspaper className="w-3.5 h-3.5" />
-                <span>{t('epaper')}</span>
-              </Link>
-
-              {navCategories.map((cat) => {
-                const isActive = location.pathname === `/category/${cat.slug}`;
-                return (
-                  <Link
-                    key={cat.id}
-                    to={`/category/${cat.slug}`}
-                    className={`whitespace-nowrap px-3 py-2 rounded transition-colors ${
-                      isActive 
-                        ? 'text-crimson-800 font-bold border-b-2 border-crimson-800' 
-                        : 'text-editorial-800 hover:text-crimson-800'
-                    }`}
-                  >
-                    {getCategoryName(cat)}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </nav>
 
       {/* 4. Mega Menu Overlay Modal */}
       <MegaMenu
