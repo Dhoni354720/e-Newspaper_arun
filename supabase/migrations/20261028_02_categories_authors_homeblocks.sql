@@ -98,6 +98,7 @@ CREATE POLICY "Staff can manage home blocks"
     )
   );
 
+DROP TRIGGER IF EXISTS trigger_update_home_blocks_timestamp ON public.home_blocks;
 CREATE TRIGGER trigger_update_home_blocks_timestamp
   BEFORE UPDATE ON public.home_blocks
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();

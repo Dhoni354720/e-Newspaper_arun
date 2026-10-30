@@ -169,14 +169,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_update_articles_timestamp ON public.articles;
 CREATE TRIGGER trigger_update_articles_timestamp
   BEFORE UPDATE ON public.articles
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
+DROP TRIGGER IF EXISTS trigger_update_breaking_timestamp ON public.breaking_news_items;
 CREATE TRIGGER trigger_update_breaking_timestamp
   BEFORE UPDATE ON public.breaking_news_items
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
+DROP TRIGGER IF EXISTS trigger_update_settings_timestamp ON public.site_settings;
 CREATE TRIGGER trigger_update_settings_timestamp
   BEFORE UPDATE ON public.site_settings
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
@@ -240,43 +243,51 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- 1. Profiles Policies
+DROP POLICY IF EXISTS "Public profiles are readable by authenticated users" ON public.profiles;
 CREATE POLICY "Public profiles are readable by authenticated users"
   ON public.profiles FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Users can update their own profile" ON public.profiles;
 CREATE POLICY "Users can update their own profile"
   ON public.profiles FOR UPDATE
   TO authenticated
   USING (auth.uid() = id);
 
 -- 2. Site Settings Policies
+DROP POLICY IF EXISTS "Public can view site settings" ON public.site_settings;
 CREATE POLICY "Public can view site settings"
   ON public.site_settings FOR SELECT
   TO anon, authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Staff can update site settings" ON public.site_settings;
 CREATE POLICY "Staff can update site settings"
   ON public.site_settings FOR UPDATE
   TO authenticated
   USING (public.is_staff());
 
 -- 3. Categories & Translations Policies
+DROP POLICY IF EXISTS "Public can view active categories" ON public.categories;
 CREATE POLICY "Public can view active categories"
   ON public.categories FOR SELECT
   TO anon, authenticated
   USING (is_active = true OR public.is_staff());
 
+DROP POLICY IF EXISTS "Staff can modify categories" ON public.categories;
 CREATE POLICY "Staff can modify categories"
   ON public.categories FOR ALL
   TO authenticated
   USING (public.is_staff());
 
+DROP POLICY IF EXISTS "Public can view category translations" ON public.category_translations;
 CREATE POLICY "Public can view category translations"
   ON public.category_translations FOR SELECT
   TO anon, authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Staff can modify category translations" ON public.category_translations;
 CREATE POLICY "Staff can modify category translations"
   ON public.category_translations FOR ALL
   TO authenticated
@@ -284,6 +295,7 @@ CREATE POLICY "Staff can modify category translations"
 
 -- 4. Articles Policies
 -- Anonymous & public readers: Only see published articles whose publication date is past
+DROP POLICY IF EXISTS "Public can view published articles" ON public.articles;
 CREATE POLICY "Public can view published articles"
   ON public.articles FOR SELECT
   TO anon, authenticated
@@ -293,69 +305,82 @@ CREATE POLICY "Public can view published articles"
   );
 
 -- Staff can insert, update, delete articles
+DROP POLICY IF EXISTS "Staff can insert articles" ON public.articles;
 CREATE POLICY "Staff can insert articles"
   ON public.articles FOR INSERT
   TO authenticated
   WITH CHECK (public.is_staff());
 
+DROP POLICY IF EXISTS "Staff can update articles" ON public.articles;
 CREATE POLICY "Staff can update articles"
   ON public.articles FOR UPDATE
   TO authenticated
   USING (public.is_staff());
 
+DROP POLICY IF EXISTS "Staff can delete articles" ON public.articles;
 CREATE POLICY "Staff can delete articles"
   ON public.articles FOR DELETE
   TO authenticated
   USING (public.is_staff());
 
 -- 5. Article Categories & Tags Policies
+DROP POLICY IF EXISTS "Public can view article categories" ON public.article_categories;
 CREATE POLICY "Public can view article categories"
   ON public.article_categories FOR SELECT
   TO anon, authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Staff can manage article categories" ON public.article_categories;
 CREATE POLICY "Staff can manage article categories"
   ON public.article_categories FOR ALL
   TO authenticated
   USING (public.is_staff());
 
+DROP POLICY IF EXISTS "Public can view tags" ON public.tags;
 CREATE POLICY "Public can view tags"
   ON public.tags FOR SELECT
   TO anon, authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Staff can manage tags" ON public.tags;
 CREATE POLICY "Staff can manage tags"
   ON public.tags FOR ALL
   TO authenticated
   USING (public.is_staff());
 
+DROP POLICY IF EXISTS "Public can view article tags" ON public.article_tags;
 CREATE POLICY "Public can view article tags"
   ON public.article_tags FOR SELECT
   TO anon, authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Staff can manage article tags" ON public.article_tags;
 CREATE POLICY "Staff can manage article tags"
   ON public.article_tags FOR ALL
   TO authenticated
   USING (public.is_staff());
 
 -- 6. Media Assets Policies
+DROP POLICY IF EXISTS "Public can view media assets" ON public.media_assets;
 CREATE POLICY "Public can view media assets"
   ON public.media_assets FOR SELECT
   TO anon, authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Staff can insert media assets" ON public.media_assets;
 CREATE POLICY "Staff can insert media assets"
   ON public.media_assets FOR INSERT
   TO authenticated
   WITH CHECK (public.is_staff());
 
+DROP POLICY IF EXISTS "Staff can delete media assets" ON public.media_assets;
 CREATE POLICY "Staff can delete media assets"
   ON public.media_assets FOR DELETE
   TO authenticated
   USING (public.is_staff());
 
 -- 7. Breaking News Items Policies
+DROP POLICY IF EXISTS "Public can view active breaking news" ON public.breaking_news_items;
 CREATE POLICY "Public can view active breaking news"
   ON public.breaking_news_items FOR SELECT
   TO anon, authenticated
@@ -365,17 +390,20 @@ CREATE POLICY "Public can view active breaking news"
     OR public.is_staff()
   );
 
+DROP POLICY IF EXISTS "Staff can manage breaking news" ON public.breaking_news_items;
 CREATE POLICY "Staff can manage breaking news"
   ON public.breaking_news_items FOR ALL
   TO authenticated
   USING (public.is_staff());
 
 -- 8. Audit Logs Policies
+DROP POLICY IF EXISTS "Only staff can view audit logs" ON public.audit_logs;
 CREATE POLICY "Only staff can view audit logs"
   ON public.audit_logs FOR SELECT
   TO authenticated
   USING (public.is_staff());
 
+DROP POLICY IF EXISTS "Staff can insert audit logs" ON public.audit_logs;
 CREATE POLICY "Staff can insert audit logs"
   ON public.audit_logs FOR INSERT
   TO authenticated

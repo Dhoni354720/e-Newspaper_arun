@@ -32,12 +32,14 @@ ON CONFLICT (id) DO UPDATE SET
 
 -- Storage Policies for article-media:
 -- 1. Anyone can view/download public images
+DROP POLICY IF EXISTS "Public Read Access for Article Media" ON storage.objects;
 CREATE POLICY "Public Read Access for Article Media"
 ON storage.objects FOR SELECT
 TO anon, authenticated
 USING (bucket_id = 'article-media');
 
 -- 2. Only authenticated staff can upload images
+DROP POLICY IF EXISTS "Staff Upload Access for Article Media" ON storage.objects;
 CREATE POLICY "Staff Upload Access for Article Media"
 ON storage.objects FOR INSERT
 TO authenticated
@@ -50,6 +52,7 @@ WITH CHECK (
 );
 
 -- 3. Only staff can delete images
+DROP POLICY IF EXISTS "Staff Delete Access for Article Media" ON storage.objects;
 CREATE POLICY "Staff Delete Access for Article Media"
 ON storage.objects FOR DELETE
 TO authenticated
@@ -63,12 +66,14 @@ USING (
 
 -- Storage Policies for epaper-editions:
 -- 1. Anyone can read epaper PDFs and page images
+DROP POLICY IF EXISTS "Public Read Access for Epaper Objects" ON storage.objects;
 CREATE POLICY "Public Read Access for Epaper Objects"
 ON storage.objects FOR SELECT
 TO anon, authenticated
 USING (bucket_id = 'epaper-editions');
 
 -- 2. Only authenticated staff can upload epapers
+DROP POLICY IF EXISTS "Staff Upload Access for Epaper Objects" ON storage.objects;
 CREATE POLICY "Staff Upload Access for Epaper Objects"
 ON storage.objects FOR INSERT
 TO authenticated
@@ -81,6 +86,7 @@ WITH CHECK (
 );
 
 -- 3. Only staff can delete epaper files
+DROP POLICY IF EXISTS "Staff Delete Access for Epaper Objects" ON storage.objects;
 CREATE POLICY "Staff Delete Access for Epaper Objects"
 ON storage.objects FOR DELETE
 TO authenticated

@@ -168,12 +168,15 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Public Read Policies for published content
+DROP POLICY IF EXISTS "Public read published galleries" ON public.galleries;
 CREATE POLICY "Public read published galleries" ON public.galleries
     FOR SELECT USING (is_published = true AND published_at <= NOW());
 
+DROP POLICY IF EXISTS "Staff manage all galleries" ON public.galleries;
 CREATE POLICY "Staff manage all galleries" ON public.galleries
     FOR ALL USING (public.is_staff_user());
 
+DROP POLICY IF EXISTS "Public read gallery images" ON public.gallery_images;
 CREATE POLICY "Public read gallery images" ON public.gallery_images
     FOR SELECT USING (
         EXISTS (
@@ -184,33 +187,43 @@ CREATE POLICY "Public read gallery images" ON public.gallery_images
         )
     );
 
+DROP POLICY IF EXISTS "Staff manage gallery images" ON public.gallery_images;
 CREATE POLICY "Staff manage gallery images" ON public.gallery_images
     FOR ALL USING (public.is_staff_user());
 
+DROP POLICY IF EXISTS "Public read published videos" ON public.videos;
 CREATE POLICY "Public read published videos" ON public.videos
     FOR SELECT USING (is_published = true AND published_at <= NOW());
 
+DROP POLICY IF EXISTS "Staff manage all videos" ON public.videos;
 CREATE POLICY "Staff manage all videos" ON public.videos
     FOR ALL USING (public.is_staff_user());
 
+DROP POLICY IF EXISTS "Public read published briefs" ON public.briefs;
 CREATE POLICY "Public read published briefs" ON public.briefs
     FOR SELECT USING (is_published = true);
 
+DROP POLICY IF EXISTS "Staff manage all briefs" ON public.briefs;
 CREATE POLICY "Staff manage all briefs" ON public.briefs
     FOR ALL USING (public.is_staff_user());
 
+DROP POLICY IF EXISTS "Public read horoscopes" ON public.horoscopes;
 CREATE POLICY "Public read horoscopes" ON public.horoscopes
     FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Staff manage horoscopes" ON public.horoscopes;
 CREATE POLICY "Staff manage horoscopes" ON public.horoscopes
     FOR ALL USING (public.is_staff_user());
 
+DROP POLICY IF EXISTS "Public read published supplements" ON public.supplements;
 CREATE POLICY "Public read published supplements" ON public.supplements
     FOR SELECT USING (is_published = true);
 
+DROP POLICY IF EXISTS "Staff manage supplements" ON public.supplements;
 CREATE POLICY "Staff manage supplements" ON public.supplements
     FOR ALL USING (public.is_staff_user());
 
+DROP POLICY IF EXISTS "Public submit news tips" ON public.news_tips;
 CREATE POLICY "Public submit news tips" ON public.news_tips
     FOR INSERT WITH CHECK (
         length(sender_name) >= 2 AND
@@ -218,11 +231,14 @@ CREATE POLICY "Public submit news tips" ON public.news_tips
         length(message) >= 10
     );
 
+DROP POLICY IF EXISTS "Staff manage news tips" ON public.news_tips;
 CREATE POLICY "Staff manage news tips" ON public.news_tips
     FOR ALL USING (public.is_staff_user());
 
+DROP POLICY IF EXISTS "Public read published pages" ON public.pages;
 CREATE POLICY "Public read published pages" ON public.pages
     FOR SELECT USING (is_published = true);
 
+DROP POLICY IF EXISTS "Staff manage pages" ON public.pages;
 CREATE POLICY "Staff manage pages" ON public.pages
     FOR ALL USING (public.is_staff_user());
