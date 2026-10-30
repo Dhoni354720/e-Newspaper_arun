@@ -13,6 +13,7 @@ import {
   MessageCircle
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { safeUrl } from '@/lib/sanitize';
 
 interface CropBox {
   x: number; // percentage (0-100)
@@ -121,8 +122,13 @@ export const EpaperClipper: React.FC<EpaperClipperProps> = ({
     setIsProcessing(true);
 
     try {
-      // Load source high-res or standard image
-      const sourceUrl = zoomImageUrl || pageImageUrl;
+      // Validate source high-res or standard image URL
+      const rawUrl = zoomImageUrl || pageImageUrl;
+      const sourceUrl = safeUrl(rawUrl, '');
+      if (!sourceUrl || (!sourceUrl.startsWith('/') && !sourceUrl.startsWith('http:') && !sourceUrl.startsWith('https:'))) {
+        throw new Error('Invalid or disallowed image URL for clipping');
+      }
+
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.src = sourceUrl;
@@ -132,19 +138,22 @@ export const EpaperClipper: React.FC<EpaperClipperProps> = ({
         img.onerror = () => reject(new Error('Failed to load page image for clipping'));
       });
 
-      // Calculate pixel crop coordinates
-      const cropPxX = (crop.x / 100) * img.naturalWidth;
-      const cropPxY = (crop.y / 100) * img.naturalHeight;
-      const cropPxW = (crop.width / 100) * img.naturalWidth;
-      const cropPxH = (crop.height / 100) * img.naturalHeight;
+      // Clamp coordinates to valid percentage bounds (0-100)
+      const safeX = Math.max(0, Math.min(95, crop.x));
+      const safeY = Math.max(0, Math.min(95, crop.y));
+      const safeW = Math.max(5, Math.min(100 - safeX, crop.width));
+      const safeH = Math.max(5, Math.min(100 - safeY, crop.height));
 
-      // Composite canvas setup:
-      // - Top masthead header height: ~120px
-      // - Crop image height: proportional
-      // - Bottom statutory footer height: ~55px
-      const targetW = Math.max(900, Math.min(1800, cropPxW));
-      const scale = targetW / cropPxW;
-      const targetCropH = cropPxH * scale;
+      // Calculate pixel crop coordinates
+      const cropPxX = (safeX / 100) * img.naturalWidth;
+      const cropPxY = (safeY / 100) * img.naturalHeight;
+      const cropPxW = (safeW / 100) * img.naturalWidth;
+      const cropPxH = (safeH / 100) * img.naturalHeight;
+
+      // Cap maximum canvas dimensions to prevent memory exhaustion / canvas DoS
+      const targetW = Math.max(400, Math.min(1800, cropPxW || 900));
+      const scale = targetW / (cropPxW || 1);
+      const targetCropH = Math.min(3000, cropPxH * scale);
 
       const headerH = 115;
       const footerH = 50;
