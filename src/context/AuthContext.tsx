@@ -23,25 +23,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     async function initAuth() {
       if (isSupabaseConfigured()) {
         try {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session?.user) {
+          const { data: { user: authUser }, error: userError } = await supabase.auth.getUser();
+          if (authUser && !userError) {
             // Fetch profile
             const { data: profile } = await supabase
               .from('profiles')
               .select('*')
-              .eq('id', session.user.id)
+              .eq('id', authUser.id)
               .single();
 
             if (profile) {
               setUser({
                 ...(profile as Profile),
-                display_name: (profile as Profile).display_name || session.user.email?.split('@')[0] || 'User',
+                display_name: (profile as Profile).display_name || authUser.email?.split('@')[0] || 'User',
               });
             } else {
               // Least privilege fallback: default to 'author', NEVER 'admin'
               setUser({
-                id: session.user.id,
-                display_name: session.user.email?.split('@')[0] || 'User',
+                id: authUser.id,
+                display_name: authUser.email?.split('@')[0] || 'User',
                 role: 'author',
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
