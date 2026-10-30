@@ -200,7 +200,10 @@ export class NewsRepository {
         }
 
         if (options.search) {
-          query = query.or(`headline.ilike.%${options.search}%,excerpt.ilike.%${options.search}%`);
+          const cleanSearch = options.search.trim().slice(0, 100).replace(/[,()"\\]/g, ' ');
+          if (cleanSearch) {
+            query = query.or(`headline.ilike.%${cleanSearch}%,excerpt.ilike.%${cleanSearch}%`);
+          }
         }
 
         const from = (page - 1) * limit;
@@ -311,7 +314,7 @@ export class NewsRepository {
 
     // Search query
     if (options.search) {
-      const q = options.search.toLowerCase().trim();
+      const q = options.search.toLowerCase().trim().slice(0, 100);
       filtered = filtered.filter(art =>
         art.headline.toLowerCase().includes(q) ||
         art.excerpt.toLowerCase().includes(q) ||
@@ -1000,6 +1003,13 @@ export class NewsRepository {
   }
 
   async incrementEpaperViews(editionId: string): Promise<void> {
+    if (isSupabaseConfigured()) {
+      try {
+        await supabase.rpc('increment_epaper_views', { edition_id: editionId });
+      } catch (err) {
+        console.warn('Supabase increment_epaper_views failed:', err);
+      }
+    }
     const editions = getLocalItem<EpaperEdition[]>(STORAGE_KEYS.EPAPER, INITIAL_EPAPER_EDITIONS);
     const edition = editions.find(e => e.id === editionId);
     if (edition) {
@@ -1009,6 +1019,13 @@ export class NewsRepository {
   }
 
   async incrementEpaperDownloads(editionId: string): Promise<void> {
+    if (isSupabaseConfigured()) {
+      try {
+        await supabase.rpc('increment_epaper_downloads', { edition_id: editionId });
+      } catch (err) {
+        console.warn('Supabase increment_epaper_downloads failed:', err);
+      }
+    }
     const editions = getLocalItem<EpaperEdition[]>(STORAGE_KEYS.EPAPER, INITIAL_EPAPER_EDITIONS);
     const edition = editions.find(e => e.id === editionId);
     if (edition) {
@@ -1165,7 +1182,7 @@ export class NewsRepository {
     if (isSupabaseConfigured()) {
       try {
         const { data, error } = await supabase
-          .from('profiles')
+          .from('public_profiles')
           .select('*')
           .order('display_name', { ascending: true });
         if (!error && data && data.length > 0) {
