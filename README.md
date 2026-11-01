@@ -3,8 +3,8 @@
 
 > **"सत्य, निष्पक्ष और निर्भीक पत्रकारिता"**  
 > Chief Editor: **अरुण रमाकांत तिवारी (Arun Ramakant Tiwari)**  
-> Head Office: **भांडुप (पश्चिम), मुंबई, महाराष्ट्र 400078**  
-> Official Email: `jagatsameeksha2014@gmail.com` | Tel: `+91-8369517611`, `+91-7448193748`
+> Head Office: **कल्याण, महाराष्ट्र 421301**  
+> Official Email: `jagatsameeksha2014@gmail.com` | Tel: `+91-8828812282`, `+91-8369517611`, `+91-7448193748`
 
 ---
 
@@ -185,6 +185,6 @@ All 12 integration and unit test suites:
 © 2014–2026 **दैनिक जगत समीक्षा (Dainik Jagat Sameeksha)**. All rights reserved.  
 - **RNI Registration**: `MAHHIN/2014/57312`
 - **Chief Editor**: अरुण रमाकांत तिवारी (Arun Ramakant Tiwari)
-- **Office**: भांडुप (पश्चिम), मुंबई, महाराष्ट्र 400078
+- **Office**: कल्याण, महाराष्ट्र 421301
 - **Email**: `jagatsameeksha2014@gmail.com`
-- **Phone**: +91-8369517611, +91-7448193748
+- **Phone**: +91-8828812282, +91-8369517611, +91-7448193748

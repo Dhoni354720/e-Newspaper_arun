@@ -12,8 +12,8 @@ This document records the stated defaults and fallback values for every requirem
 | **Established Year** ⚠️ | `2014` | Corroborated by RNI Registration No. `MAHHIN/2014/57312` and email handle. |
 | **Owner & Publisher** ⚠️ | अरुण रमाकांत तिवारी (Arun Ramakant Tiwari) | Editor named in print edition strip; owner of Vaishnavi Property Consultancy in Mumbai. |
 | **Printer & Printing Press** ⚠️ | मुद्रक एवं प्रकाशक: अरुण रमाकांत तिवारी | Standard print press fallback pending specific commercial press name confirmation. |
-| **Office Address** ⚠️ | मुंबई / भांडुप (पश्चिम), मुंबई, महाराष्ट्र 400078 | Inferred from Garud Security & Vaishnavi Consultancy offices listed in print edition. |
-| **Grievance Officer (IT Rules 2021)** ⚠️ | **अधिकारी:** अरुण रमाकांत तिवारी (संपादक)<br>**ईमेल:** `jagatsameeksha2014@gmail.com`<br>**फोन:** +91-8369517611 | Statutory digital media requirement under India Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021. |
+| **Office Address** ⚠️ | कल्याण, महाराष्ट्र 421301 | Updated to Kalyan, Maharashtra editorial office. |
+| **Grievance Officer (IT Rules 2021)** ⚠️ | **अधिकारी:** अरुण रमाकांत तिवारी (संपादक)<br>**ईमेल:** `jagatsameeksha2014@gmail.com`<br>**फोन:** +91-8828812282, +91-8369517611 | Statutory digital media requirement under India Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021. |
 | **Hindi Tagline** ⚠️ | `सत्य, निष्पक्ष और निर्भीक पत्रकारिता` | Editorial standard Devanagari tagline. |
 
 ---

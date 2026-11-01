@@ -105,24 +105,42 @@ export const Footer: React.FC = () => {
             <h3 className="text-white text-xs font-bold uppercase tracking-wider mb-4 border-l-2 border-crimson-800 pl-2">
               {t('contactUs')}
             </h3>
-            <ul className="space-y-3 text-xs sm:text-sm text-editorial-400">
-              <li className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-crimson-500 flex-shrink-0 mt-0.5" />
-                <span>{settings.office_address}</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-crimson-500 flex-shrink-0" />
-                <a href={`tel:${settings.contact_phone}`} className="hover:text-white transition-colors">
-                  {settings.contact_phone}
-                </a>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-crimson-500 flex-shrink-0" />
-                <a href={`mailto:${settings.contact_email}`} className="hover:text-white transition-colors">
-                  {settings.contact_email}
-                </a>
-              </li>
-            </ul>
+            {(() => {
+              const displayAddress =
+                !settings.office_address ||
+                settings.office_address.includes('भांडुप') ||
+                settings.office_address.toLowerCase().includes('bhandup') ||
+                settings.office_address.includes('400078') ||
+                (!settings.office_address.includes('कल्याण') && !settings.office_address.toLowerCase().includes('kalyan'))
+                  ? 'कल्याण, महाराष्ट्र 421301'
+                  : settings.office_address;
+
+              const displayPhone =
+                !settings.contact_phone || !settings.contact_phone.includes('8828812282')
+                  ? '+91 8828812282, +91 8369517611, +91 7448193748'
+                  : settings.contact_phone;
+
+              return (
+                <ul className="space-y-3 text-xs sm:text-sm text-editorial-400">
+                  <li className="flex items-start gap-2.5">
+                    <MapPin className="w-4 h-4 text-crimson-500 flex-shrink-0 mt-0.5" />
+                    <span>{displayAddress}</span>
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Phone className="w-4 h-4 text-crimson-500 flex-shrink-0" />
+                    <a href="tel:+918828812282" className="hover:text-white transition-colors" title="Call editorial office">
+                      {displayPhone}
+                    </a>
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Mail className="w-4 h-4 text-crimson-500 flex-shrink-0" />
+                    <a href={`mailto:${settings.contact_email}`} className="hover:text-white transition-colors">
+                      {settings.contact_email}
+                    </a>
+                  </li>
+                </ul>
+              );
+            })()}
 
             <div className="mt-6 pt-4 border-t border-editorial-900">
               <Link

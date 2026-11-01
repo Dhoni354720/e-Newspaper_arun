@@ -15,15 +15,33 @@ interface SettingsContextType {
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
+const sanitizeSettings = (raw: SiteSettings): SiteSettings => {
+  const s = { ...raw };
+  const addr = s.office_address || '';
+  if (
+    addr.includes('भांडुप') ||
+    addr.toLowerCase().includes('bhandup') ||
+    addr.includes('400078') ||
+    (!addr.includes('कल्याण') && !addr.toLowerCase().includes('kalyan'))
+  ) {
+    s.office_address = 'कल्याण, महाराष्ट्र 421301';
+  }
+  const phone = s.contact_phone || '';
+  if (!phone.includes('8828812282')) {
+    s.contact_phone = '+91 8828812282, +91 8369517611, +91 7448193748';
+  }
+  return s;
+};
+
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
+  const [settings, setSettings] = useState<SiteSettings>(() => sanitizeSettings(DEFAULT_SITE_SETTINGS));
   const [isLoading, setIsLoading] = useState(true);
   const { language } = useLanguage();
 
   const loadSettings = async () => {
     try {
       const data = await repository.getSiteSettings();
-      setSettings(data);
+      setSettings(sanitizeSettings(data));
     } catch (e) {
       console.error('Failed to load settings:', e);
     } finally {
@@ -37,7 +55,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const updateSettings = async (newSettings: Partial<SiteSettings>) => {
     const updated = await repository.updateSiteSettings(newSettings);
-    setSettings(updated);
+    setSettings(sanitizeSettings(updated));
   };
 
   // Localized publication name according to selected language

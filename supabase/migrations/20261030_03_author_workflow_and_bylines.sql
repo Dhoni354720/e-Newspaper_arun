@@ -184,8 +184,8 @@ ALTER TABLE public.site_settings
   ALTER COLUMN publication_name_mr SET DEFAULT 'दैनिक जगत समीक्षा',
   ALTER COLUMN publication_name_hi SET DEFAULT 'दैनिक जगत समीक्षा',
   ALTER COLUMN contact_email SET DEFAULT 'jagatsameeksha2014@gmail.com',
-  ALTER COLUMN contact_phone SET DEFAULT '+91 8369517611',
-  ALTER COLUMN office_address SET DEFAULT 'भांडुप (पश्चिम), मुंबई, महाराष्ट्र 400078',
+  ALTER COLUMN contact_phone SET DEFAULT '+91 8828812282, +91 8369517611, +91 7448193748',
+  ALTER COLUMN office_address SET DEFAULT 'कल्याण, महाराष्ट्र 421301',
   ALTER COLUMN default_language SET DEFAULT 'hi';
 
 INSERT INTO public.site_settings (
@@ -211,8 +211,8 @@ VALUES (
   'hi',
   ARRAY['hi', 'mr', 'en'],
   'jagatsameeksha2014@gmail.com',
-  '+91 8369517611',
-  'भांडुप (पश्चिम), मुंबई, महाराष्ट्र 400078',
+  '+91 8828812282, +91 8369517611, +91 7448193748',
+  'कल्याण, महाराष्ट्र 421301',
   '{"twitter": "https://twitter.com/jagatsameeksha", "facebook": "https://facebook.com/jagatsameeksha", "youtube": "https://youtube.com/@jagatsameeksha"}'::jsonb,
   '{"accentColor": "#ed1c24", "mastheadStyle": "classic", "enableBreakingTicker": true}'::jsonb
 )

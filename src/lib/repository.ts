@@ -842,18 +842,68 @@ export class NewsRepository {
   // --------------------------------------------------------------------------
   // SITE SETTINGS
   // --------------------------------------------------------------------------
+  sanitizeAndMigrateSettings(settings: SiteSettings): SiteSettings {
+    let modified = false;
+    const updated: SiteSettings = { ...settings };
+
+    // Auto-migrate legacy Bhandup address or 400078 pincode to Kalyan, Maharashtra 421301
+    const addr = updated.office_address || '';
+    if (
+      addr.includes('भांडुप') ||
+      addr.toLowerCase().includes('bhandup') ||
+      addr.includes('400078') ||
+      (!addr.includes('कल्याण') && !addr.toLowerCase().includes('kalyan'))
+    ) {
+      updated.office_address = 'कल्याण, महाराष्ट्र 421301';
+      modified = true;
+    }
+
+    // Auto-migrate contact_phone to include 8828812282 first
+    const phone = updated.contact_phone || '';
+    if (!phone.includes('8828812282')) {
+      updated.contact_phone = '+91 8828812282, +91 8369517611, +91 7448193748';
+      modified = true;
+    }
+
+    if (modified) {
+      setLocalItem(STORAGE_KEYS.SETTINGS, updated);
+      if (isSupabaseConfigured()) {
+        supabase
+          .from('site_settings')
+          .upsert({
+            id: 'default',
+            ...updated,
+            updated_at: new Date().toISOString(),
+          })
+          .then(({ error }) => {
+            if (error) {
+              console.warn('Auto-migration upsert to Supabase warning:', error);
+            } else {
+              console.info('Auto-migrated site_settings to Kalyan and 8828812282 in Supabase.');
+            }
+          })
+          .catch((err) => {
+            console.warn('Auto-migration upsert exception:', err);
+          });
+      }
+    }
+
+    return updated;
+  }
+
   async getSiteSettings(): Promise<SiteSettings> {
     if (isSupabaseConfigured()) {
       try {
         const { data, error } = await supabase.from('site_settings').select('*').eq('id', 'default').single();
         if (!error && data) {
-          return data as SiteSettings;
+          return this.sanitizeAndMigrateSettings(data as SiteSettings);
         }
       } catch (e) {
         console.warn('Supabase getSiteSettings error:', e);
       }
     }
-    return getLocalItem<SiteSettings>(STORAGE_KEYS.SETTINGS, DEFAULT_SITE_SETTINGS);
+    const local = getLocalItem<SiteSettings>(STORAGE_KEYS.SETTINGS, DEFAULT_SITE_SETTINGS);
+    return this.sanitizeAndMigrateSettings(local);
   }
 
   async updateSiteSettings(settings: Partial<SiteSettings>): Promise<SiteSettings> {

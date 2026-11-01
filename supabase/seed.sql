@@ -26,8 +26,8 @@ INSERT INTO public.site_settings (
   'hi',
   ARRAY['hi', 'mr', 'en'],
   'jagatsameeksha2014@gmail.com',
-  '+91 8369517611',
-  'भांडुप (पश्चिम), मुंबई, महाराष्ट्र 400078',
+  '+91 8828812282, +91 8369517611, +91 7448193748',
+  'कल्याण, महाराष्ट्र 421301',
   '{"twitter": "https://twitter.com/jagatsameeksha", "facebook": "https://facebook.com/jagatsameeksha", "youtube": "https://youtube.com/@jagatsameeksha"}'::jsonb,
   '{"accentColor": "#ed1c24", "mastheadStyle": "classic", "enableBreakingTicker": true}'::jsonb
 )

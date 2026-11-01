@@ -129,7 +129,13 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
       },
       'address': {
         '@type': 'PostalAddress',
-        'streetAddress': settings.office_address || 'कल्याण, महाराष्ट्र 421301',
+        'streetAddress':
+          !settings.office_address ||
+          settings.office_address.includes('भांडुप') ||
+          settings.office_address.toLowerCase().includes('bhandup') ||
+          settings.office_address.includes('400078')
+            ? 'कल्याण, महाराष्ट्र 421301'
+            : settings.office_address,
         'addressLocality': 'कल्याण',
         'addressRegion': 'महाराष्ट्र',
         'postalCode': '421301',
