@@ -8,7 +8,8 @@ import { ZODIAC_SIGNS } from '@/data/seedData';
 import { HoroscopeItem, HoroscopePeriod, HoroscopeSign } from '@/types/database';
 import { useLanguage } from '@/context/LanguageContext';
 import { formatDate } from '@/lib/date';
-import { Sparkles, Calendar, ArrowLeft, Award, Compass } from 'lucide-react';
+import { Sparkles, Calendar, ArrowLeft, Award, Compass, RefreshCw, Radio } from 'lucide-react';
+import { fetchLiveDailyHoroscope } from '@/lib/horoscopeService';
 
 export const RashifalPage: React.FC = () => {
   const { language, t } = useLanguage();
@@ -16,22 +17,38 @@ export const RashifalPage: React.FC = () => {
   const [horoscopes, setHoroscopes] = useState<HoroscopeItem[]>([]);
   const [selectedSign, setSelectedSign] = useState<HoroscopeSign>('aries');
   const [isLoading, setIsLoading] = useState(true);
+  const [isSyncingLive, setIsSyncingLive] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
+
+  const loadData = async (forceLive: boolean = false) => {
+    setIsLoading(true);
+    if (forceLive) setIsSyncingLive(true);
+
+    try {
+      if (period === 'daily') {
+        const liveData = await fetchLiveDailyHoroscope(forceLive);
+        setHoroscopes(liveData);
+        setLastSyncTime(new Date().toLocaleTimeString(language === 'en' ? 'en-US' : 'mr-IN', { hour: '2-digit', minute: '2-digit' }));
+      } else {
+        const data = await repository.getHoroscopes(period);
+        setHoroscopes(data);
+      }
+    } catch {
+      const data = await repository.getHoroscopes(period);
+      setHoroscopes(data);
+    } finally {
+      setIsLoading(false);
+      setIsSyncingLive(false);
+    }
+  };
 
   useEffect(() => {
-    let isMounted = true;
-    setIsLoading(true);
-
-    repository.getHoroscopes(period).then(data => {
-      if (isMounted) {
-        setHoroscopes(data);
-        setIsLoading(false);
-      }
-    });
-
-    return () => {
-      isMounted = false;
-    };
+    loadData();
   }, [period]);
+
+  const handleManualLiveSync = () => {
+    loadData(true);
+  };
 
   const activeHoroscope = horoscopes.find(h => h.sign === selectedSign) || horoscopes[0];
   const activeSignInfo = ZODIAC_SIGNS.find(s => s.sign === selectedSign) || ZODIAC_SIGNS[0];
@@ -89,43 +106,78 @@ export const RashifalPage: React.FC = () => {
                 </p>
               </div>
 
-              {/* Period Tabs */}
-              <div className="flex items-center bg-black/40 border border-white/20 p-1 rounded-lg text-xs font-semibold self-start sm:self-auto">
-                <button
-                  type="button"
-                  onClick={() => setPeriod('daily')}
-                  className={`px-3 py-1.5 rounded-md transition-all ${
-                    period === 'daily'
-                      ? 'bg-brand-gold text-editorial-950 shadow-xs font-bold'
-                      : 'text-white hover:text-amber-200'
-                  }`}
-                >
-                  दैनिक (Daily)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPeriod('weekly')}
-                  className={`px-3 py-1.5 rounded-md transition-all ${
-                    period === 'weekly'
-                      ? 'bg-brand-gold text-editorial-950 shadow-xs font-bold'
-                      : 'text-white hover:text-amber-200'
-                  }`}
-                >
-                  साप्ताहिक (Weekly)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPeriod('monthly')}
-                  className={`px-3 py-1.5 rounded-md transition-all ${
-                    period === 'monthly'
-                      ? 'bg-brand-gold text-editorial-950 shadow-xs font-bold'
-                      : 'text-white hover:text-amber-200'
-                  }`}
-                >
-                  मासिक (Monthly)
-                </button>
+              {/* Period Tabs & Live Sync */}
+              <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                <div className="flex items-center bg-black/40 border border-white/20 p-1 rounded-lg text-xs font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => setPeriod('daily')}
+                    className={`px-3 py-1.5 rounded-md transition-all ${
+                      period === 'daily'
+                        ? 'bg-brand-gold text-editorial-950 shadow-xs font-bold'
+                        : 'text-white hover:text-amber-200'
+                    }`}
+                  >
+                    दैनिक (Daily)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPeriod('weekly')}
+                    className={`px-3 py-1.5 rounded-md transition-all ${
+                      period === 'weekly'
+                        ? 'bg-brand-gold text-editorial-950 shadow-xs font-bold'
+                        : 'text-white hover:text-amber-200'
+                    }`}
+                  >
+                    साप्ताहिक (Weekly)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPeriod('monthly')}
+                    className={`px-3 py-1.5 rounded-md transition-all ${
+                      period === 'monthly'
+                        ? 'bg-brand-gold text-editorial-950 shadow-xs font-bold'
+                        : 'text-white hover:text-amber-200'
+                    }`}
+                  >
+                    मासिक (Monthly)
+                  </button>
+                </div>
+
+                {period === 'daily' && (
+                  <button
+                    type="button"
+                    onClick={handleManualLiveSync}
+                    disabled={isSyncingLive}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600/90 hover:bg-emerald-600 text-white rounded-lg text-xs font-bold border border-emerald-400 shadow-sm transition-all"
+                    title="इंटरनेटवरून ताजे आजचे राशीभविष्य फेच करा"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isSyncingLive ? 'animate-spin' : ''}`} />
+                    <span>{isSyncingLive ? 'सिंक होत आहे...' : 'लाईव्ह सिंक (Live Sync)'}</span>
+                  </button>
+                )}
               </div>
             </div>
+
+            {/* Live Indicator Sub-strip */}
+            {period === 'daily' && (
+              <div className="mt-4 pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-2.5 w-2.5 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                  </span>
+                  <span className="font-semibold text-emerald-300">
+                    थेट इंटरनेट ग्रहगोचर (Live Daily Internet Broadcast) • दररोज स्वयंचलित अद्यतन
+                  </span>
+                </div>
+                {lastSyncTime && (
+                  <span className="text-[11px] text-amber-200/80 font-mono">
+                    शेवटचे अपडेट: आज {lastSyncTime}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {/* 12 Signs Selector Pills */}
@@ -206,8 +258,11 @@ export const RashifalPage: React.FC = () => {
 
               {/* Attribution */}
               <div className="pt-4 border-t border-editorial-100 flex items-center justify-between text-xs text-editorial-500 font-sans">
-                <span>{activeHoroscope.author_credit || 'दैनिक जगत समीक्षा ज्योतिष केंद्र'}</span>
-                <span className="italic">भांडुप (पश्चिम), मुंबई</span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span>{activeHoroscope.author_credit || 'दैनिक जगत समीक्षा लाइव ज्योतिष केंद्र'}</span>
+                </span>
+                <span className="italic">कल्याण, महाराष्ट्र</span>
               </div>
             </div>
           ) : null}

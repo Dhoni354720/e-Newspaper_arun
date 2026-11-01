@@ -129,22 +129,27 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
       },
       'address': {
         '@type': 'PostalAddress',
-        'streetAddress': settings.office_address || 'भांडुप (पश्चिम), मुंबई, महाराष्ट्र 400078',
-        'addressLocality': 'मुंबई',
+        'streetAddress': settings.office_address || 'कल्याण, महाराष्ट्र 421301',
+        'addressLocality': 'कल्याण',
         'addressRegion': 'महाराष्ट्र',
-        'postalCode': '400078',
+        'postalCode': '421301',
         'addressCountry': 'IN',
       },
       'contactPoint': [
         {
           '@type': 'ContactPoint',
-          'telephone': settings.contact_phone || '+91-8369517611',
+          'telephone': settings.contact_phone || '+91-8828812282',
           'contactType': 'editorial',
           'email': settings.contact_email || 'jagatsameeksha2014@gmail.com',
         },
         {
           '@type': 'ContactPoint',
-          'telephone': '+91-7448193748',
+          'telephone': '+91-8828812282',
+          'contactType': 'membership',
+        },
+        {
+          '@type': 'ContactPoint',
+          'telephone': '+91-8369517611',
           'contactType': 'advertising',
         }
       ],

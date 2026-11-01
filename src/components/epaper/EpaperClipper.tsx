@@ -220,7 +220,7 @@ export const EpaperClipper: React.FC<EpaperClipperProps> = ({
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(
-        'दैनिक जगत समीक्षा डिजिटल ई-पेपर • www.jagatsameeksha.com • भांडुप (पश्चिम), मुंबई ४०००७८',
+        'दैनिक जगत समीक्षा डिजिटल ई-पेपर • www.jagatsameeksha.com • कल्याण, महाराष्ट्र ४२१३०१',
         canvasW / 2,
         headerH + targetCropH + (footerH / 2)
       );

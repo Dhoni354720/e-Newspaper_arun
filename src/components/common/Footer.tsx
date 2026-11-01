@@ -139,6 +139,11 @@ export const Footer: React.FC = () => {
         {/* Bottom Bar: Legal Pages, Notice, Copyright */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-editorial-500">
           <div className="flex flex-wrap items-center gap-4">
+            <Link to="/membership" className="text-amber-400 font-bold hover:text-amber-300 transition-colors flex items-center gap-1">
+              <span>⭐</span>
+              <span>सदस्यता (₹200/माह)</span>
+            </Link>
+            <span>•</span>
             <Link to="/about" className="hover:text-editorial-300 transition-colors">
               {t('aboutUs')}
             </Link>

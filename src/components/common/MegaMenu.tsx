@@ -236,6 +236,16 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, categories 
                 </li>
                 <li>
                   <Link
+                    to="/membership"
+                    onClick={onClose}
+                    className="font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 p-2 rounded-lg border border-amber-200 flex items-center justify-between"
+                  >
+                    <span>⭐ {language === 'mr' ? 'सदस्यता (₹२००/महिना)' : language === 'hi' ? 'सदस्यता (₹200/माह)' : 'Membership (₹200/mo)'}</span>
+                    <span className="text-[10px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.5 rounded">आलेख विशेष</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/rashifal"
                     onClick={onClose}
                     className="font-bold text-editorial-900 hover:text-crimson-800 block"

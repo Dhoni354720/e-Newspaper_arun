@@ -998,6 +998,38 @@ export class NewsRepository {
     setLocalItem(STORAGE_KEYS.MEDIA, assets.filter(a => a.id !== id));
   }
 
+  async uploadEpaperFile(file: File): Promise<{ url: string; fileName: string; sizeBytes: number }> {
+    if (isSupabaseConfigured()) {
+      try {
+        const fileExt = file.name.split('.').pop() || 'pdf';
+        const filePath = `epaper/${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('epaper-files')
+          .upload(filePath, file, { cacheControl: '3600', upsert: false });
+
+        if (!uploadError) {
+          const { data: { publicUrl } } = supabase.storage.from('epaper-files').getPublicUrl(filePath);
+          return { url: publicUrl, fileName: file.name, sizeBytes: file.size };
+        }
+      } catch (e) {
+        console.warn('Supabase epaper upload error, falling back to data URL:', e);
+      }
+    }
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        resolve({
+          url: reader.result as string,
+          fileName: file.name,
+          sizeBytes: file.size,
+        });
+      };
+      reader.onerror = err => reject(err);
+      reader.readAsDataURL(file);
+    });
+  }
+
   // --------------------------------------------------------------------------
   // DASHBOARD STATS
   // --------------------------------------------------------------------------

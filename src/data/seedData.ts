@@ -1771,7 +1771,7 @@ function generatePagePreview(editionTitle: string, pageNum: number, pageName: st
     <!-- Masthead -->
     <line x1="40" y1="85" x2="760" y2="85" stroke="#ed1c24" stroke-width="3"/>
     <text x="400" y="135" fill="#ed1c24" font-family="serif" font-size="46" font-weight="900" text-anchor="middle" letter-spacing="2">दैनिक जगत समीक्षा</text>
-    <text x="400" y="156" fill="#78716c" font-family="serif" font-size="13" font-style="italic" text-anchor="middle">सत्य, निष्पक्ष एवं निर्भीक • RNI: MAHHIN/2014/57312 • भांडुप, मुंबई</text>
+    <text x="400" y="156" fill="#78716c" font-family="serif" font-size="13" font-style="italic" text-anchor="middle">सत्य, निष्पक्ष एवं निर्भीक • RNI: MAHHIN/2014/57312 • कल्याण, महाराष्ट्र</text>
     <line x1="40" y1="170" x2="760" y2="170" stroke="#1c1917" stroke-width="2"/>
     <line x1="40" y1="174" x2="760" y2="174" stroke="#1c1917" stroke-width="1"/>
     
@@ -1822,7 +1822,7 @@ function generatePagePreview(editionTitle: string, pageNum: number, pageName: st
     <!-- Bottom Editorial Footer -->
     <line x1="40" y1="1080" x2="760" y2="1080" stroke="#1c1917" stroke-width="2"/>
     <text x="400" y="1105" fill="#78716c" font-family="sans-serif" font-size="11" text-anchor="middle">
-      संपादक : अरुण रमाकांत तिवारी • RNI क्र. MAHHIN/2014/57312 • भांडुप (पश्चिम), मुंबई 400078
+      संपादक : अरुण रमाकांत तिवारी • RNI क्र. MAHHIN/2014/57312 • कल्याण, महाराष्ट्र ४२१३०१
     </text>
   </svg>`;
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
@@ -2370,8 +2370,8 @@ export const INITIAL_CMS_PAGES: CMSPage[] = [
   <li><strong>प्रधान संपादक:</strong> अरुण रमाकांत तिवारी</li>
   <li><strong>मुद्रक एवं प्रकाशक:</strong> अरुण रमाकांत तिवारी</li>
   <li><strong>मुद्रण स्थल:</strong> मुंबई, महाराष्ट्र</li>
-  <li><strong>कार्यालय पता:</strong> भांडुप (पश्चिम), मुंबई, महाराष्ट्र - ४०००७८</li>
-  <li><strong>संपर्क दूरभाष:</strong> +91-8369517611, +91-7448193748</li>
+  <li><strong>कार्यालय पता:</strong> कल्याण, महाराष्ट्र - ४२१३०१</li>
+  <li><strong>संपर्क दूरभाष:</strong> +91-8828812282, +91-8369517611, +91-7448193748</li>
   <li><strong>ईमेल:</strong> jagatsameeksha2014@gmail.com</li>
 </ul>
     `.trim(),
@@ -2406,9 +2406,9 @@ export const INITIAL_CMS_PAGES: CMSPage[] = [
     <li><strong>नाम:</strong> श्री अरुण रमाकांत तिवारी (Arun Ramakant Tiwari)</li>
     <li><strong>पदनाम:</strong> प्रधान संपादक एवं शिकायत निवारण अधिकारी</li>
     <li><strong>पंजीकरण संख्या (RNI):</strong> MAHHIN/2014/57312</li>
-    <li><strong>कार्यालय पता:</strong> दैनिक जगत समीक्षा, भांडुप (पश्चिम), मुंबई, महाराष्ट्र - ४०००७८</li>
+    <li><strong>कार्यालय पता:</strong> दैनिक जगत समीक्षा, कल्याण, महाराष्ट्र - ४२१३०१</li>
     <li><strong>ईमेल:</strong> <a href="mailto:jagatsameeksha2014@gmail.com" class="text-crimson-800 font-bold underline">jagatsameeksha2014@gmail.com</a></li>
-    <li><strong>हेल्पलाइन दूरभाष:</strong> +91-8369517611 / +91-7448193748</li>
+    <li><strong>हेल्पलाइन दूरभाष:</strong> +91-8828812282 / +91-8369517611 / +91-7448193748</li>
   </ul>
 </div>
 
@@ -2424,9 +2424,9 @@ export const INITIAL_CMS_PAGES: CMSPage[] = [
 <p>माहिती तंत्रज्ञान (डिजिटल मीडिया आचारसंहिता) नियम २०२१ अंतर्गत दैनिक जगत समीक्षाचे तक्रार निवारण अधिकारी तपशील खालीलप्रमाणे:</p>
 <ul>
   <li><strong>अधिकारी:</strong> श्री. अरुण रमाकांत तिवारी (मुख्य संपादक)</li>
-  <li><strong>पत्ता:</strong> भांडुप (पश्चिम), मुंबई - ४०००७८</li>
+  <li><strong>पत्ता:</strong> कल्याण, महाराष्ट्र - ४२१३०१</li>
   <li><strong>ईमेल:</strong> jagatsameeksha2014@gmail.com</li>
-  <li><strong>दूरध्वनी:</strong> +91-8369517611</li>
+  <li><strong>दूरध्वनी:</strong> +91-8828812282, +91-8369517611</li>
 </ul>
     `.trim(),
     body_en: `
@@ -2435,9 +2435,9 @@ export const INITIAL_CMS_PAGES: CMSPage[] = [
 <ul>
   <li><strong>Name:</strong> Mr. Arun Ramakant Tiwari</li>
   <li><strong>Designation:</strong> Chief Editor & Grievance Officer</li>
-  <li><strong>Address:</strong> Bhandup (West), Mumbai, Maharashtra - 400078</li>
+  <li><strong>Address:</strong> Kalyan, Maharashtra - 421301</li>
   <li><strong>Email:</strong> jagatsameeksha2014@gmail.com</li>
-  <li><strong>Phone:</strong> +91-8369517611</li>
+  <li><strong>Phone:</strong> +91-8828812282, +91-8369517611</li>
   <li><strong>Resolution Window:</strong> Acknowledged within 24 hours; resolved within 15 days.</li>
 </ul>
     `.trim(),

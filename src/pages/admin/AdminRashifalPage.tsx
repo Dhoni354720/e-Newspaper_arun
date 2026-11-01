@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { repository } from '@/lib/repository';
 import { ZODIAC_SIGNS } from '@/data/seedData';
 import { HoroscopeItem, HoroscopeSign, HoroscopePeriod } from '@/types/database';
-import { Sparkles, Save, CheckCircle2, Calendar, Compass, Award } from 'lucide-react';
+import { Sparkles, Save, CheckCircle2, Calendar, Compass, Award, RefreshCw, Globe } from 'lucide-react';
+import { fetchLiveDailyHoroscope } from '@/lib/horoscopeService';
 
 export const AdminRashifalPage: React.FC = () => {
   const [period, setPeriod] = useState<HoroscopePeriod>('daily');
@@ -19,6 +20,7 @@ export const AdminRashifalPage: React.FC = () => {
   );
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLiveFetching, setIsLiveFetching] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const loadData = async (dateStr: string, p: HoroscopePeriod) => {
@@ -48,6 +50,28 @@ export const AdminRashifalPage: React.FC = () => {
     setTimeout(() => setFeedback(null), 3000);
   };
 
+  const handleFetchFromInternet = async () => {
+    setIsLiveFetching(true);
+    try {
+      const liveItems = await fetchLiveDailyHoroscope(true);
+      const updated: Record<string, { content_hi: string; lucky_number?: number; lucky_color?: string }> = {};
+      ZODIAC_SIGNS.forEach(z => {
+        const match = liveItems.find(e => e.sign === z.sign);
+        updated[z.sign] = {
+          content_hi: match?.content_hi || '',
+          lucky_number: match?.lucky_number,
+          lucky_color: match?.lucky_color || '',
+        };
+      });
+      setFormData(updated as Record<HoroscopeSign, { content_hi: string; lucky_number?: number; lucky_color?: string }>);
+      showToast('इंटरनेटवरून आजचे थेट राशीभविष्य यशस्वीरित्या फेच व सेव्ह झाले!');
+    } catch {
+      alert('इंटरनेटवरून राशीभविष्य फेच करताना त्रुटी आली.');
+    } finally {
+      setIsLiveFetching(false);
+    }
+  };
+
   const handleFieldChange = (sign: HoroscopeSign, field: 'content_hi' | 'lucky_number' | 'lucky_color', val: unknown) => {
     setFormData(prev => ({
       ...prev,
@@ -70,13 +94,13 @@ export const AdminRashifalPage: React.FC = () => {
         content_hi: formData[z.sign]?.content_hi || '',
         lucky_number: formData[z.sign]?.lucky_number,
         lucky_color: formData[z.sign]?.lucky_color,
-        author_credit: 'दैनिक जगत समीक्षा ज्योतिष केंद्र',
+        author_credit: 'दैनिक जगत समीक्षा लाइव ज्योतिष केंद्र (कल्याण, महाराष्ट्र)',
       }));
 
       await repository.saveHoroscopesBatch(batchPayload);
-      showToast('सर्व १२ राशींचे दैनिक भविष्य यशस्वीरित्या सेव्ह झाले!');
+      showToast('सर्व १२ राशींचे राशीभविष्य यशस्वीरीत्या सेव्ह केले!');
     } catch {
-      alert('राशिफल सेव्ह करताना त्रुटी आली.');
+      alert('राशीभविष्य सेव्ह करताना त्रुटी आली.');
     } finally {
       setIsSaving(false);
     }
@@ -90,7 +114,7 @@ export const AdminRashifalPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-200">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 font-serif flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-brand-red" />
+            <Sparkles className="w-6 h-6 text-crimson-800" />
             दैनिक राशीभविष्य व्यवस्थापन (Batch Horoscope Editor)
           </h1>
           <p className="text-sm text-gray-600 mt-1">
@@ -98,15 +122,28 @@ export const AdminRashifalPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Date Selector */}
-        <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg p-1.5 shadow-2xs">
-          <Calendar className="w-4 h-4 text-brand-red" />
-          <input
-            type="date"
-            value={targetDate}
-            onChange={e => setTargetDate(e.target.value)}
-            className="text-xs font-mono font-bold text-gray-900 border-none outline-hidden"
-          />
+        {/* Action Controls: Live Fetch from Internet + Date Selector */}
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={handleFetchFromInternet}
+            disabled={isLiveFetching}
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg text-xs font-bold shadow-xs transition-all disabled:opacity-50"
+            title="थेट इंटरनेटवरून आजचे राशीभविष्य फेच करा"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isLiveFetching ? 'animate-spin' : ''}`} />
+            <span>{isLiveFetching ? 'फेच होत आहे...' : 'इंटरनेटवरून लाइव फेच करा (Live Sync)'}</span>
+          </button>
+
+          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg p-1.5 shadow-2xs">
+            <Calendar className="w-4 h-4 text-crimson-800" />
+            <input
+              type="date"
+              value={targetDate}
+              onChange={e => setTargetDate(e.target.value)}
+              className="text-xs font-mono font-bold text-gray-900 border-none outline-hidden"
+            />
+          </div>
         </div>
       </div>
 

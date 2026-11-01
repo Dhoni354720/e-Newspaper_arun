@@ -311,6 +311,10 @@ export const NewsTipsPage: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <PhoneCall className="w-3.5 h-3.5 text-crimson-700" />
+                    <span className="font-mono font-bold">+91-8828812282</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <PhoneCall className="w-3.5 h-3.5 text-crimson-700" />
                     <span className="font-mono font-bold">+91-8369517611</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -323,7 +327,7 @@ export const NewsTipsPage: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-[11px] text-editorial-500 pt-2 border-t">
-                  भांडुप (पश्चिम), मुंबई, महाराष्ट्र - ४०००७८
+                  कल्याण, महाराष्ट्र - ४२१३०१
                 </p>
               </div>
             </div>

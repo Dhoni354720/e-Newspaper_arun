@@ -389,7 +389,7 @@ export const PrivacyPolicyPage: React.FC = () => {
       s3Title: '३. कुकीज व तृतीय पक्ष सेवा (Cookies & Third Parties)',
       s3Text: 'स्थानिक सत्र आणि भाषा प्राधान्यांसाठी आवश्यक कुकीज वापरल्या जातात. क्लाउडफ्लेअर टर्नस्टाइल (स्पॅम प्रतिबंध) आणि ओपन-मेटिओ (हवामान माहिती) या किमान तृतीय-पक्ष सेवा वापरल्या जातात, ज्यांना वाचकांचा कोणताही वैयक्तिक डेटा विकला जात नाही.',
       s4Title: '४. डेटा संरक्षण अधिकारी व संपर्क (Grievance Redressal)',
-      s4Text: 'DPDP कायद्यांतर्गत डेटा अधिकार किंवा तक्रारींसाठी संपर्क: अरुण रमाकांत तिवारी (संपादक), ईमेल: jagatsameeksha2014@gmail.com, पत्ता: भांडुप (पश्चिम), मुंबई ४०००७८.',
+      s4Text: 'DPDP कायद्यांतर्गत डेटा अधिकार किंवा तक्रारींसाठी संपर्क: अरुण रमाकांत तिवारी (संपादक), ईमेल: jagatsameeksha2014@gmail.com, पत्ता: कल्याण, महाराष्ट्र ४२१३०१.',
     },
     hi: {
       draftNotice: 'प्रारूप सूचना: यह गोपनीयता नीति भारत के डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम (DPDP Act, 2023) के अनुपालन में तैयार किया गया एक प्रारूप है तथा अंतिम कानूनी समीक्षा के अधीन है।',
@@ -401,7 +401,7 @@ export const PrivacyPolicyPage: React.FC = () => {
       s3Title: '३. कुकीज एवं थर्ड-पार्टी सेवाएं (Cookies & Third Parties)',
       s3Text: 'वेबसाइट पर केवल आवश्यक सत्र कुकीज (भाषा चयन एवं प्रमाणीकरण) का उपयोग किया जाता है। स्पैम सुरक्षा हेतु Cloudflare Turnstile तथा मौसम पूर्वानुमान हेतु Open-Meteo API का उपयोग होता है। हम कोई भी व्यक्तिगत डेटा कभी किसी विज्ञापनदाता या तीसरे पक्ष को नहीं बेचते।',
       s4Title: '४. शिकायत निवारण एवं संपर्क (Data Grievance Officer)',
-      s4Text: 'डेटा गोपनीयता अथवा सुधार अनुरोध हेतु संपर्क सूत्र: अरुण रमाकांत तिवारी (मुख्य संपादक), ईमेल: jagatsameeksha2014@gmail.com, कार्यालय: भांडुप (पश्चिम), मुंबई ४०००७८।',
+      s4Text: 'डेटा गोपनीयता अथवा सुधार अनुरोध हेतु संपर्क सूत्र: अरुण रमाकांत तिवारी (मुख्य संपादक), ईमेल: jagatsameeksha2014@gmail.com, कार्यालय: कल्याण, महाराष्ट्र ४२१३०१।',
     },
     en: {
       draftNotice: 'Legal Draft Notice: This privacy policy is a compliance draft formulated in accordance with the Digital Personal Data Protection Act (DPDP Act), 2023 of India, and is subject to final legal counsel review.',
@@ -413,7 +413,7 @@ export const PrivacyPolicyPage: React.FC = () => {
       s3Title: '3. Third-Party Integrations',
       s3Text: 'Our platform utilizes Cloudflare Turnstile for CAPTCHA bot defense and Open-Meteo for regional weather bulletins. No user personal data is ever commercialized or sold to third-party ad networks.',
       s4Title: '4. Grievance Redressal & Contact',
-      s4Text: 'For privacy inquiries or statutory data rights requests under DPDP Act 2023, contact: Arun Ramakant Tiwari (Chief Editor), Email: jagatsameeksha2014@gmail.com, Address: Bhandup West, Mumbai 400078.',
+      s4Text: 'For privacy inquiries or statutory data rights requests under DPDP Act 2023, contact: Arun Ramakant Tiwari (Chief Editor), Email: jagatsameeksha2014@gmail.com, Address: Kalyan, Maharashtra - 421301.',
     },
   }[language];
 

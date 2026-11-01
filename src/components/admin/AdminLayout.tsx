@@ -25,13 +25,87 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useSettings } from '@/context/SettingsContext';
+import { useLanguage } from '@/context/LanguageContext';
+import { SupportedLanguage } from '@/types/database';
+
+const ADMIN_NAV_LABELS: Record<SupportedLanguage, Record<string, string>> = {
+  mr: {
+    dashboard: 'डॅशबोर्ड (Overview)',
+    articles: 'सर्व बातम्या (Articles)',
+    writeNew: 'नवीन बातमी (Write New)',
+    epaper: 'ई-वृत्तपत्र (E-Paper)',
+    categories: 'विभाग व्यवस्थापन (Categories)',
+    homeBlocks: 'होमपेज ब्लॉक्स (Home Blocks)',
+    flashNews: 'फटाफट बातम्या (Flash News)',
+    horoscope: 'दैनिक राशीभविष्य (Horoscope)',
+    galleries: 'फोटो गॅलरी (Galleries)',
+    videos: 'व्हिडिओ बातमी (Videos)',
+    newsTips: 'नागरिक पत्रकारिता (News Tips)',
+    pages: 'डायनामिक पृष्ठे (Pages)',
+    breakingNews: 'ब्रेकिंग न्यूज (Breaking News)',
+    media: 'मीडिया लायब्ररी (Media)',
+    settings: 'संपादकीय सेटिंग्ज (Settings)',
+    account: 'माझे खाते (Account)',
+    editorialRoom: 'संपादकीय कक्ष (Editorial CMS)',
+    viewSite: 'वेबसाईट उघडा (View Site)',
+    signOut: 'लॉग आऊट',
+    checkingAuth: 'प्रशासक सत्र तपासत आहे...',
+  },
+  hi: {
+    dashboard: 'डैशबोर्ड (Overview)',
+    articles: 'सभी समाचार (Articles)',
+    writeNew: 'नया समाचार (Write New)',
+    epaper: 'ई-समाचार पत्र (E-Paper)',
+    categories: 'श्रेणी प्रबंधन (Categories)',
+    homeBlocks: 'होमपेज ब्लॉक्स (Home Blocks)',
+    flashNews: 'फटाफट खबरें (Flash News)',
+    horoscope: 'दैनिक राशिफल (Horoscope)',
+    galleries: 'फोटो गैलरी (Galleries)',
+    videos: 'वीडियो समाचार (Videos)',
+    newsTips: 'नागरिक पत्रकारिता (News Tips)',
+    pages: 'डायनामिक पेज (Pages)',
+    breakingNews: 'ब्रेकिंग न्यूज़ (Breaking News)',
+    media: 'मीडिया लाइब्रेरी (Media)',
+    settings: 'संपादकीय सेटिंग्स (Settings)',
+    account: 'मेरा खाता (Account)',
+    editorialRoom: 'संपादकीय कक्ष (Editorial CMS)',
+    viewSite: 'वेबसाइट देखें (View Site)',
+    signOut: 'लॉग आउट',
+    checkingAuth: 'व्यवस्थापक सत्र जांचा जा रहा है...',
+  },
+  en: {
+    dashboard: 'Dashboard (Overview)',
+    articles: 'All Articles',
+    writeNew: 'Write New Article',
+    epaper: 'E-Paper Management',
+    categories: 'Categories Manager',
+    homeBlocks: 'Homepage Blocks',
+    flashNews: 'Flash News Ticker',
+    horoscope: 'Daily Horoscope (Rashifal)',
+    galleries: 'Photo Galleries',
+    videos: 'Video News Hub',
+    newsTips: 'Citizen News Tips',
+    pages: 'Dynamic Pages',
+    breakingNews: 'Breaking News Alerts',
+    media: 'Media Asset Library',
+    settings: 'Editorial Site Settings',
+    account: 'My Account & Profile',
+    editorialRoom: 'Editorial CMS Desk',
+    viewSite: 'View Live Site',
+    signOut: 'Sign Out',
+    checkingAuth: 'Verifying Admin Session...',
+  },
+};
 
 export const AdminLayout: React.FC = () => {
   const { user, isLoading, isStaff, logout } = useAuth();
   const { publicationName } = useSettings();
+  const { language, setLanguage } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const labels = ADMIN_NAV_LABELS[language] || ADMIN_NAV_LABELS.hi;
 
   // If still loading auth state
   if (isLoading) {
@@ -39,7 +113,7 @@ export const AdminLayout: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-crimson-800 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-sm font-medium text-gray-600">प्रशासक सत्र तपासत आहे...</p>
+          <p className="text-sm font-medium text-gray-600">{labels.checkingAuth}</p>
         </div>
       </div>
     );
@@ -56,38 +130,56 @@ export const AdminLayout: React.FC = () => {
   };
 
   const navItems = [
-    { label: 'डॅशबोर्ड (Overview)', href: '/admin', icon: LayoutDashboard, exact: true },
-    { label: 'सर्व बातम्या (Articles)', href: '/admin/articles', icon: FileText, exact: true },
-    { label: 'नवीन बातमी (Write New)', href: '/admin/articles/new', icon: PlusCircle },
-    { label: 'ई-वृत्तपत्र (E-Paper)', href: '/admin/epaper', icon: Newspaper },
-    { label: 'विभाग व्यवस्थापन (Categories)', href: '/admin/categories', icon: Layers },
-    { label: 'होमपेज ब्लॉक्स (Home Blocks)', href: '/admin/home-blocks', icon: Sparkles },
-    { label: 'फटाफट बातम्या (Flash News)', href: '/admin/flash', icon: Zap },
-    { label: 'दैनिक राशीभविष्य (Horoscope)', href: '/admin/rashifal', icon: Sun },
-    { label: 'फोटो गॅलरी (Galleries)', href: '/admin/galleries', icon: Camera },
-    { label: 'व्हिडिओ बातमी (Videos)', href: '/admin/videos', icon: Video },
-    { label: 'नागरिक पत्रकारिता (News Tips)', href: '/admin/news-tips', icon: Send },
-    { label: 'डायनामिक पृष्ठे (Pages)', href: '/admin/pages', icon: Files },
-    { label: 'ब्रेकिंग न्यूज (Breaking News)', href: '/admin/breaking-news', icon: Flame },
-    { label: 'मीडिया लायब्ररी (Media)', href: '/admin/media', icon: ImageIcon },
-    { label: 'संपादकीय सेटिंग्ज (Settings)', href: '/admin/settings', icon: Settings },
-    { label: 'माझे खाते (Account)', href: '/admin/account', icon: User },
+    { label: labels.dashboard, href: '/admin', icon: LayoutDashboard, exact: true },
+    { label: labels.articles, href: '/admin/articles', icon: FileText, exact: true },
+    { label: labels.writeNew, href: '/admin/articles/new', icon: PlusCircle },
+    { label: labels.epaper, href: '/admin/epaper', icon: Newspaper },
+    { label: labels.categories, href: '/admin/categories', icon: Layers },
+    { label: labels.homeBlocks, href: '/admin/home-blocks', icon: Sparkles },
+    { label: labels.flashNews, href: '/admin/flash', icon: Zap },
+    { label: labels.horoscope, href: '/admin/rashifal', icon: Sun },
+    { label: labels.galleries, href: '/admin/galleries', icon: Camera },
+    { label: labels.videos, href: '/admin/videos', icon: Video },
+    { label: labels.newsTips, href: '/admin/news-tips', icon: Send },
+    { label: labels.pages, href: '/admin/pages', icon: Files },
+    { label: labels.breakingNews, href: '/admin/breaking-news', icon: Flame },
+    { label: labels.media, href: '/admin/media', icon: ImageIcon },
+    { label: labels.settings, href: '/admin/settings', icon: Settings },
+    { label: labels.account, href: '/admin/account', icon: User },
   ];
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col md:flex-row text-editorial-900 font-sans">
       {/* Mobile Top Header */}
-      <div className="md:hidden bg-editorial-950 text-white p-4 flex items-center justify-between border-b border-editorial-800 sticky top-0 z-40">
+      <div className="md:hidden bg-editorial-950 text-white p-3 flex items-center justify-between border-b border-editorial-800 sticky top-0 z-40">
         <div className="flex items-center gap-2">
-          <span className="font-masthead font-bold text-lg text-white">{publicationName}</span>
-          <span className="text-[10px] bg-crimson-800 text-white px-2 py-0.5 rounded font-mono">CMS</span>
+          <span className="font-masthead font-bold text-base text-white">{publicationName}</span>
+          <span className="text-[10px] bg-crimson-800 text-white px-1.5 py-0.5 rounded font-mono">CMS</span>
         </div>
+
+        {/* Mobile Language Switcher */}
+        <div className="flex items-center gap-1 bg-editorial-900 rounded-lg p-0.5 border border-editorial-700 text-[11px]">
+          {(['hi', 'mr', 'en'] as SupportedLanguage[]).map((lang) => (
+            <button
+              key={lang}
+              onClick={() => setLanguage(lang)}
+              className={`px-2 py-0.5 rounded transition-all font-semibold ${
+                language === lang
+                  ? 'bg-crimson-800 text-white shadow-xs'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              {lang === 'hi' ? 'हिन्दी' : lang === 'mr' ? 'मराठी' : 'EN'}
+            </button>
+          ))}
+        </div>
+
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-1.5 text-gray-300 hover:text-white"
           aria-label="Toggle admin sidebar"
         >
-          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
@@ -107,14 +199,14 @@ export const AdminLayout: React.FC = () => {
         }`}
       >
         {/* Masthead Header in Sidebar */}
-        <div className="p-5 border-b border-editorial-800 flex items-center justify-between shrink-0">
+        <div className="p-4 border-b border-editorial-800 flex items-center justify-between shrink-0">
           <div>
             <Link to="/admin" onClick={() => setSidebarOpen(false)} className="block">
-              <span className="font-masthead text-xl font-black text-white tracking-tight">
+              <span className="font-masthead text-lg font-black text-white tracking-tight">
                 {publicationName}
               </span>
               <span className="block text-[11px] text-crimson-400 font-medium tracking-wide">
-                संपादकीय कक्ष (Editorial CMS)
+                {labels.editorialRoom}
               </span>
             </Link>
           </div>
@@ -125,6 +217,48 @@ export const AdminLayout: React.FC = () => {
           >
             <X className="w-5 h-5" />
           </button>
+        </div>
+
+        {/* Trilingual Language Selector (Hindi / Marathi / English) */}
+        <div className="px-4 py-2.5 border-b border-editorial-800 bg-editorial-900/60">
+          <div className="flex items-center justify-between text-xs mb-1.5 text-gray-400 font-medium">
+            <span>प्रशासकीय भाषा (CMS Language):</span>
+          </div>
+          <div className="grid grid-cols-3 gap-1 bg-editorial-950 p-1 rounded-lg border border-editorial-800">
+            <button
+              type="button"
+              onClick={() => setLanguage('hi')}
+              className={`py-1 text-xs rounded font-medium transition-all text-center ${
+                language === 'hi'
+                  ? 'bg-crimson-800 text-white font-bold shadow-xs'
+                  : 'text-gray-400 hover:text-white hover:bg-editorial-900'
+              }`}
+            >
+              हिन्दी (HI)
+            </button>
+            <button
+              type="button"
+              onClick={() => setLanguage('mr')}
+              className={`py-1 text-xs rounded font-medium transition-all text-center ${
+                language === 'mr'
+                  ? 'bg-crimson-800 text-white font-bold shadow-xs'
+                  : 'text-gray-400 hover:text-white hover:bg-editorial-900'
+              }`}
+            >
+              मराठी (MR)
+            </button>
+            <button
+              type="button"
+              onClick={() => setLanguage('en')}
+              className={`py-1 text-xs rounded font-medium transition-all text-center ${
+                language === 'en'
+                  ? 'bg-crimson-800 text-white font-bold shadow-xs'
+                  : 'text-gray-400 hover:text-white hover:bg-editorial-900'
+              }`}
+            >
+              English (EN)
+            </button>
+          </div>
         </div>
 
         {/* Scrollable Navigation Items */}
@@ -167,7 +301,7 @@ export const AdminLayout: React.FC = () => {
           >
             <span className="flex items-center gap-2">
               <ExternalLink className="w-3.5 h-3.5 text-crimson-400" />
-              वेबसाईट उघडा (View Site)
+              {labels.viewSite}
             </span>
           </Link>
 
@@ -186,7 +320,7 @@ export const AdminLayout: React.FC = () => {
             <button
               onClick={handleLogout}
               className="p-1.5 text-gray-400 hover:text-red-400 rounded-lg hover:bg-editorial-900 transition-colors shrink-0"
-              title="लॉग आऊट (Sign out)"
+              title={labels.signOut}
             >
               <LogOut className="w-4 h-4" />
             </button>

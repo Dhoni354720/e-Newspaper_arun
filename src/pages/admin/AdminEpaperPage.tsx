@@ -15,7 +15,10 @@ import {
   Layers, 
   ExternalLink,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  FileText,
+  AlertCircle,
+  Image as ImageIcon
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -28,11 +31,18 @@ export const AdminEpaperPage: React.FC = () => {
 
   // Form State
   const [title, setTitle] = useState('');
+  const [titleHi, setTitleHi] = useState('');
   const [editionDate, setEditionDate] = useState(new Date().toISOString().split('T')[0]);
-  const [editionRegion, setEditionRegion] = useState('pune');
+  const [editionRegion, setEditionRegion] = useState('mumbai');
   const [description, setDescription] = useState('');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
   const [pdfUrl, setPdfUrl] = useState('');
+  const [pdfFileName, setPdfFileName] = useState('');
+  const [pdfFileSize, setPdfFileSize] = useState(0);
+  const [isUploadingPdf, setIsUploadingPdf] = useState(false);
+  const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [showManualUrl, setShowManualUrl] = useState(false);
   const [isPublished, setIsPublished] = useState(true);
   const [pagesCount, setPagesCount] = useState(6);
 
@@ -50,14 +60,61 @@ export const AdminEpaperPage: React.FC = () => {
   const resetForm = () => {
     setEditingId(null);
     setTitle('');
+    setTitleHi('');
     setEditionDate(new Date().toISOString().split('T')[0]);
     setEditionRegion('mumbai');
     setDescription('');
     setThumbnailUrl('');
     setPdfUrl('');
+    setPdfFileName('');
+    setPdfFileSize(0);
+    setUploadError(null);
+    setShowManualUrl(false);
     setIsPublished(true);
     setPagesCount(4);
     setModalOpen(false);
+  };
+
+  const handlePdfFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+
+    // Validate size (max 50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      setUploadError('PDF फाईलचा आकार खूप मोठा आहे (कमाल मर्यादा ५० MB).');
+      return;
+    }
+
+    setUploadError(null);
+    setIsUploadingPdf(true);
+
+    try {
+      const res = await repository.uploadEpaperFile(file);
+      setPdfUrl(res.url);
+      setPdfFileName(res.fileName);
+      setPdfFileSize(res.sizeBytes);
+    } catch {
+      setUploadError('PDF फाइल अपलोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.');
+    } finally {
+      setIsUploadingPdf(false);
+    }
+  };
+
+  const handleThumbnailFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+
+    setIsUploadingThumbnail(true);
+    try {
+      const res = await repository.uploadEpaperFile(file);
+      setThumbnailUrl(res.url);
+    } catch {
+      alert('मुखपृष्ठ प्रतिमा अपलोड करण्यात त्रुटी आली.');
+    } finally {
+      setIsUploadingThumbnail(false);
+    }
   };
 
   const handleOpenCreate = () => {
@@ -69,11 +126,14 @@ export const AdminEpaperPage: React.FC = () => {
   const handleOpenEdit = (edition: EpaperEdition) => {
     setEditingId(edition.id);
     setTitle(edition.title);
+    setTitleHi(edition.title_hi || edition.title);
     setEditionDate(edition.edition_date);
     setEditionRegion(edition.edition_region);
     setDescription(edition.description || '');
     setThumbnailUrl(edition.thumbnail_url);
     setPdfUrl(edition.pdf_url || '');
+    setPdfFileName(edition.pdf_url ? 'ई-वृत्तपत्र आवृत्ती PDF' : '');
+    setPdfFileSize(edition.file_size_bytes || 0);
     setIsPublished(edition.is_published);
     setPagesCount(edition.total_pages || edition.pages?.length || 6);
     setModalOpen(true);
@@ -101,11 +161,13 @@ export const AdminEpaperPage: React.FC = () => {
         id: editingId || undefined,
         title: title.trim(),
         title_mr: title.trim(),
+        title_hi: titleHi.trim() || title.trim(),
         edition_date: editionDate,
         edition_region: editionRegion,
         description: description.trim(),
         thumbnail_url: thumbnailUrl.trim() || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80',
         pdf_url: pdfUrl.trim() || undefined,
+        file_size_bytes: pdfFileSize || undefined,
         total_pages: pagesCount,
         is_published: isPublished,
         pages: defaultPages,
@@ -342,19 +404,33 @@ export const AdminEpaperPage: React.FC = () => {
             </div>
 
             <form onSubmit={handleSave} className="space-y-4 text-xs">
-              {/* Title */}
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">
-                  आवृत्तीचे शीर्षक (Edition Title) *
-                </label>
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="उदा. दैनिक जगत समीक्षा - मुंबई मुख्य संस्करण"
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-crimson-800"
-                />
+              {/* Title & Language */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-gray-700 mb-1">
+                    आवृत्तीचे शीर्षक (Marathi / English Title) *
+                  </label>
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="उदा. दैनिक जगत समीक्षा - मुंबई मुख्य संस्करण"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-crimson-800"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-gray-700 mb-1">
+                    संस्करण शीर्षक (Hindi Title)
+                  </label>
+                  <input
+                    type="text"
+                    value={titleHi}
+                    onChange={(e) => setTitleHi(e.target.value)}
+                    placeholder="उदा. दैनिक जगत समीक्षा - मुंबई मुख्य संस्करण"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-crimson-800"
+                  />
+                </div>
               </div>
 
               {/* Date & Region */}
@@ -404,35 +480,165 @@ export const AdminEpaperPage: React.FC = () => {
                 />
               </div>
 
-              {/* PDF Document URL */}
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">
-                  ई-वृत्तपत्र PDF लिंक (Full PDF Download URL)
+              {/* Error message */}
+              {uploadError && (
+                <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                  <span>{uploadError}</span>
+                </div>
+              )}
+
+              {/* PDF Document File Upload (Upload from File, not link) */}
+              <div className="space-y-1.5">
+                <label className="block font-bold text-gray-700">
+                  ई-वृत्तपत्र PDF फाइल अपलोड करा (Upload PDF from Files) *
                 </label>
-                <input
-                  type="url"
-                  value={pdfUrl}
-                  onChange={(e) => setPdfUrl(e.target.value)}
-                  placeholder="https://your-domain.com/storage/epaper-2026-02-25.pdf"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-crimson-800"
-                />
-                <span className="text-[11px] text-gray-500 mt-0.5 block">
-                  वाचक थेट ही संपूर्ण आवृत्ती PDF स्वरूपात डाउनलोड करू शकतील.
-                </span>
+
+                <div
+                  className={`border-2 border-dashed rounded-xl p-4 text-center transition-all ${
+                    pdfUrl ? 'border-emerald-400 bg-emerald-50/40' : 'border-gray-300 hover:border-crimson-700 bg-gray-50'
+                  }`}
+                >
+                  {isUploadingPdf ? (
+                    <div className="py-4 space-y-2">
+                      <div className="w-7 h-7 border-3 border-crimson-800 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                      <p className="text-xs font-semibold text-gray-700">PDF फाइल अपलोड होत आहे...</p>
+                    </div>
+                  ) : pdfUrl ? (
+                    <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-emerald-300 shadow-2xs">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                          <FileText className="w-5 h-5" />
+                        </div>
+                        <div className="text-left min-w-0">
+                          <p className="text-xs font-bold text-gray-900 truncate">
+                            {pdfFileName || 'ई-वृत्तपत्र संपूर्ण आवृत्ती.pdf'}
+                          </p>
+                          <p className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            फाइल यशस्वीरित्या जोडली आहे {pdfFileSize ? `(${(pdfFileSize / (1024 * 1024)).toFixed(2)} MB)` : ''}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <label className="cursor-pointer px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 rounded font-semibold transition-colors flex items-center gap-1">
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>बदला</span>
+                          <input
+                            type="file"
+                            accept="application/pdf,.pdf"
+                            onChange={handlePdfFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPdfUrl('');
+                            setPdfFileName('');
+                            setPdfFileSize(0);
+                          }}
+                          className="p-1.5 text-gray-400 hover:text-red-600 rounded"
+                          title="फाइल काढा"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <label className="cursor-pointer block py-5 space-y-2">
+                      <div className="w-12 h-12 bg-crimson-50 text-crimson-800 rounded-full flex items-center justify-center mx-auto shadow-2xs">
+                        <Upload className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-crimson-800 hover:underline">
+                          आपल्या संगणक / मोबाईलमधून PDF फाइल निवडा (Choose File)
+                        </span>
+                        <p className="text-[11px] text-gray-500 mt-1">
+                          PDF फाइल्स समर्थित आहेत (कमाल मर्यादा: ५० MB)
+                        </p>
+                      </div>
+                      <input
+                        type="file"
+                        accept="application/pdf,.pdf"
+                        onChange={handlePdfFileChange}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+                </div>
+
+                {/* Optional manual URL toggle for advanced fallback */}
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={() => setShowManualUrl(!showManualUrl)}
+                    className="text-[11px] text-gray-500 hover:text-gray-700 underline"
+                  >
+                    {showManualUrl ? 'फाइल अपलोड वापरा' : 'किंवा थेट URL लिंक वापरा'}
+                  </button>
+                </div>
+
+                {showManualUrl && (
+                  <div className="pt-1">
+                    <input
+                      type="url"
+                      value={pdfUrl}
+                      onChange={(e) => setPdfUrl(e.target.value)}
+                      placeholder="https://your-domain.com/storage/epaper-2026.pdf"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs"
+                    />
+                  </div>
+                )}
               </div>
 
-              {/* Thumbnail Image URL */}
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">
-                  मुखपृष्ठ छायाचित्र / Thumbnail URL
+              {/* Thumbnail / Cover Image File Upload */}
+              <div className="space-y-1.5">
+                <label className="block font-bold text-gray-700">
+                  मुखपृष्ठ छायाचित्र (Upload Cover Image from Files)
                 </label>
-                <input
-                  type="text"
-                  value={thumbnailUrl}
-                  onChange={(e) => setThumbnailUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/... किंवा SVG Data URL"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-crimson-800"
-                />
+                <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl border border-gray-200">
+                  {thumbnailUrl ? (
+                    <div className="relative w-16 h-20 rounded border border-gray-300 overflow-hidden shrink-0 shadow-2xs bg-white">
+                      <img src={thumbnailUrl} alt="Thumbnail preview" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setThumbnailUrl('')}
+                        className="absolute top-1 right-1 p-0.5 bg-black/70 hover:bg-red-600 text-white rounded-full transition-colors"
+                        title="काढा"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-16 h-20 rounded border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 bg-white shrink-0">
+                      <ImageIcon className="w-6 h-6" />
+                    </div>
+                  )}
+
+                  <div className="flex-1 space-y-1">
+                    {isUploadingThumbnail ? (
+                      <div className="flex items-center gap-2 text-xs text-gray-600 font-medium">
+                        <div className="w-4 h-4 border-2 border-crimson-800 border-t-transparent rounded-full animate-spin"></div>
+                        <span>मुखपृष्ठ अपलोड होत आहे...</span>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 hover:border-crimson-800 rounded-lg text-xs font-bold text-gray-800 shadow-2xs transition-colors">
+                        <Upload className="w-4 h-4 text-crimson-800" />
+                        <span>प्रतिमा फाइल निवडा (Browse Image)</span>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/avif"
+                          onChange={handleThumbnailFileChange}
+                          className="hidden"
+                        />
+                      </label>
+                    )}
+                    <p className="text-[11px] text-gray-500">
+                      JPEG, PNG, WebP किंवा आपोआप डिजिटल मुखपृष्ठ तयार केले जाईल.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Description */}
