@@ -42,6 +42,7 @@ export interface SiteSettings {
   contact_email: string;
   contact_phone: string;
   office_address: string;
+  patron_name?: string;
   editor_name?: string;
   rni_number?: string;
   social_links: {

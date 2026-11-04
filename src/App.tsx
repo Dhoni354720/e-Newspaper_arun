@@ -22,6 +22,7 @@ import { RashifalPage } from '@/pages/RashifalPage';
 import { SupplementDetailPage } from '@/pages/SupplementDetailPage';
 import { NewsTipsPage } from '@/pages/NewsTipsPage';
 import { MembershipPage } from '@/pages/MembershipPage';
+import { ReporterJoinPage } from '@/pages/ReporterJoinPage';
 import { DynamicPage } from '@/pages/DynamicPage';
 import { AboutPage, ContactPage, PrivacyPolicyPage, TermsPage, NotFoundPage } from '@/pages/StaticPages';
 
@@ -90,6 +91,8 @@ export const App: React.FC = () => {
               <Route path="/supplement/:slug" element={<SupplementDetailPage />} />
               <Route path="/submit-news" element={<NewsTipsPage />} />
               <Route path="/membership" element={<MembershipPage />} />
+              <Route path="/join-reporter" element={<ReporterJoinPage />} />
+              <Route path="/reporter-join" element={<ReporterJoinPage />} />
               <Route path="/page/:slug" element={<DynamicPage />} />
               <Route path="/grievance" element={<DynamicPage fixedSlug="grievance" />} />
               <Route path="/search" element={<SearchPage />} />

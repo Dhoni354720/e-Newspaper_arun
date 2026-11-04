@@ -52,7 +52,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
           </div>
 
           {/* Lead Content */}
-          <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between bg-white">
+          <div className="lg:col-span-5 p-4 sm:p-6 lg:p-8 flex flex-col justify-between bg-white">
             <div>
               <div className="flex items-center gap-3 text-xs text-editorial-500 mb-2">
                 <span className="flex items-center gap-1">

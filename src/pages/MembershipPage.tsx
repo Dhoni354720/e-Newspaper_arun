@@ -447,16 +447,26 @@ export const MembershipPage: React.FC = () => {
         <Header />
 
         <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-10">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs text-editorial-500">
-            <Link to="/" className="hover:text-crimson-800 transition-colors flex items-center gap-1">
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>{t('backToHome')}</span>
+          {/* Breadcrumb & Switcher to Reporter Onboarding */}
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-editorial-500">
+            <div className="flex items-center gap-2">
+              <Link to="/" className="hover:text-crimson-800 transition-colors flex items-center gap-1">
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>{t('backToHome')}</span>
+              </Link>
+              <span>/</span>
+              <span className="text-crimson-800 font-bold">
+                {c.breadcrumb}
+              </span>
+            </div>
+
+            <Link
+              to="/join-reporter"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-900 border border-emerald-300 hover:bg-emerald-100 transition-all shadow-2xs"
+            >
+              <span>🎙️</span>
+              <span>{language === 'mr' ? 'बातमीदार / पत्रकार नोंदणी' : language === 'hi' ? 'संवाददाता / पत्रकार जुड़ें' : 'Join as News Reporter'}</span>
             </Link>
-            <span>/</span>
-            <span className="text-crimson-800 font-bold">
-              {c.breadcrumb}
-            </span>
           </div>
 
           {/* Hero Masthead Banner */}

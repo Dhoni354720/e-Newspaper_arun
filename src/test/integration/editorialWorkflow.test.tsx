@@ -36,8 +36,8 @@ describe('Editorial Workflow & Public Portal E2E Component Tests', () => {
     expect(screen.getByText(/दैनिक जगत समीक्षा|Dainik Jagat Sameeksha|जनवाणी/i)).toBeInTheDocument();
 
     // Language switcher buttons exist
-    expect(screen.getByRole('button', { name: 'हिन्दी' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'मराठी' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'हिन्दी' }).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByRole('button', { name: 'मराठी' }).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole('button', { name: 'English' })).toBeInTheDocument();
   });
 

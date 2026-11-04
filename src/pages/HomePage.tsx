@@ -103,8 +103,8 @@ export const HomePage: React.FC = () => {
       case 'hero':
         if (!leadStory) return null;
         return (
-          <section key={block.id} aria-label={t('leadStory')} className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <section key={block.id} aria-label={t('leadStory')} className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-8 items-start">
               {/* Lead Hero (8 cols) */}
               <div className="lg:col-span-8">
                 <ArticleCard article={leadStory} variant="lead" priorityImage={true} />
@@ -511,7 +511,7 @@ export const HomePage: React.FC = () => {
         <BreakingNewsTicker />
 
         {/* Main Content Container */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-12">
+        <main className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8 space-y-8 sm:space-y-12">
           {isLoading ? (
             <div className="py-20 text-center">
               <div className="w-10 h-10 border-4 border-crimson-800 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>

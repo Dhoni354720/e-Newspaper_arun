@@ -166,6 +166,11 @@ export const Footer: React.FC = () => {
         {/* Bottom Bar: Legal Pages, Notice, Copyright */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-editorial-500">
           <div className="flex flex-wrap items-center gap-4">
+            <Link to="/join-reporter" className="text-emerald-400 font-bold hover:text-emerald-300 transition-colors flex items-center gap-1">
+              <span>🎙️</span>
+              <span>{language === 'mr' ? 'पत्रकार नोंदणी' : language === 'hi' ? 'संवाददाता जुड़ें' : 'Join as Reporter'}</span>
+            </Link>
+            <span>•</span>
             <Link to="/membership" className="text-amber-400 font-bold hover:text-amber-300 transition-colors flex items-center gap-1">
               <span>⭐</span>
               <span>{t('membership')}</span>
@@ -189,7 +194,7 @@ export const Footer: React.FC = () => {
           </div>
 
           <div className="text-center md:text-right">
-            <p>© {currentYear} {publicationName}. {t('allRightsReserved')}.</p>
+            <p>संरक्षक: राकेश शंकर शेट्टी • © {currentYear} {publicationName}. {t('allRightsReserved')}.</p>
             <p className="text-[11px] text-editorial-600 mt-1">
               {t('demoContentNotice')}
             </p>

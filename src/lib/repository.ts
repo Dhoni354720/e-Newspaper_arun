@@ -244,6 +244,18 @@ export class NewsRepository {
       setLocalItem(STORAGE_KEYS.ARTICLES, allArticles);
     }
 
+    // Ensure initial articles for selected language exist in local cache if missing
+    if (options.language) {
+      const hasLang = allArticles.some(a => a.language === options.language);
+      if (!hasLang) {
+        const langSeed = INITIAL_ARTICLES.filter(a => a.language === options.language);
+        if (langSeed.length > 0) {
+          allArticles = [...allArticles, ...langSeed];
+          setLocalItem(STORAGE_KEYS.ARTICLES, allArticles);
+        }
+      }
+    }
+
     const categories = getLocalItem<Category[]>(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
     const categoryMap = new Map(categories.map(c => [c.id, c]));
 

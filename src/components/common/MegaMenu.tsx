@@ -236,6 +236,18 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, categories 
                 </li>
                 <li>
                   <Link
+                    to="/join-reporter"
+                    onClick={onClose}
+                    className="font-bold text-emerald-900 bg-emerald-50 hover:bg-emerald-100 p-2 rounded-lg border border-emerald-300 flex items-center justify-between"
+                  >
+                    <span>🎙️ {language === 'mr' ? 'बातमीदार / पत्रकार नोंदणी' : language === 'hi' ? 'संवाददाता पंजीकरण' : 'Join as Reporter'}</span>
+                    <span className="text-[10px] bg-emerald-200 text-emerald-900 font-bold px-1.5 py-0.5 rounded font-mono">
+                      WhatsApp
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/membership"
                     onClick={onClose}
                     className="font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 p-2 rounded-lg border border-amber-200 flex items-center justify-between"

@@ -16,6 +16,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   contact_email: 'jagatsameeksha2014@gmail.com',
   contact_phone: '+91 8828812282, +91 8369517611',
   office_address: 'कल्याण, महाराष्ट्र 421301',
+  patron_name: 'राकेश शंकर शेट्टी',
   editor_name: 'अरुण रमाकांत तिवारी',
   rni_number: 'MAHHIN/2014/57312',
   social_links: {
