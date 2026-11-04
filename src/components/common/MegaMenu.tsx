@@ -27,7 +27,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, categories 
 
   // Group categories into broadsheet desks
   const nationalCats = categories.filter(c => ['top-news', 'india', 'international', 'politics'].includes(c.slug));
-  const regionalCats = categories.filter(c => ['maharashtra', 'madhya-pradesh', 'delhi'].includes(c.slug));
+  const regionalCats = categories.filter(c => ['maharashtra', 'madhya-pradesh', 'uttarpradesh', 'uttar-pradesh', 'delhi'].includes(c.slug));
   const crimeAndLawCats = categories.filter(c => ['crime', 'court'].includes(c.slug));
   const businessSportsCats = categories.filter(c => ['business', 'sports', 'entertainment'].includes(c.slug));
   const editorialCats = categories.filter(c => ['editorial', 'lead-editorial', 'opinion', 'columns'].includes(c.slug));
@@ -240,8 +240,10 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, categories 
                     onClick={onClose}
                     className="font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 p-2 rounded-lg border border-amber-200 flex items-center justify-between"
                   >
-                    <span>⭐ {language === 'mr' ? 'सदस्यता (₹२००/महिना)' : language === 'hi' ? 'सदस्यता (₹200/माह)' : 'Membership (₹200/mo)'}</span>
-                    <span className="text-[10px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.5 rounded">आलेख विशेष</span>
+                    <span>⭐ {t('membership')}</span>
+                    <span className="text-[10px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.5 rounded">
+                      {language === 'mr' ? 'आलेख विशेष' : language === 'hi' ? 'आलेख विशेष' : 'Publish'}
+                    </span>
                   </Link>
                 </li>
                 <li>

@@ -276,7 +276,12 @@ export class NewsRepository {
 
     // Hierarchical category filtering
     if (options.categorySlug) {
-      const targetCat = categories.find(c => c.slug === options.categorySlug);
+      const matchSlug = (slug: string, target: string) =>
+        slug === target ||
+        (target === 'uttarpradesh' && slug === 'uttar-pradesh') ||
+        (target === 'uttar-pradesh' && slug === 'uttarpradesh');
+
+      const targetCat = categories.find(c => matchSlug(c.slug, options.categorySlug!));
       if (targetCat) {
         const allowedCatIds = new Set<string>([targetCat.id]);
         categories.forEach(c => {
@@ -286,11 +291,11 @@ export class NewsRepository {
         });
         filtered = filtered.filter(art =>
           art.category_ids?.some(id => allowedCatIds.has(id)) ||
-          art.categories?.some(cat => cat.slug === options.categorySlug || allowedCatIds.has(cat.id))
+          art.categories?.some(cat => matchSlug(cat.slug, options.categorySlug!) || allowedCatIds.has(cat.id))
         );
       } else {
         filtered = filtered.filter(art =>
-          art.categories?.some(cat => cat.slug === options.categorySlug)
+          art.categories?.some(cat => matchSlug(cat.slug, options.categorySlug!))
         );
       }
     }
@@ -620,20 +625,36 @@ export class NewsRepository {
           .select('*, translations:category_translations(*)')
           .order('sort_order', { ascending: true });
         if (!error && data && data.length > 0) {
-          return data.map((c: any) => ({
+          const list = data.map((c: any) => ({
             ...c,
             translations: (c.translations || []).reduce((acc: any, t: any) => {
               acc[t.language] = t;
               return acc;
             }, {})
           })) as Category[];
+          for (const initCat of INITIAL_CATEGORIES) {
+            if (!list.some(c => c.slug === initCat.slug || c.id === initCat.id)) {
+              list.push(initCat);
+            }
+          }
+          return list.sort((a, b) => (a.nav_order || a.sort_order) - (b.nav_order || b.sort_order));
         }
       } catch (err) {
         console.warn('Supabase getCategories error:', err);
       }
     }
     const categories = getLocalItem<Category[]>(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
-    return categories.sort((a, b) => a.sort_order - b.sort_order);
+    let modified = false;
+    for (const initCat of INITIAL_CATEGORIES) {
+      if (!categories.some(c => c.slug === initCat.slug || c.id === initCat.id)) {
+        categories.push(initCat);
+        modified = true;
+      }
+    }
+    if (modified) {
+      setLocalItem(STORAGE_KEYS.CATEGORIES, categories);
+    }
+    return categories.sort((a, b) => (a.nav_order || a.sort_order) - (b.nav_order || b.sort_order));
   }
 
   async saveCategory(categoryData: Partial<Category>): Promise<Category> {

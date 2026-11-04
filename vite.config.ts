@@ -30,6 +30,10 @@ function apiRoutesPlugin(): Plugin {
             const handler = (await import('./api/admin/settings')).default;
             return handler(req, res);
           }
+          if (url === '/api/cron-horoscope') {
+            const handler = (await import('./api/cron-horoscope')).default;
+            return handler(req, res);
+          }
         } catch (err) {
           console.error('[API Middleware Error]:', err);
           res.statusCode = 500;

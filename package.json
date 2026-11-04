@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "sync:horoscope": "node scripts/sync-daily-horoscope.mjs",
+    "scheduler": "node scripts/scheduler.mjs",
     "build:feeds": "node scripts/generate-feeds.mjs",
-    "build": "node scripts/generate-feeds.mjs && tsc && vite build",
+    "build": "node scripts/sync-daily-horoscope.mjs && node scripts/generate-feeds.mjs && tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run"
   },

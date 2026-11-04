@@ -147,10 +147,16 @@ export const Header: React.FC = () => {
             <Link
               to="/membership"
               className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r from-amber-400 to-amber-500 text-editorial-950 hover:brightness-110 shadow-xs transition-all border border-amber-300"
-              title="सदस्यता घ्या (₹२००/महिना) - आपले लेख प्रकाशित करा"
+              title={
+                language === 'mr'
+                  ? 'सदस्यता घ्या (₹२००/महिना) - आपले लेख प्रकाशित करा'
+                  : language === 'hi'
+                  ? 'सदस्यता लें (₹200/माह) - अपने लेख प्रकाशित करें'
+                  : 'Get Membership (₹200/mo) - Publish your articles'
+              }
             >
               <span>⭐</span>
-              <span>{language === 'mr' ? 'सदस्यता (₹२००/महिना)' : language === 'hi' ? 'सदस्यता (₹200/माह)' : 'Membership (₹200/mo)'}</span>
+              <span>{t('membership')}</span>
             </Link>
 
             {/* Admin CMS portal button */}
@@ -430,7 +436,7 @@ export const Header: React.FC = () => {
                       to="/membership"
                       className="block px-3 py-1.5 rounded text-sm text-amber-800 bg-amber-50 border border-amber-200 hover:bg-amber-100 font-bold"
                     >
-                      ⭐ {language === 'mr' ? 'सदस्यता (₹२००/महिना)' : language === 'hi' ? 'सदस्यता (₹200/माह)' : 'Membership (₹200/mo)'}
+                      ⭐ {t('membership')}
                     </Link>
                   </li>
                   <li>

@@ -54,6 +54,7 @@ export const CAT_CURIOUS = 'c1000000-0000-0000-0000-000000000031';
 export const CAT_PHOTOS = 'c1000000-0000-0000-0000-000000000032';
 export const CAT_VIDEOS = 'c1000000-0000-0000-0000-000000000033';
 export const CAT_RASHIFAL = 'c1000000-0000-0000-0000-000000000034';
+export const CAT_UP = 'c1000000-0000-0000-0000-000000000035';
 
 // Translation Group UUIDs
 const GROUP_1 = 'g1000000-0000-0000-0000-000000000001';
@@ -277,11 +278,27 @@ export const INITIAL_CATEGORIES: Category[] = [
     },
   },
   {
+    id: CAT_UP,
+    slug: 'uttarpradesh',
+    kind: 'city',
+    show_in_nav: true,
+    nav_order: 7,
+    color_hex: '#ea580c',
+    sort_order: 13.5,
+    is_active: true,
+    created_at: '2026-02-01T00:00:00Z',
+    translations: {
+      hi: { id: 'tup-hi', category_id: CAT_UP, language: 'hi', name: 'उत्तर प्रदेश', description: 'उत्तर प्रदेश की प्रमुख हलचल एवं प्रादेशिक समाचार' },
+      mr: { id: 'tup-mr', category_id: CAT_UP, language: 'mr', name: 'उत्तर प्रदेश', description: 'उत्तर प्रदेशातील ताज्या घडामोडी आणि विश्लेषण' },
+      en: { id: 'tup-en', category_id: CAT_UP, language: 'en', name: 'Uttar Pradesh', description: 'Uttar Pradesh state news and regional governance' },
+    },
+  },
+  {
     id: CAT_DELHI,
     slug: 'delhi',
     kind: 'city',
     show_in_nav: true,
-    nav_order: 7,
+    nav_order: 8,
     color_hex: '#2563eb',
     sort_order: 14,
     is_active: true,
@@ -297,7 +314,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     slug: 'crime',
     kind: 'news',
     show_in_nav: true,
-    nav_order: 8,
+    nav_order: 9,
     color_hex: '#b91c1c',
     sort_order: 15,
     is_active: true,
@@ -313,7 +330,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     slug: 'court',
     kind: 'news',
     show_in_nav: true,
-    nav_order: 9,
+    nav_order: 10,
     color_hex: '#4f46e5',
     sort_order: 16,
     is_active: true,
@@ -329,7 +346,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     slug: 'business',
     kind: 'news',
     show_in_nav: true,
-    nav_order: 10,
+    nav_order: 11,
     color_hex: '#059669',
     sort_order: 17,
     is_active: true,
@@ -345,7 +362,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     slug: 'sports',
     kind: 'news',
     show_in_nav: true,
-    nav_order: 11,
+    nav_order: 12,
     color_hex: '#0891b2',
     sort_order: 18,
     is_active: true,
@@ -361,7 +378,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     slug: 'entertainment',
     kind: 'news',
     show_in_nav: true,
-    nav_order: 12,
+    nav_order: 13,
     color_hex: '#db2777',
     sort_order: 19,
     is_active: true,
@@ -377,7 +394,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     slug: 'editorial',
     kind: 'opinion',
     show_in_nav: true,
-    nav_order: 13,
+    nav_order: 14,
     color_hex: '#9333ea',
     sort_order: 20,
     is_active: true,

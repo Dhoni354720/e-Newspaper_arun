@@ -46,6 +46,18 @@ export const RashifalPage: React.FC = () => {
     loadData();
   }, [period]);
 
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('djs_horoscope_last_sync');
+      if (stored) {
+        const syncDate = new Date(stored);
+        setLastSyncTime(syncDate.toLocaleTimeString(language === 'en' ? 'en-US' : 'mr-IN', { hour: '2-digit', minute: '2-digit' }));
+      }
+    } catch {
+      // Ignore
+    }
+  }, [language]);
+
   const handleManualLiveSync = () => {
     loadData(true);
   };

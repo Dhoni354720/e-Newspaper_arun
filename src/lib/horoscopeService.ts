@@ -210,7 +210,21 @@ export async function fetchLiveDailyHoroscope(forceRefresh: boolean = false): Pr
         return matchesToday;
       }
     } catch {
-      // Proceed to fetch fresh
+      // Proceed to check static pre-synced payload
+    }
+
+    // 1b. Check pre-synced automated daily payload (/data/daily-horoscope.json)
+    try {
+      const staticRes = await fetch('/data/daily-horoscope.json', { cache: 'no-cache' });
+      if (staticRes.ok) {
+        const staticPayload = await staticRes.json();
+        if (staticPayload?.date === todayStr && Array.isArray(staticPayload?.items) && staticPayload.items.length === 12) {
+          const saved = await repository.saveHoroscopesBatch(staticPayload.items);
+          return saved;
+        }
+      }
+    } catch {
+      // Fall through to live parallel fetch
     }
   }
 
@@ -220,7 +234,7 @@ export async function fetchLiveDailyHoroscope(forceRefresh: boolean = false): Pr
     const { luckyNumber, luckyColor } = getDailyLuckySeed(zodiac.sign, todayStr);
 
     try {
-      // Connect to online live horoscope service
+      // Connect to online live horoscope service (Primary: horoscope-app-api)
       const res = await fetch(`https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${zodiac.sign}&day=TODAY`, {
         cache: 'no-store',
       });
@@ -230,9 +244,21 @@ export async function fetchLiveDailyHoroscope(forceRefresh: boolean = false): Pr
           liveEnglishText = json.data.horoscope.trim();
         }
       }
-    } catch (e) {
-      // Non-blocking fallback if internet network is intermittent
-      console.warn(`Internet horoscope fetch for ${zodiac.sign} fallback:`, e);
+    } catch {
+      // Secondary fallback: ohmanda.com
+      try {
+        const res2 = await fetch(`https://ohmanda.com/api/horoscope/${zodiac.sign}`, {
+          cache: 'no-store',
+        });
+        if (res2.ok) {
+          const json2 = await res2.json();
+          if (json2?.horoscope) {
+            liveEnglishText = json2.horoscope.trim();
+          }
+        }
+      } catch (e2) {
+        console.warn(`Internet horoscope fetch for ${zodiac.sign} fallback:`, e2);
+      }
     }
 
     // Default Vedic astrological guidance for Hindi and Marathi

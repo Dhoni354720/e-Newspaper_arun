@@ -35,7 +35,11 @@ export const CategoryPage: React.FC = () => {
     ]).then(([allCategories, articlesRes]) => {
       if (!isMounted) return;
 
-      const found = allCategories.find((c) => c.slug === slug);
+      const found = allCategories.find((c) => 
+        c.slug === slug ||
+        (slug === 'uttarpradesh' && c.slug === 'uttar-pradesh') ||
+        (slug === 'uttar-pradesh' && c.slug === 'uttarpradesh')
+      );
       setCategory(found || null);
       setArticles(articlesRes.articles);
       setIsLoading(false);

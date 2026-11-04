@@ -168,7 +168,7 @@ export const Footer: React.FC = () => {
           <div className="flex flex-wrap items-center gap-4">
             <Link to="/membership" className="text-amber-400 font-bold hover:text-amber-300 transition-colors flex items-center gap-1">
               <span>⭐</span>
-              <span>सदस्यता (₹200/माह)</span>
+              <span>{t('membership')}</span>
             </Link>
             <span>•</span>
             <Link to="/about" className="hover:text-editorial-300 transition-colors">
