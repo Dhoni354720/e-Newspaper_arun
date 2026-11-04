@@ -115,10 +115,19 @@ export const Footer: React.FC = () => {
                   ? 'कल्याण, महाराष्ट्र 421301'
                   : settings.office_address;
 
-              const displayPhone =
+              const rawPhone =
                 !settings.contact_phone || !settings.contact_phone.includes('8828812282')
-                  ? '+91 8828812282, +91 8369517611, +91 7448193748'
+                  ? '+91 8828812282, +91 8369517611'
                   : settings.contact_phone;
+
+              const displayPhone = rawPhone
+                .split(',')
+                .map((p) => p.trim())
+                .filter((p) => {
+                  const cleaned = p.replace(/^\+?91[\s-]*/, '').trim();
+                  return !cleaned.startsWith('7');
+                })
+                .join(', ');
 
               return (
                 <ul className="space-y-3 text-xs sm:text-sm text-editorial-400">

@@ -858,10 +858,20 @@ export class NewsRepository {
       modified = true;
     }
 
-    // Auto-migrate contact_phone to include 8828812282 first
+    // Auto-migrate contact_phone to include 8828812282 first and remove 7-series number
     const phone = updated.contact_phone || '';
     if (!phone.includes('8828812282')) {
-      updated.contact_phone = '+91 8828812282, +91 8369517611, +91 7448193748';
+      updated.contact_phone = '+91 8828812282, +91 8369517611';
+      modified = true;
+    } else if (phone.includes('7448193748')) {
+      updated.contact_phone = phone
+        .split(',')
+        .map((p) => p.trim())
+        .filter((p) => {
+          const cleaned = p.replace(/^\+?91[\s-]*/, '').trim();
+          return !cleaned.startsWith('7');
+        })
+        .join(', ');
       modified = true;
     }
 

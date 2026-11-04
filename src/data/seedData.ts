@@ -2371,7 +2371,7 @@ export const INITIAL_CMS_PAGES: CMSPage[] = [
   <li><strong>मुद्रक एवं प्रकाशक:</strong> अरुण रमाकांत तिवारी</li>
   <li><strong>मुद्रण स्थल:</strong> मुंबई, महाराष्ट्र</li>
   <li><strong>कार्यालय पता:</strong> कल्याण, महाराष्ट्र - ४२१३०१</li>
-  <li><strong>संपर्क दूरभाष:</strong> +91-8828812282, +91-8369517611, +91-7448193748</li>
+  <li><strong>संपर्क दूरभाष:</strong> +91-8828812282, +91-8369517611</li>
   <li><strong>ईमेल:</strong> jagatsameeksha2014@gmail.com</li>
 </ul>
     `.trim(),
@@ -2408,7 +2408,7 @@ export const INITIAL_CMS_PAGES: CMSPage[] = [
     <li><strong>पंजीकरण संख्या (RNI):</strong> MAHHIN/2014/57312</li>
     <li><strong>कार्यालय पता:</strong> दैनिक जगत समीक्षा, कल्याण, महाराष्ट्र - ४२१३०१</li>
     <li><strong>ईमेल:</strong> <a href="mailto:jagatsameeksha2014@gmail.com" class="text-crimson-800 font-bold underline">jagatsameeksha2014@gmail.com</a></li>
-    <li><strong>हेल्पलाइन दूरभाष:</strong> +91-8828812282 / +91-8369517611 / +91-7448193748</li>
+    <li><strong>हेल्पलाइन दूरभाष:</strong> +91-8828812282 / +91-8369517611</li>
   </ul>
 </div>
 

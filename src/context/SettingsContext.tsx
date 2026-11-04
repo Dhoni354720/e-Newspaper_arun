@@ -28,7 +28,16 @@ const sanitizeSettings = (raw: SiteSettings): SiteSettings => {
   }
   const phone = s.contact_phone || '';
   if (!phone.includes('8828812282')) {
-    s.contact_phone = '+91 8828812282, +91 8369517611, +91 7448193748';
+    s.contact_phone = '+91 8828812282, +91 8369517611';
+  } else if (phone.includes('7448193748')) {
+    s.contact_phone = phone
+      .split(',')
+      .map((p) => p.trim())
+      .filter((p) => {
+        const cleaned = p.replace(/^\+?91[\s-]*/, '').trim();
+        return !cleaned.startsWith('7');
+      })
+      .join(', ');
   }
   return s;
 };
