@@ -6,6 +6,7 @@ import { safeJsonStringify } from '@/lib/sanitize';
 interface SEOHeadProps {
   title?: string;
   description?: string;
+  keywords?: string;
   canonicalUrl?: string;
   ogImage?: string;
   publishedTime?: string;
@@ -20,6 +21,7 @@ interface SEOHeadProps {
 export const SEOHead: React.FC<SEOHeadProps> = ({
   title,
   description,
+  keywords,
   canonicalUrl,
   ogImage,
   publishedTime,
@@ -33,12 +35,44 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
   const { language } = useLanguage();
   const { publicationName, settings } = useSettings();
 
-  const fullTitle = title 
-    ? `${title} | ${publicationName}` 
-    : `${publicationName} — ${settings.tagline}`;
-  const metaDescription = description || settings.tagline;
+  // 1. Unique, concise Page Title with primary keywords without duplication
+  let fullTitle: string;
+  if (!title) {
+    fullTitle = `${publicationName} — ${settings.tagline}`;
+  } else if (
+    title.includes(publicationName) ||
+    title.includes('दैनिक जगत समीक्षा') ||
+    title.includes('Dainik Jagat Sameeksha')
+  ) {
+    fullTitle = title;
+  } else {
+    fullTitle = `${title} | ${publicationName}`;
+  }
+
+  // 2. Meta Description: Brief summary under 160 characters (Google Search snippet standard)
+  const cleanDescription = (rawText?: string, maxLen = 155): string => {
+    if (!rawText) return '';
+    const plain = rawText
+      .replace(/<[^>]*>/g, '') // strip HTML tags
+      .replace(/&nbsp;/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (plain.length <= maxLen) return plain;
+    return plain.slice(0, maxLen).trim() + '...';
+  };
+
+  const metaDescription = cleanDescription(description || settings.tagline);
   const currentUrl = canonicalUrl || window.location.href;
   const shareImage = ogImage || `${window.location.origin}/images/logo.png`;
+
+  // Default site-wide keywords
+  const siteKeywords = keywords || (
+    language === 'mr'
+      ? 'दैनिक जगत समीक्षा, मराठी वृत्तपत्र, ई-पेपर, ताज्या बातम्या, महाराष्ट्र, मुंबई, कल्याण, निष्पक्ष पत्रकारिता, अरुण रमाकांत तिवारी'
+      : language === 'en'
+      ? 'Dainik Jagat Sameeksha, national daily newspaper, latest news, e-paper, Maharashtra, Mumbai, Kalyan, Hindi news, Arun Ramakant Tiwari'
+      : 'दैनिक जगत समीक्षा, Dainik Jagat Sameeksha, राष्ट्रीय हिंदी दैनिक समाचार पत्र, ई-पेपर, ताज़ा खबर, मुंबई, कल्याण, महाराष्ट्र, उत्तर प्रदेश, अरुण रमाकांत तिवारी'
+  );
 
   useEffect(() => {
     // Set document title
@@ -57,6 +91,8 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
     };
 
     setMeta('description', metaDescription);
+    setMeta('keywords', siteKeywords);
+    setMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
     setMeta('og:title', fullTitle, true);
     setMeta('og:description', metaDescription, true);
     setMeta('og:type', articleType, true);
@@ -168,7 +204,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
 
     const finalData = customJsonLd || jsonLd;
     script.textContent = safeJsonStringify(finalData);
-  }, [fullTitle, metaDescription, currentUrl, shareImage, articleType, publishedTime, modifiedTime, authorName, articleCategory, language, publicationName, settings, customJsonLd]);
+  }, [fullTitle, metaDescription, siteKeywords, currentUrl, shareImage, articleType, publishedTime, modifiedTime, authorName, articleCategory, language, publicationName, settings, customJsonLd]);
 
   return null;
 };

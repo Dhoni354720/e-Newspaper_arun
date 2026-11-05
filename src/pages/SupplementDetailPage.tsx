@@ -97,7 +97,7 @@ export const SupplementDetailPage: React.FC = () => {
                 <div className="md:col-span-5 relative rounded-lg overflow-hidden border border-paper-border shadow-md bg-editorial-100 aspect-3/4">
                   <img
                     src={supplement.cover_image_url}
-                    alt={getTitle(supplement)}
+                    alt={getTitle(supplement) || 'दैनिक जगत समीक्षा पुरवणी विशेषांक'}
                     className="w-full h-full object-cover"
                   />
                   <span className="absolute top-3 left-3 bg-crimson-800 text-white text-xs font-bold font-mono px-3 py-1 rounded-full shadow">
@@ -178,7 +178,7 @@ export const SupplementDetailPage: React.FC = () => {
                           <div className="aspect-16/10 overflow-hidden bg-editorial-100">
                             <img
                               src={s.cover_image_url}
-                              alt={getTitle(s)}
+                              alt={getTitle(s) || 'दैनिक जगत समीक्षा पुरवणी विशेषांक'}
                               className="w-full h-full object-cover transition-transform group-hover:scale-105"
                             />
                           </div>

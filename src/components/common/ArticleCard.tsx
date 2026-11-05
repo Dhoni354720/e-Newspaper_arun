@@ -10,6 +10,7 @@ interface ArticleCardProps {
   variant?: 'lead' | 'horizontal' | 'grid' | 'compact' | 'text-only';
   showExcerpt?: boolean;
   priorityImage?: boolean;
+  headingTag?: 'h1' | 'h2' | 'h3';
 }
 
 export const ArticleCard: React.FC<ArticleCardProps> = ({
@@ -17,6 +18,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
   variant = 'grid',
   showExcerpt = true,
   priorityImage = false,
+  headingTag,
 }) => {
   const { language, t, getCategoryName } = useLanguage();
 
@@ -28,6 +30,8 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
   const primaryCategory = article.categories?.[0];
   const categoryName = getCategoryName(primaryCategory);
   const imageUrl = article.featured_image_path || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80';
+  const imageAlt = article.image_alt || article.headline || 'दैनिक जगत समीक्षा समाचार छायाचित्र';
+  const LeadHeading = headingTag || 'h2';
 
   // 1. LEAD / HERO STORY VARIANT
   if (variant === 'lead') {
@@ -39,7 +43,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
             <Link to={`/article/${article.slug}`} className="block w-full h-full">
               <img
                 src={imageUrl}
-                alt={article.image_alt || article.headline}
+                alt={imageAlt}
                 loading={priorityImage ? 'eager' : 'lazy'}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out min-h-[260px] lg:min-h-[420px]"
               />
@@ -67,9 +71,9 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
               </div>
 
               <Link to={`/article/${article.slug}`} className="block group">
-                <h2 className="font-serif text-2xl sm:text-3xl lg:text-3xl font-bold text-editorial-950 leading-tight group-hover:text-crimson-800 transition-colors mb-3">
+                <LeadHeading className="font-serif text-2xl sm:text-3xl lg:text-3xl font-bold text-editorial-950 leading-tight group-hover:text-crimson-800 transition-colors mb-3">
                   {article.headline}
-                </h2>
+                </LeadHeading>
               </Link>
 
               {article.subtitle && (
@@ -112,7 +116,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         <Link to={`/article/${article.slug}`} className="w-full sm:w-48 sm:h-32 flex-shrink-0 relative overflow-hidden rounded bg-editorial-100 aspect-[16/10] sm:aspect-auto">
           <img
             src={imageUrl}
-            alt={article.image_alt || article.headline}
+            alt={imageAlt}
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -153,7 +157,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         <Link to={`/article/${article.slug}`} className="w-20 h-16 sm:w-24 sm:h-18 flex-shrink-0 relative overflow-hidden rounded bg-editorial-100">
           <img
             src={imageUrl}
-            alt={article.image_alt || article.headline}
+            alt={imageAlt}
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -203,7 +207,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         <Link to={`/article/${article.slug}`} className="block relative aspect-[16/10] overflow-hidden bg-editorial-100">
           <img
             src={imageUrl}
-            alt={article.image_alt || article.headline}
+            alt={imageAlt}
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />

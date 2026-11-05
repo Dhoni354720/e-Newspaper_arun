@@ -71,7 +71,17 @@ export const NewsFeedPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-paper flex flex-col justify-between selection:bg-crimson-100 selection:text-crimson-900">
-      <SEOHead title={t('allNews')} description="सर्व ताज्या राजकीय, सामाजिक व प्रादेशिक बातम्यांचे संकलन." />
+      <SEOHead
+        title={t('allNews')}
+        description={
+          language === 'mr'
+            ? 'सर्व ताज्या राजकीय, सामाजिक व प्रादेशिक बातम्यांचे संकलन — दैनिक जगत समीक्षा.'
+            : language === 'en'
+            ? 'All latest national, state, political and regional news dispatches — Dainik Jagat Sameeksha.'
+            : 'देश, प्रदेश और समाज की सभी ताज़ा खबरों व संपादकीय विश्लेषण का संपूर्ण संकलन — दैनिक जगत समीक्षा।'
+        }
+        keywords="ताज़ा समाचार, all news, दैनिक जगत समीक्षा, ब्रेकिंग न्यूज़, राष्ट्रीय समाचार, महाराष्ट्र"
+      />
 
       <div>
         <Header />

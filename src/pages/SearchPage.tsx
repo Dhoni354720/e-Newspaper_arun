@@ -85,7 +85,15 @@ export const SearchPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-paper flex flex-col justify-between selection:bg-crimson-100 selection:text-crimson-900">
-      <SEOHead title={`${t('searchButton')}: ${query}`} description="बातमी शोध निकाल." />
+      <SEOHead
+        title={query ? `${t('searchButton')}: "${query}"` : t('searchButton')}
+        description={
+          query
+            ? `दैनिक जगत समीक्षा पर "${query}" से संबंधित समाचार, संपादकीय आलेख एवं विशेष रिपोर्ट खोजें।`
+            : 'दैनिक जगत समीक्षा के संपूर्ण अभिलेखागार में से राष्ट्रीय, प्रादेशिक एवं स्थानीय समाचार खोजें।'
+        }
+        keywords="समाचार खोज, search news, दैनिक जगत समीक्षा, ताज़ा खबरें, हिंदी न्यूज़"
+      />
 
       <div>
         <Header />

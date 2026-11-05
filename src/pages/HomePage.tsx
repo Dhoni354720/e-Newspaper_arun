@@ -298,7 +298,7 @@ export const HomePage: React.FC = () => {
                   <div className="flex items-center gap-3 mb-3">
                     <img
                       src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80"
-                      alt="अरुण रमाकांत तिवारी"
+                      alt="अरुण रमाकांत तिवारी - मुख्य संपादक, दैनिक जगत समीक्षा"
                       className="w-14 h-14 rounded-full object-cover border-2 border-crimson-800"
                     />
                     <div>
@@ -440,7 +440,7 @@ export const HomePage: React.FC = () => {
                 <div className="relative group w-48 sm:w-56 shadow-2xl rounded overflow-hidden border-2 border-amber-400 transform -rotate-1 hover:rotate-0 transition-transform duration-300">
                   <img
                     src={latestEpaper.thumbnail_url || latestEpaper.pages?.[0]?.image_url}
-                    alt={latestEpaper.title}
+                    alt={latestEpaper.title || "दैनिक जगत समीक्षा आज का ई-पेपर डिजिटल संस्करण"}
                     className="w-full h-auto object-cover"
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -501,7 +501,30 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-paper flex flex-col justify-between selection:bg-crimson-100 selection:text-crimson-900">
-      <SEOHead />
+      <SEOHead
+        title={
+          language === 'mr'
+            ? 'दैनिक जगत समीक्षा | सत्य, निष्पक्ष आणि निर्भीक वृत्तपत्र'
+            : language === 'en'
+            ? 'Dainik Jagat Sameeksha | National & Regional Daily Newspaper'
+            : 'दैनिक जगत समीक्षा | सत्य, निष्पक्ष और निर्भीक राष्ट्रीय हिंदी समाचार पत्र'
+        }
+        description={
+          language === 'mr'
+            ? 'दैनिक जगत समीक्षा — मुंबई, महाराष्ट्र व देशातील ताज्या, निष्पक्ष व निर्भीक बातम्या, ई-पेपर आणि संपादकीय विश्लेषण.'
+            : language === 'en'
+            ? 'Dainik Jagat Sameeksha — Independent national daily newspaper providing authentic breaking news, e-paper, state and regional reports.'
+            : 'दैनिक जगत समीक्षा — राष्ट्रीय एवं प्रादेशिक हिंदी दैनिक समाचार पत्र। मुंबई, महाराष्ट्र, उत्तर प्रदेश सहित देश-विदेश की ताज़ा एवं निष्पक्ष खबरें व ई-पेपर।'
+        }
+        keywords={
+          language === 'mr'
+            ? 'दैनिक जगत समीक्षा, मराठी वृत्तपत्र, ई-पेपर, ताज्या बातम्या, महाराष्ट्र, मुंबई, कल्याण, अरुण रमाकांत तिवारी'
+            : language === 'en'
+            ? 'Dainik Jagat Sameeksha, national daily newspaper, breaking news, e-paper, Maharashtra, Mumbai, Kalyan, Hindi news, Arun Ramakant Tiwari'
+            : 'दैनिक जगत समीक्षा, Dainik Jagat Sameeksha, राष्ट्रीय हिंदी दैनिक समाचार पत्र, ई-पेपर, ताज़ा खबर, मुंबई, कल्याण, महाराष्ट्र, उत्तर प्रदेश, अरुण रमाकांत तिवारी'
+        }
+        canonicalUrl="https://dainikjagatsameeksha.com/"
+      />
 
       <div>
         {/* Header */}
@@ -512,6 +535,14 @@ export const HomePage: React.FC = () => {
 
         {/* Main Content Container */}
         <main className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8 space-y-8 sm:space-y-12">
+          {/* Accessible Main H1 Heading signaling core publication topic */}
+          <h1 className="sr-only">
+            {language === 'mr'
+              ? 'दैनिक जगत समीक्षा — सत्य, निष्पक्ष आणि निर्भीक वृत्तपत्र, ताज्या घडामोडी व ई-पेपर'
+              : language === 'en'
+              ? 'Dainik Jagat Sameeksha — Independent National & Regional Daily Newspaper, Breaking News and E-Paper'
+              : 'दैनिक जगत समीक्षा — सत्य, निष्पक्ष और निर्भीक राष्ट्रीय हिंदी दैनिक समाचार पत्र, ताज़ा खबरें एवं ई-पेपर'}
+          </h1>
           {isLoading ? (
             <div className="py-20 text-center">
               <div className="w-10 h-10 border-4 border-crimson-800 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>

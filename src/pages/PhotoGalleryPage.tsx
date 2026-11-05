@@ -98,7 +98,7 @@ export const PhotoGalleryPage: React.FC = () => {
                     <div className="relative aspect-16/10 overflow-hidden bg-editorial-100">
                       <img
                         src={gallery.cover_image_url}
-                        alt={getTitle(gallery)}
+                        alt={getTitle(gallery) || 'दैनिक जगत समीक्षा फोटो गैलरी'}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         loading="lazy"
                       />

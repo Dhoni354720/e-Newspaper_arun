@@ -7,12 +7,12 @@ import { repository } from '@/lib/repository';
 import { Gallery, GalleryImage } from '@/types/database';
 import { useLanguage } from '@/context/LanguageContext';
 import { formatDate } from '@/lib/date';
-import { 
-  Camera, 
-  ArrowLeft, 
-  ChevronLeft, 
-  ChevronRight, 
-  X, 
+import {
+  Camera,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  X,
   Maximize2,
   Calendar,
   Share2
@@ -47,16 +47,16 @@ export const PhotoGalleryDetailPage: React.FC = () => {
   const images: GalleryImage[] = gallery?.images && gallery.images.length > 0
     ? gallery.images
     : gallery ? [{
-        id: 'img-cover',
-        gallery_id: gallery.id,
-        image_url: gallery.cover_image_url,
-        caption_hi: gallery.title_hi,
-        caption_mr: gallery.title_mr,
-        caption_en: gallery.title_en,
-        credit: gallery.credit,
-        sort_order: 1,
-        created_at: gallery.created_at,
-      }] : [];
+      id: 'img-cover',
+      gallery_id: gallery.id,
+      image_url: gallery.cover_image_url,
+      caption_hi: gallery.title_hi,
+      caption_mr: gallery.title_mr,
+      caption_en: gallery.title_en,
+      credit: gallery.credit,
+      sort_order: 1,
+      created_at: gallery.created_at,
+    }] : [];
 
   const handleNext = useCallback(() => {
     if (activeImageIndex === null || images.length === 0) return;
@@ -101,7 +101,7 @@ export const PhotoGalleryDetailPage: React.FC = () => {
       navigator.share({
         title: getTitle(gallery),
         url: window.location.href,
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       navigator.clipboard.writeText(window.location.href);
       alert('गैलरी लिंक कॉपी हो गया!');
@@ -113,7 +113,7 @@ export const PhotoGalleryDetailPage: React.FC = () => {
       {gallery && (
         <SEOHead
           title={`${getTitle(gallery)} | फोटो गैलरी | दैनिक जगत समीक्षा`}
-          description={getTitle(gallery)}
+          description={`${getTitle(gallery)} — दैनिक जगत समीक्षा विशेष छायाचित्र दालन (Photo Gallery). उच्च गुणवत्ता वाली तस्वीरें एवं विस्तृत विवरण.`}
           ogImage={gallery.cover_image_url}
         />
       )}
@@ -201,7 +201,7 @@ export const PhotoGalleryDetailPage: React.FC = () => {
                     <div className="aspect-4/3 overflow-hidden">
                       <img
                         src={img.image_url}
-                        alt={getCaption(img) || `तस्वीर ${idx + 1}`}
+                        alt={getCaption(img) || `${getTitle(gallery)} - छायाचित्र ${idx + 1}`}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         loading="lazy"
                       />
@@ -254,7 +254,7 @@ export const PhotoGalleryDetailPage: React.FC = () => {
           <div className="relative flex-1 flex items-center justify-center my-4 min-h-0">
             <img
               src={images[activeImageIndex].image_url}
-              alt={getCaption(images[activeImageIndex])}
+              alt={getCaption(images[activeImageIndex]) || `${gallery ? getTitle(gallery) : 'फोटो गैलरी'} - छायाचित्र ${activeImageIndex + 1}`}
               className="max-h-full max-w-full object-contain rounded shadow-2xl"
             />
 

@@ -373,7 +373,7 @@ export const Header: React.FC = () => {
                   {/* Logo Image */}
                   <img
                     src="/images/logo.png"
-                    alt={publicationName}
+                    alt={`${publicationName} - मुख्य लोगो (Dainik Jagat Sameeksha Official Masthead Logo)`}
                     className="h-10 sm:h-16 md:h-20 lg:h-24 max-w-full w-auto object-contain transition-transform group-hover:scale-[1.01]"
                     onError={(e) => {
                       // Fallback to text masthead if image fails

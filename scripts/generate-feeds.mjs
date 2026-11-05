@@ -25,6 +25,8 @@ const CORE_ROUTES = [
   { url: '/videos', priority: '0.8', changefreq: 'daily' },
   { url: '/photos', priority: '0.7', changefreq: 'daily' },
   { url: '/rashifal', priority: '0.8', changefreq: 'daily' },
+  { url: '/membership', priority: '0.8', changefreq: 'weekly' },
+  { url: '/join-reporter', priority: '0.8', changefreq: 'weekly' },
   { url: '/submit-news', priority: '0.6', changefreq: 'monthly' },
   { url: '/grievance', priority: '0.6', changefreq: 'monthly' },
   { url: '/about', priority: '0.5', changefreq: 'monthly' },

@@ -327,7 +327,7 @@ export const EpaperClipper: React.FC<EpaperClipperProps> = ({
             <img
               ref={imgRef}
               src={pageImageUrl}
-              alt={`Broadsheet Page ${pageNumber}`}
+              alt={`दैनिक जगत समीक्षा ई-पेपर पृष्ठ ${pageNumber} (Dainik Jagat Sameeksha Page ${pageNumber})`}
               className="w-auto h-auto max-h-[82vh] object-contain pointer-events-none select-none block"
               draggable={false}
             />
@@ -379,7 +379,7 @@ export const EpaperClipper: React.FC<EpaperClipperProps> = ({
             <div className="p-4 flex-1 overflow-auto bg-stone-100 flex items-center justify-center">
               <img
                 src={clippedImageDataUrl}
-                alt="Generated Article Clip"
+                alt="दैनिक जगत समीक्षा वृत्त कतरन (Generated Newspaper Article Clip)"
                 className="max-h-[55vh] w-auto object-contain rounded shadow-lg border border-stone-300"
               />
             </div>

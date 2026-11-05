@@ -47,7 +47,17 @@ export const AboutPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-paper flex flex-col justify-between selection:bg-crimson-100 selection:text-crimson-900">
-      <SEOHead title={t('aboutUs')} description={`About ${publicationName} - Independent Digital Journalism`} />
+      <SEOHead
+        title={t('aboutUs')}
+        description={
+          language === 'mr'
+            ? `${publicationName} बद्दल माहिती — सत्य, निष्पक्ष आणि निर्भीक पत्रकारिता. मुख्य संपादक: अरुण रमाकांत तिवारी.`
+            : language === 'en'
+            ? `About ${publicationName} — Independent national daily newspaper dedicated to public-interest journalism.`
+            : `${publicationName} के बारे में — सत्य, निष्पक्ष और निर्भीक राष्ट्रीय हिंदी दैनिक समाचार पत्र।`
+        }
+        keywords="हमारे बारे में, about us, दैनिक जगत समीक्षा, संपादकीय नीति, अरुण रमाकांत तिवारी"
+      />
       <div>
         <Header />
         <BreakingNewsTicker />
@@ -186,7 +196,17 @@ export const ContactPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-paper flex flex-col justify-between selection:bg-crimson-100 selection:text-crimson-900">
-      <SEOHead title={t('contactUs')} description={`Contact editorial desk at ${publicationName}`} />
+      <SEOHead
+        title={t('contactUs')}
+        description={
+          language === 'mr'
+            ? `${publicationName} संपादकीय कक्षाशी संपर्क साधा — कल्याण, महाराष्ट्र. फोन: ८८२८८१२२८२.`
+            : language === 'en'
+            ? `Contact editorial and administrative offices of ${publicationName} at Kalyan, Maharashtra.`
+            : `${publicationName} के संपादकीय कक्ष एवं मुख्य कार्यालय से संपर्क करें — कल्याण, महाराष्ट्र। फोन: 8828812282.`
+        }
+        keywords="संपर्क, contact us, दैनिक जगत समीक्षा, संपादकीय कार्यालय, कल्याण, महाराष्ट्र"
+      />
       <div>
         <Header />
         <BreakingNewsTicker />
@@ -419,7 +439,10 @@ export const PrivacyPolicyPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-paper flex flex-col justify-between selection:bg-crimson-100 selection:text-crimson-900">
-      <SEOHead title={t('privacyPolicy')} description={`Privacy Policy of ${publicationName}`} />
+      <SEOHead
+        title={t('privacyPolicy')}
+        description={`गोपनीयता नीति (Privacy Policy) — ${publicationName}. DPDP Act 2023 अंतर्गत वाचक डेटा संरक्षण व नियम।`}
+      />
       <div>
         <Header />
         <BreakingNewsTicker />
@@ -480,7 +503,10 @@ export const TermsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-paper flex flex-col justify-between selection:bg-crimson-100 selection:text-crimson-900">
-      <SEOHead title={t('termsOfService')} description={`Terms of Service for ${publicationName}`} />
+      <SEOHead
+        title={t('termsOfService')}
+        description={`नियम एवं शर्तें (Terms of Service) — ${publicationName}. अधिकृत संपादकीय एवं डिजिटल पोर्टल उपयोग नियम।`}
+      />
       <div>
         <Header />
         <BreakingNewsTicker />

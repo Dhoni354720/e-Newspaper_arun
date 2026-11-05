@@ -164,6 +164,7 @@ export const ArticleDetailPage: React.FC = () => {
       <SEOHead
         title={article.headline}
         description={article.excerpt}
+        keywords={article.tags?.length ? article.tags.join(', ') : `${categoryName || 'समाचार'}, दैनिक जगत समीक्षा, ताज़ा खबर`}
         ogImage={article.featured_image_path}
         publishedTime={article.published_at || article.created_at}
         modifiedTime={article.updated_at}
@@ -311,7 +312,7 @@ export const ArticleDetailPage: React.FC = () => {
               <div className="aspect-[16/10] overflow-hidden rounded-xl bg-editorial-100 border border-paper-border">
                 <img
                   src={article.featured_image_path}
-                  alt={article.image_alt || article.headline}
+                  alt={article.image_alt || article.headline || 'दैनिक जगत समीक्षा समाचार छायाचित्र'}
                   className="w-full h-full object-cover"
                 />
               </div>

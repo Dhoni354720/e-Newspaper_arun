@@ -120,7 +120,7 @@ export const AuthorDetailPage: React.FC = () => {
                   <div className="relative flex-shrink-0">
                     <img
                       src={author.avatar_url || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'}
-                      alt={author.display_name}
+                      alt={`${author.display_name} - ${author.role || 'संपादकीय लेखक, दैनिक जगत समीक्षा'}`}
                       className="w-28 h-28 sm:w-36 sm:h-36 rounded-full object-cover border-4 border-crimson-800 shadow-md"
                     />
                     {author.is_columnist && (

@@ -188,7 +188,8 @@ export const EpaperPage: React.FC = () => {
     <div className="min-h-screen bg-stone-100 flex flex-col justify-between selection:bg-crimson-100 selection:text-crimson-900">
       <SEOHead
         title={`${t('epaper')} — ${currentEdition?.title || publicationName}`}
-        description={currentEdition?.description || 'Read the official digital newspaper edition online.'}
+        description={currentEdition?.description || 'दैनिक जगत समीक्षा आज का ई-पेपर डिजिटल संस्करण। सभी पृष्ठ ऑनलाइन पढ़ें एवं कतरन डाउनलोड करें।'}
+        keywords="दैनिक जगत समीक्षा ई-पेपर, e-paper, digital newspaper, epaper pdf, मुंबई ई-पेपर, महाराष्ट्र समाचार"
       />
 
       <div>
@@ -461,7 +462,7 @@ export const EpaperPage: React.FC = () => {
                   >
                     <img
                       src={zoomLevel > 1.25 && activePage.zoom_image_url ? activePage.zoom_image_url : activePage.image_url}
-                      alt={activePage.page_title}
+                      alt={activePage.page_title || `${currentEdition?.title || 'दैनिक जगत समीक्षा'} — ई-पेपर पृष्ठ ${activePage.page_number}`}
                       className="w-auto h-auto max-w-[850px] object-contain select-none"
                       draggable={false}
                     />
@@ -501,7 +502,7 @@ export const EpaperPage: React.FC = () => {
                         <div className="w-20 h-28 bg-stone-800 rounded overflow-hidden border border-stone-700 flex items-center justify-center">
                           <img
                             src={page.thumbnail_url || page.image_url}
-                            alt={page.page_title}
+                            alt={page.page_title || `${currentEdition?.title || 'दैनिक जगत समीक्षा'} — पृष्ठ ${page.page_number} थंबनेल`}
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -535,7 +536,7 @@ export const EpaperPage: React.FC = () => {
                   }`}
                 >
                   <div className="w-16 h-22 bg-stone-100 rounded border border-stone-300 flex-shrink-0 overflow-hidden">
-                    <img src={ed.thumbnail_url} alt={ed.title} className="w-full h-full object-cover" />
+                    <img src={ed.thumbnail_url} alt={ed.title || 'दैनिक जगत समीक्षा ई-पेपर संस्करण'} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>

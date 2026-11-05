@@ -52,6 +52,12 @@ export const CategoryPage: React.FC = () => {
 
   const categoryName = category ? getCategoryName(category) : slug?.toUpperCase();
   const categoryDescription = category?.translations?.[language]?.description || '';
+  const fallbackCategoryDesc = language === 'mr'
+    ? `${categoryName} — महाराष्ट्रातील व देशातील ताज्या घडामोडी, सविस्तर वृत्तांत आणि संपादकीय विश्लेषण.`
+    : language === 'en'
+    ? `${categoryName} — Latest breaking news updates, special ground reports and analysis from Dainik Jagat Sameeksha.`
+    : `${categoryName} — ताज़ा एवं प्रादेशिक मुख्य समाचार, विशेष कवरेज और विश्लेषण दैनिक जगत समीक्षा पर।`;
+  const categoryKeywords = `${categoryName}, ${categoryName} news, ${categoryName} समाचार, हिंदी न्यूज़, दैनिक जगत समीक्षा, ताज़ा खबरें`;
 
   const leadStory = articles[0];
   const otherStories = articles.slice(1);
@@ -60,7 +66,8 @@ export const CategoryPage: React.FC = () => {
     <div className="min-h-screen bg-paper flex flex-col justify-between selection:bg-crimson-100 selection:text-crimson-900">
       <SEOHead
         title={categoryName}
-        description={categoryDescription || `${categoryName} विभागातील ताज्या बातम्या आणि विश्लेषण.`}
+        description={categoryDescription || fallbackCategoryDesc}
+        keywords={categoryKeywords}
       />
 
       <div>

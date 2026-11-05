@@ -220,7 +220,7 @@ export const VideoHubPage: React.FC = () => {
                         <div className="relative aspect-16/10 overflow-hidden bg-editorial-100">
                           <img
                             src={video.thumbnail_url}
-                            alt={getTitle(video)}
+                            alt={getTitle(video) || 'दैनिक जगत समीक्षा व्हिडिओ वृत्त थंबनेल'}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             loading="lazy"
                           />
