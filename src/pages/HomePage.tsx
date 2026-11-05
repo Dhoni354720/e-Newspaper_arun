@@ -523,7 +523,7 @@ export const HomePage: React.FC = () => {
             ? 'Dainik Jagat Sameeksha, national daily newspaper, breaking news, e-paper, Maharashtra, Mumbai, Kalyan, Hindi news, Arun Ramakant Tiwari'
             : 'दैनिक जगत समीक्षा, Dainik Jagat Sameeksha, राष्ट्रीय हिंदी दैनिक समाचार पत्र, ई-पेपर, ताज़ा खबर, मुंबई, कल्याण, महाराष्ट्र, उत्तर प्रदेश, अरुण रमाकांत तिवारी'
         }
-        canonicalUrl="https://dainikjagatsameeksha.com/"
+        canonicalUrl="https://jagatsameeksha.com/"
       />
 
       <div>

@@ -34,7 +34,7 @@ describe('Production Polish, SEO, Feeds, and 404 Integration Tests', () => {
         <SEOHead
           title="ताज़ा संपादकीय विचार"
           description="दैनिक जगत समीक्षा मुख्य संपादकीय आलेख"
-          canonicalUrl="https://dainikjagatsameeksha.com/article/editorial-lead-2026"
+          canonicalUrl="https://jagatsameeksha.com/article/editorial-lead-2026"
           authorName="अरुण रमाकांत तिवारी (मुख्य संपादक)"
           articleType="article"
         />
@@ -69,10 +69,10 @@ describe('Production Polish, SEO, Feeds, and 404 Integration Tests', () => {
     const content = fs.readFileSync(sitemapPath, 'utf-8');
     expect(content).toContain('<?xml version="1.0" encoding="UTF-8"?>');
     expect(content).toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"');
-    expect(content).toContain('<loc>https://dainikjagatsameeksha.com/</loc>');
-    expect(content).toContain('<loc>https://dainikjagatsameeksha.com/epaper</loc>');
-    expect(content).toContain('<loc>https://dainikjagatsameeksha.com/category/mumbai</loc>');
-    expect(content).toContain('<loc>https://dainikjagatsameeksha.com/top-news</loc>');
+    expect(content).toContain('<loc>https://jagatsameeksha.com/</loc>');
+    expect(content).toContain('<loc>https://jagatsameeksha.com/epaper</loc>');
+    expect(content).toContain('<loc>https://jagatsameeksha.com/category/mumbai</loc>');
+    expect(content).toContain('<loc>https://jagatsameeksha.com/top-news</loc>');
     expect(content).toContain('<priority>1.0</priority>');
   });
 

@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 const publicDir = path.join(rootDir, 'public');
 
-const SITE_URL = 'https://dainikjagatsameeksha.com';
+const SITE_URL = process.env.VITE_SITE_URL || 'https://jagatsameeksha.com';
 const PUBLICATION_NAME = 'दैनिक जगत समीक्षा (Dainik Jagat Sameeksha)';
 const PUBLICATION_LANG = 'hi';
 const EDITOR_NAME = 'अरुण रमाकांत तिवारी (Chief Editor)';
