@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useSettings } from '@/context/SettingsContext';
-import { isSupabaseConfigured, isDemoMode } from '@/lib/supabase';
+import { isDemoMode } from '@/lib/supabase';
 import { checkRateLimit } from '@/lib/security/rateLimiter';
-import { ShieldCheck, Lock, Mail, AlertCircle, ArrowLeft, Database, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Lock, Mail, AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 export const AdminLoginPage: React.FC = () => {
   const { login, isStaff } = useAuth();
@@ -52,7 +52,6 @@ export const AdminLoginPage: React.FC = () => {
     }
   };
 
-  const hasLiveSupabase = isSupabaseConfigured();
   const showDemoNotice = isDemoMode();
 
   return (
@@ -68,26 +67,6 @@ export const AdminLoginPage: React.FC = () => {
             <ShieldCheck className="w-4 h-4" />
             संपादकीय कक्ष लॉगिन (CMS Secure Access)
           </div>
-        </div>
-
-        {/* Database Status Pill */}
-        <div className="mt-4 flex items-center justify-center">
-          {hasLiveSupabase ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-emerald-950 border border-emerald-700 text-emerald-300">
-              <Database className="w-3.5 h-3.5 text-emerald-400" />
-              Live Supabase Database Connected
-            </span>
-          ) : showDemoNotice ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-amber-950/80 border border-amber-700 text-amber-300">
-              <Database className="w-3.5 h-3.5 text-amber-400" />
-              Local Development Demo Mode
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-red-950/80 border border-red-700 text-red-300">
-              <Database className="w-3.5 h-3.5 text-red-400" />
-              Supabase Not Configured
-            </span>
-          )}
         </div>
       </div>
 
