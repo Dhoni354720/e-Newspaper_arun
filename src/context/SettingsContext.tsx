@@ -39,6 +39,19 @@ const sanitizeSettings = (raw: SiteSettings): SiteSettings => {
       })
       .join(', ');
   }
+
+  // Ensure publication tagline is strictly in Hindi ("सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र") and not Marathi
+  const rawTagline = s.tagline || '';
+  if (
+    !rawTagline ||
+    rawTagline.includes('वृत्तपत्र') ||
+    rawTagline.includes('आणि') ||
+    rawTagline.includes('सत्य, निष्पक्ष आणि निर्भीक')
+  ) {
+    s.tagline = 'सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र';
+  }
+  s.tagline_hi = 'सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र';
+  s.tagline_mr = 'सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र';
   return s;
 };
 
@@ -75,11 +88,12 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     publicationName = settings.publication_name_hi;
   }
 
-  // Localized publication tagline according to selected language
-  let tagline = settings.tagline;
-  if (language === 'mr' && settings.tagline_mr) {
-    tagline = settings.tagline_mr;
-  } else if (language === 'hi' && settings.tagline_hi) {
+  // Publication tagline: strictly Hindi motto only (not Marathi) as requested
+  let tagline = settings.tagline || 'सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र';
+  if (tagline.includes('वृत्तपत्र') || tagline.includes('आणि')) {
+    tagline = 'सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र';
+  }
+  if (language === 'hi' && settings.tagline_hi) {
     tagline = settings.tagline_hi;
   } else if (language === 'en' && settings.tagline_en) {
     tagline = settings.tagline_en;

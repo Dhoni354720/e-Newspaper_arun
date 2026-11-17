@@ -33,12 +33,12 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
   jsonLd: customJsonLd,
 }) => {
   const { language } = useLanguage();
-  const { publicationName, settings } = useSettings();
+  const { publicationName, settings, tagline } = useSettings();
 
   // 1. Unique, concise Page Title with primary keywords without duplication
   let fullTitle: string;
   if (!title) {
-    fullTitle = `${publicationName} — ${settings.tagline}`;
+    fullTitle = `${publicationName} — ${tagline || 'सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र'}`;
   } else if (
     title.includes(publicationName) ||
     title.includes('दैनिक जगत समीक्षा') ||
@@ -61,7 +61,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
     return plain.slice(0, maxLen).trim() + '...';
   };
 
-  const metaDescription = cleanDescription(description || settings.tagline);
+  const metaDescription = cleanDescription(description || tagline || 'सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र');
   const currentUrl = canonicalUrl || window.location.href;
   const shareImage = ogImage || `${window.location.origin}/images/logo.png`;
 
@@ -156,7 +156,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
       'alternateName': 'Dainik Jagat Sameeksha',
       'url': window.location.origin,
       'logo': `${window.location.origin}/images/logo.png`,
-      'description': settings.tagline,
+      'description': tagline || 'सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र',
       'foundingDate': '2014',
       'identifier': {
         '@type': 'PropertyValue',

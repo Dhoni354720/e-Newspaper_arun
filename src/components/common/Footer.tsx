@@ -8,7 +8,7 @@ import { Category } from '@/types/database';
 
 export const Footer: React.FC = () => {
   const { language, t, getCategoryName } = useLanguage();
-  const { settings, publicationName } = useSettings();
+  const { settings, publicationName, tagline } = useSettings();
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
@@ -28,11 +28,11 @@ export const Footer: React.FC = () => {
               {publicationName}
             </h2>
             <p className="text-crimson-400 font-serif italic text-sm mb-4">
-              {settings.tagline}
+              {tagline || 'सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र'}
             </p>
             <p className="text-xs sm:text-sm text-editorial-400 leading-relaxed mb-6">
               {language === 'mr' 
-                ? 'महाराष्ट्र, देश आणि जागतिक पातळीवरील सत्य, निष्पक्ष आणि निर्भीक वृत्तपत्र. आधुनिक पत्रकारितेची नवी परंपरा.'
+                ? 'महाराष्ट्र, देश आणि जागतिक पातळीवरील सत्य, निष्पक्ष आणि निर्भीक समाचार पत्र. आधुनिक पत्रकारितेची नवी परंपरा.'
                 : language === 'hi'
                 ? 'महाराष्ट्र, राष्ट्रीय और अंतरराष्ट्रीय घटनाक्रम पर आधारित निष्पक्ष, सटीक और विश्वसनीय समाचार पत्र।'
                 : 'Credible, independent and fearless digital journalism covering Maharashtra, national policies and global perspectives.'}

@@ -10,7 +10,7 @@ import { Mail, Phone, MapPin, Send, CheckCircle2, Shield, FileText, ArrowLeft, A
 
 export const AboutPage: React.FC = () => {
   const { t, language } = useLanguage();
-  const { settings, publicationName } = useSettings();
+  const { settings, publicationName, tagline } = useSettings();
 
   const content = {
     mr: {
@@ -70,7 +70,7 @@ export const AboutPage: React.FC = () => {
               {publicationName}
             </h1>
             <p className="text-lg font-serif italic text-editorial-700">
-              "{settings.tagline}"
+              "{tagline || 'सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र'}"
             </p>
           </div>
 

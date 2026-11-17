@@ -149,7 +149,7 @@ export const AdminLoginPage: React.FC = () => {
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-400 hover:text-white transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            मुख्य वृत्तपत्राकडे परत जा (Return to Website)
+            मुख्य समाचार पत्र पर वापस जाएँ (Return to Website)
           </Link>
         </div>
       </div>

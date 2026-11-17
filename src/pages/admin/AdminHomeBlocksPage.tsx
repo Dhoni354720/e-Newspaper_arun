@@ -17,15 +17,15 @@ import {
 } from 'lucide-react';
 
 const BLOCK_TYPE_LABELS: Record<HomeBlockType, { hi: string; en: string }> = {
-  hero: { hi: 'मुख्य बातमी / लीड (Hero Lead)', en: 'Hero Lead' },
+  hero: { hi: 'मुख्य समाचार / लीड (Hero Lead)', en: 'Hero Lead' },
   top_news: { hi: 'शीर्ष समाचार (Top News / Big 4)', en: 'Top News' },
-  city_tabs: { hi: 'शहर/प्रादेशिक टॅब्स (City Dispatches)', en: 'City Tabs' },
+  city_tabs: { hi: 'शहर/प्रादेशिक टैब्स (City Dispatches)', en: 'City Tabs' },
   opinion: { hi: 'संपादकीय व विचार (Editor Arun Ramakant Tiwari Column)', en: 'Editorial & Opinion' },
   crime: { hi: 'अपराध विशेष (Crime & Legal Bureau)', en: 'Crime Special' },
-  sports: { hi: 'क्रीडा विश्व (Sports Desk)', en: 'Sports' },
-  epaper_promo: { hi: 'ई-वृत्तपत्र प्रसार (E-Paper Strip)', en: 'E-Paper Promo' },
-  weather: { hi: 'हवामान व पंचांग (Weather Widget)', en: 'Weather' },
-  category_grid: { hi: 'विभाग ग्रीड (Category Grid)', en: 'Category Grid' },
+  sports: { hi: 'खेल जगत (Sports Desk)', en: 'Sports' },
+  epaper_promo: { hi: 'ई-समाचार पत्र (E-Paper Strip)', en: 'E-Paper Promo' },
+  weather: { hi: 'मौसम व पंचांग (Weather Widget)', en: 'Weather' },
+  category_grid: { hi: 'श्रेणी ग्रिड (Category Grid)', en: 'Category Grid' },
   custom: { hi: 'कस्टम ब्लॉक (Custom Block)', en: 'Custom Block' },
 };
 

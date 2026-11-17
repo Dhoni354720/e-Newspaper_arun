@@ -138,7 +138,7 @@ export const AdminSettingsPage: React.FC = () => {
               required
               value={tagline}
               onChange={(e) => setTagline(e.target.value)}
-              placeholder="सत्य, निष्पक्ष आणि निर्भीक वृत्तपत्र"
+              placeholder="सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र"
               className="w-full px-3 py-2 text-sm border rounded font-serif italic text-gray-800"
             />
           </div>

@@ -106,7 +106,11 @@ export const SearchPage: React.FC = () => {
               {t('searchButton')}
             </h1>
             <p className="text-sm text-editorial-600 mb-6">
-              वृत्तपत्रातील सर्व संग्रहित बातम्या, संपादकीय लेख व विश्लेषण शोधा
+              {language === 'mr'
+                ? 'वृत्तपत्रातील सर्व संग्रहित बातम्या, संपादकीय लेख व विश्लेषण शोधा'
+                : language === 'en'
+                ? 'Search all archived dispatches, editorial columns and special analyses'
+                : 'समाचार पत्र के सभी संग्रहीत समाचार, संपादकीय लेख व विश्लेषण खोजें'}
             </p>
 
             <form onSubmit={handleSearchSubmit} className="relative flex items-center">

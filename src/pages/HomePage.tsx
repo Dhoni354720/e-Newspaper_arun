@@ -504,7 +504,7 @@ export const HomePage: React.FC = () => {
       <SEOHead
         title={
           language === 'mr'
-            ? 'दैनिक जगत समीक्षा | सत्य, निष्पक्ष आणि निर्भीक वृत्तपत्र'
+            ? 'दैनिक जगत समीक्षा | सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र'
             : language === 'en'
             ? 'Dainik Jagat Sameeksha | National & Regional Daily Newspaper'
             : 'दैनिक जगत समीक्षा | सत्य, निष्पक्ष और निर्भीक राष्ट्रीय हिंदी समाचार पत्र'
@@ -538,7 +538,7 @@ export const HomePage: React.FC = () => {
           {/* Accessible Main H1 Heading signaling core publication topic */}
           <h1 className="sr-only">
             {language === 'mr'
-              ? 'दैनिक जगत समीक्षा — सत्य, निष्पक्ष आणि निर्भीक वृत्तपत्र, ताज्या घडामोडी व ई-पेपर'
+              ? 'दैनिक जगत समीक्षा — सत्य, निष्पक्ष एवं निर्भीक समाचार पत्र, ताज्या घडामोडी व ई-पेपर'
               : language === 'en'
               ? 'Dainik Jagat Sameeksha — Independent National & Regional Daily Newspaper, Breaking News and E-Paper'
               : 'दैनिक जगत समीक्षा — सत्य, निष्पक्ष और निर्भीक राष्ट्रीय हिंदी दैनिक समाचार पत्र, ताज़ा खबरें एवं ई-पेपर'}
